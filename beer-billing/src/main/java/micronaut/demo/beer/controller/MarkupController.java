@@ -9,26 +9,26 @@ import io.micronaut.validation.Validated;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
-import micronaut.demo.beer.domain.BeerCost;
-import micronaut.demo.beer.domain.CostConfiguration;
+import micronaut.demo.beer.domain.BeerMarkup;
+import micronaut.demo.beer.domain.MarkupConfiguration;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 
 import static com.mongodb.client.model.Filters.eq;
 
-@Controller("/cost")
+@Controller("/markup")
 @Validated
-public class CostController implements CostOperations<BeerCost> {
+public class MarkupController implements MarkupOperations<BeerMarkup> {
 
     final EmbeddedServer embeddedServer;
-    private final CostConfiguration configuration;
+    private final MarkupConfiguration configuration;
     private MongoClient mongoClient;
 
     @Inject
-    public CostController(EmbeddedServer embeddedServer,
-                          CostConfiguration configuration,
-                          MongoClient mongoClient) {
+    public MarkupController(EmbeddedServer embeddedServer,
+                            MarkupConfiguration configuration,
+                            MongoClient mongoClient) {
         this.embeddedServer = embeddedServer;
         this.configuration = configuration;
         this.mongoClient = mongoClient;
@@ -36,7 +36,7 @@ public class CostController implements CostOperations<BeerCost> {
 
     /*
     @Override
-    public Single<List<BeerCost>> list() {
+    public Single<List<BeerMarkup>> list() {
         return Flowable.fromPublisher(
                 getCollection()
                         .find()
@@ -46,7 +46,7 @@ public class CostController implements CostOperations<BeerCost> {
 
     @Get("/")
     @Override
-    public Maybe<BeerCost> baseCosts() {
+    public Maybe<BeerMarkup> baseCosts() {
         return Flowable.fromPublisher(
                 getCollection()
                         .find()
@@ -54,20 +54,9 @@ public class CostController implements CostOperations<BeerCost> {
     }
 
 
-
     @Override
-    public Maybe<BeerCost> find(Double field) {
-        return Flowable.fromPublisher(
-                getCollection()
-                        .find(eq("pintMarkup", field))
-                        .limit(1)
-        ).firstElement();
-    }
-
-
-    @Override
-    public Single<BeerCost> save(@Valid BeerCost cost) {
-        return find(cost.getPintMarkup())
+    public Single<BeerMarkup> save(@Valid BeerMarkup cost) {
+        return baseCosts()
                 .switchIfEmpty(
                         Single.fromPublisher(getCollection().insertOne(cost))
                                 .map(success -> cost)
@@ -75,10 +64,10 @@ public class CostController implements CostOperations<BeerCost> {
 
     }
 
-    private MongoCollection<BeerCost> getCollection() {
+    private MongoCollection<BeerMarkup> getCollection() {
         return mongoClient
                 .getDatabase(configuration.getDatabaseName())
-                .getCollection(configuration.getCollectionName(), BeerCost.class);
+                .getCollection(configuration.getCollectionName(), BeerMarkup.class);
     }
 
 

@@ -2,16 +2,14 @@ package micronaut.demo.beer.client;
 
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.client.Client;
-import io.micronaut.retry.annotation.CircuitBreaker;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
-import micronaut.demo.beer.domain.BeerStock;
+import micronaut.demo.beer.model.BeerStock;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
-@Client("/stock")
-@CircuitBreaker(delay = "1s", attempts = "5", multiplier = "3", reset = "100s")
+@Client(id = "cost", path = "/cost")
 public interface StockControllerClient {
 
 

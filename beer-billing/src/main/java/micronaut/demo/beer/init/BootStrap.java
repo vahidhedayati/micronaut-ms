@@ -10,8 +10,8 @@ import io.micronaut.runtime.server.event.ServerStartupEvent;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
-import micronaut.demo.beer.domain.BeerCost;
-import micronaut.demo.beer.domain.CostConfiguration;
+import micronaut.demo.beer.domain.BeerMarkup;
+import micronaut.demo.beer.domain.MarkupConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,12 +35,12 @@ public class BootStrap implements ApplicationEventListener<ServerStartupEvent> {
 
     final EmbeddedServer embeddedServer;
     private MongoClient mongoClient;
-    private final CostConfiguration costConfig;
+    private final MarkupConfiguration costConfig;
 
     final static Logger log = LoggerFactory.getLogger(BootStrap.class);
 
     @Inject
-    public BootStrap(EmbeddedServer embeddedServer, MongoClient mongoClient, CostConfiguration costConfig) {
+    public BootStrap(EmbeddedServer embeddedServer, MongoClient mongoClient, MarkupConfiguration costConfig) {
         this.embeddedServer = embeddedServer;
         this.mongoClient = mongoClient;
         this.costConfig=costConfig;
@@ -54,13 +54,13 @@ public class BootStrap implements ApplicationEventListener<ServerStartupEvent> {
     }
 
     void setupDefaults() {
-            Maybe<BeerCost> currentBeer = Flowable.fromPublisher(
+            Maybe<BeerMarkup> currentBeer = Flowable.fromPublisher(
                     getCosts()
                             .find()
                             .limit(1)
             ).firstElement();
 
-            BeerCost beerCost = new BeerCost(5.00,5.00);
+            BeerMarkup beerCost = new BeerMarkup(5.00,5.00);
             currentBeer.switchIfEmpty(
                     Single.fromPublisher(getCosts().insertOne(beerCost))
                             .map(success -> beerCost)
@@ -68,9 +68,9 @@ public class BootStrap implements ApplicationEventListener<ServerStartupEvent> {
     }
 
 
-    private MongoCollection<BeerCost> getCosts() {
+    private MongoCollection<BeerMarkup> getCosts() {
         return mongoClient
                 .getDatabase(costConfig.getDatabaseName())
-                .getCollection(costConfig.getCollectionName(), BeerCost.class);
+                .getCollection(costConfig.getCollectionName(), BeerMarkup.class);
     }
 }

@@ -12,7 +12,7 @@ import io.reactivex.Maybe;
 import io.reactivex.Single;
 import micronaut.demo.beer.dbConfig.CostConfiguration;
 import micronaut.demo.beer.dbConfig.StockConfiguration;
-import micronaut.demo.beer.domain.Beer;
+import micronaut.demo.beer.domain.BeerStock;
 import micronaut.demo.beer.domain.BeerCost;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,13 +63,13 @@ public class BootStrap implements ApplicationEventListener<ServerStartupEvent> {
              * Generate actual beer object
              * by default all getting a 1000 bottles and 2 barrels of larger
              */
-            Maybe<Beer> currentBeer = Flowable.fromPublisher(
+            Maybe<BeerStock> currentBeer = Flowable.fromPublisher(
                     getStock()
                             .find(eq("name", beer))
                             .limit(1)
             ).firstElement();
 
-            Beer beerObject = new Beer(beer, 1000L, 2);
+            BeerStock beerObject = new BeerStock(beer, 1000L, 2);
 
             currentBeer.switchIfEmpty(
                     Single.fromPublisher(getStock().insertOne(beerObject))
@@ -100,10 +100,10 @@ public class BootStrap implements ApplicationEventListener<ServerStartupEvent> {
         }
     }
 
-    private MongoCollection<Beer> getStock() {
+    private MongoCollection<BeerStock> getStock() {
         return mongoClient
                 .getDatabase(stockConfig.getDatabaseName())
-                .getCollection(stockConfig.getCollectionName(), Beer.class);
+                .getCollection(stockConfig.getCollectionName(), BeerStock.class);
     }
 
     private MongoCollection<BeerCost> getCosts() {

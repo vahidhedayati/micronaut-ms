@@ -9,7 +9,6 @@ import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import micronaut.demo.beer.dbConfig.CostConfiguration;
-import micronaut.demo.beer.domain.Beer;
 import micronaut.demo.beer.domain.BeerCost;
 
 import javax.inject.Inject;
@@ -75,7 +74,5 @@ public class CostController implements CostOperations<BeerCost> {
                 .getDatabase(configuration.getDatabaseName())
                 .getCollection(configuration.getCollectionName(), BeerCost.class);
     }
-
-
 
 }

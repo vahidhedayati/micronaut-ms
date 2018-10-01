@@ -1,9 +1,9 @@
-package micronaut.demo.beer.domain;
+package micronaut.demo.beer.model;
 
 /**
  * A generic markup percentage price on each bottle/pint sold
  */
-public class BeerCost {
+public class BeerMarkup {
 
 
 	public double getBottleMarkup() {
@@ -17,14 +17,14 @@ public class BeerCost {
 	private double bottleMarkup;
 	private double pintMarkup;
 
-	public BeerCost(double bottleMarkup, double pintMarkup) {
+	public BeerMarkup(double bottleMarkup, double pintMarkup) {
 		this.bottleMarkup = bottleMarkup;
 		this.pintMarkup = pintMarkup;
 	}
 
 	@Override
 	public String toString() {
-		return "BeerCost{" +
+		return "BeerMarkup{" +
 				"bottleMarkup='" + bottleMarkup + '\'' +
 				", pintMarkup=" + pintMarkup +
 				'}';

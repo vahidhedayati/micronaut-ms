@@ -1,12 +1,10 @@
 package micronaut.demo.beer.domain;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import micronaut.demo.beer.enums.BeerSize;
 
 import java.math.BigDecimal;
 
-public class Beer {
+public class BeerStock {
 
 	private  String name;
 
@@ -19,7 +17,7 @@ public class Beer {
 
 	/*
 	@JsonCreator
-	public Beer(@JsonProperty("name") String name, @JsonProperty("size") long bottles,
+	public BeerStock(@JsonProperty("name") String name, @JsonProperty("size") long bottles,
 				 @JsonProperty("cost") double barrels) {
 		this.name = name;
 		this.bottles = bottles;
@@ -28,9 +26,9 @@ public class Beer {
 	}
 	*/
 
-	public Beer() {}
+	public BeerStock() {}
 
-	public Beer(String name, long bottles, double barrels) {
+	public BeerStock(String name, long bottles, double barrels) {
 		this.name = name;
 		this.bottles = bottles;
 		//this.barrels = barrels;
@@ -75,7 +73,7 @@ public class Beer {
 	}
 
 
-	public Beer addPint(int amount) {
+	public BeerStock addPint(int amount) {
 		if (this.getBarrels()>0) {
 			this.availablePints=this.getAvailablePints() - (BeerSize.PINT.getValue()*amount);
 			updateBarrels();
@@ -84,7 +82,7 @@ public class Beer {
 		return null;
 	}
 
-	public Beer addHalfPint(int amount) {
+	public BeerStock addHalfPint(int amount) {
 		if (this.getBarrels()>0) {
 			this.availablePints=this.getAvailablePints() - (BeerSize.HALF_PINT.getValue()*amount);
 			updateBarrels();
@@ -94,7 +92,7 @@ public class Beer {
 	}
 
 
-	public Beer addBottle(int amount) {
+	public BeerStock addBottle(int amount) {
 		if (this.getBottles()>0 && this.getBottles()-amount>0) {
 			this.bottles=this.getBottles()-amount;
 			return this;
@@ -113,7 +111,7 @@ public class Beer {
 
 	@Override
 	public String toString() {
-		return "Beer{" +
+		return "BeerStock{" +
 				"name='" + name + '\'' +
 				"bottles='" + bottles + '\'' +
 				"barrels='" + barrels + '\'' +

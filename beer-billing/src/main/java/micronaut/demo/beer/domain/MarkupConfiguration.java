@@ -18,9 +18,9 @@ package micronaut.demo.beer.domain;
 import io.micronaut.context.annotation.ConfigurationProperties;
 
 @ConfigurationProperties("beercost")
-public class CostConfiguration {
+public class MarkupConfiguration {
     private String databaseName = "beerbilling";
-    private String collectionName = "costs";
+    private String collectionName = "markup";
 
     public String getDatabaseName() {
         return databaseName;

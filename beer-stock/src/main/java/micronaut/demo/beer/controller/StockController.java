@@ -5,45 +5,47 @@ import com.mongodb.reactivestreams.client.MongoCollection;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.runtime.server.EmbeddedServer;
-import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.validation.Validated;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
-import io.reactivex.disposables.Disposable;
+import micronaut.demo.beer.dbConfig.CostConfiguration;
 import micronaut.demo.beer.dbConfig.StockConfiguration;
-import micronaut.demo.beer.domain.Beer;
+import micronaut.demo.beer.domain.BeerStock;
+import micronaut.demo.beer.domain.BeerCost;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
-import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.eq;
 @Controller("/stock")
 @Validated
-public class StockController implements StockOperations<Beer> {
+public class StockController implements StockOperations<BeerStock> {
 
     final EmbeddedServer embeddedServer;
     private final StockConfiguration configuration;
+    private final CostConfiguration costConfig;
     private MongoClient mongoClient;
 
     @Inject
     public StockController(EmbeddedServer embeddedServer,
                           StockConfiguration configuration,
+                           CostConfiguration costConfig,
                             MongoClient mongoClient) {
         this.embeddedServer = embeddedServer;
         this.configuration = configuration;
+        this.costConfig = costConfig;
         this.mongoClient = mongoClient;
     }
-    @Get("/list")
+
+    @Get("/")
     @Override
-    public Single<List<Beer>> list() {
-        return Flowable.fromPublisher(
-                getCollection()
-                        .find()
-        ).toList();
+    public Single<List<BeerStock>> list() {
+        Single<List<BeerStock>> beers= Flowable.fromPublisher(getCollection().find()).toList();
+        //Single<List<BeerCost>> costs= Flowable.fromPublisher(getCost().find()).toList();
+        return beers; ///Single.zip(beers,costs);
     }
 
     /*
@@ -58,17 +60,10 @@ Observable<Order> orders = customers
 he need to map from a single item to Iterable is so popular tha
      */
 
-    @Override
-    public Single<List<Beer>> search(String name) {
-        return Flowable.fromPublisher(
-                getCollection()
-                        .find(eq("name", name))
-        ).toList();
-    }
 
     @Get("/lookup/{name}")
     @Override
-    public Maybe<Beer> find(String username) {
+    public Maybe<BeerStock> find(String username) {
         return Flowable.fromPublisher(
                 getCollection()
                         .find(eq("name", username))
@@ -78,7 +73,7 @@ he need to map from a single item to Iterable is so popular tha
 
     @Get("/pints/{name}/{amount}")
     public Single<Maybe> pints(@NotBlank String name, @NotBlank String amount) {
-        Maybe<Beer> found = find(name);
+        Maybe<BeerStock> found = find(name);
         if (found!=null) {
             return Single.just(found.map(beer-> beer.addPint(Integer.valueOf(amount))));
         }
@@ -87,7 +82,7 @@ he need to map from a single item to Iterable is so popular tha
 
     @Get("/halfPints/{name}/{amount}")
     public Single<Maybe> halfPints(@NotBlank String name, @NotBlank String amount) {
-        Maybe<Beer> found = find(name);
+        Maybe<BeerStock> found = find(name);
         if (found!=null) {
             return Single.just(found.map(beer-> beer.addHalfPint(Integer.valueOf(amount))));
         }
@@ -96,7 +91,7 @@ he need to map from a single item to Iterable is so popular tha
 
     @Get("/bottles/{name}/{amount}")
     public Single<Maybe> bottles(@NotBlank String name, @NotBlank String amount) {
-        Maybe<Beer> found = find(name);
+        Maybe<BeerStock> found = find(name);
         if (found!=null) {
             return Single.just(found.map(beer-> beer.addBottle(Integer.valueOf(amount))));
         }
@@ -104,7 +99,7 @@ he need to map from a single item to Iterable is so popular tha
     }
 
     @Override
-    public Single<Beer> save(@Valid Beer pet) {
+    public Single<BeerStock> save(@Valid BeerStock pet) {
         return find(pet.getName())
                 .switchIfEmpty(
                         Single.fromPublisher(getCollection().insertOne(pet))
@@ -113,11 +108,15 @@ he need to map from a single item to Iterable is so popular tha
 
     }
 
-    private MongoCollection<Beer> getCollection() {
+    private MongoCollection<BeerStock> getCollection() {
         return mongoClient
                 .getDatabase(configuration.getDatabaseName())
-                .getCollection(configuration.getCollectionName(), Beer.class);
+                .getCollection(configuration.getCollectionName(), BeerStock.class);
     }
-
+    private MongoCollection<BeerCost> getCost() {
+        return mongoClient
+                .getDatabase(configuration.getDatabaseName())
+                .getCollection(configuration.getCollectionName(), BeerCost.class);
+    }
 
 }

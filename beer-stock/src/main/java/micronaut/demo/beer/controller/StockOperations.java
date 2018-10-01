@@ -6,19 +6,17 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.validation.Validated;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
-import micronaut.demo.beer.domain.Beer;
+import micronaut.demo.beer.domain.BeerStock;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @Validated
-public interface StockOperations<T extends Beer> {
+public interface StockOperations<T extends BeerStock> {
 
     @Get("/")
     Single<List<T>> list();
 
-    @Get("/search/{name}")
-    Single<List<T>> search(String name);
 
     @Get("/lookup/{name}")
     Maybe<T> find(String name);
