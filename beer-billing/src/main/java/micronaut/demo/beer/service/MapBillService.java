@@ -1,5 +1,6 @@
 package micronaut.demo.beer.service;
 
+import lombok.RequiredArgsConstructor;
 import micronaut.demo.beer.model.Ticket;
 
 import javax.inject.Singleton;
@@ -8,16 +9,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Singleton
+@RequiredArgsConstructor
 public class MapBillService implements BillService {
 
+
     Map<String, Ticket> billsPerCustomer = new HashMap<>();
-    public Ticket getBillForCostumer(String username) {
-        return billsPerCustomer.get(username);
-    }
+    public Ticket getBillForCostumer(String username) { return billsPerCustomer.get(username); }
 
     public void  createBillForCostumer(String username, Ticket ticket) {
         billsPerCustomer.put(username,ticket);
     };
+
 
     public String usersInBarMessage() {
         int howManyUsers = size();

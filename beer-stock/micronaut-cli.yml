@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: beer.stock
+---
+testFramework: junit
+sourceLanguage: java

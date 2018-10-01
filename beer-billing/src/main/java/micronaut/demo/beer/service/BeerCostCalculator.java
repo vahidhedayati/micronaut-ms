@@ -6,10 +6,12 @@
 
     public class BeerCostCalculator implements CostCalculator {
 
-        @Value("${beer.base.cost.value}")
+        //Default value added of 5
+        @Value("${beer.base.cost.value:5}")
         private int beerBaseCost =1;
 
-        @Value("${vat.value}")
+        //VAT default value of 17.5 added
+        @Value("${vat.value:17}")
         private int vat ;
 
         public int getVat() {
@@ -21,7 +23,7 @@
         }
 
         public int getBeerBaseCost() {
-            return beerBaseCost;
+            return this.beerBaseCost;
         }
 
         public void setBeerBaseCost(int c) {

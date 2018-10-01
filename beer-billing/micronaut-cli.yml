@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: beer.billing
+---
+testFramework: junit
+sourceLanguage: java
