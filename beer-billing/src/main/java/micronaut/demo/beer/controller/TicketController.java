@@ -1,4 +1,4 @@
-package micronaut.demo.beer;
+package micronaut.demo.beer.controller;
 
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoCollection;
@@ -150,22 +150,18 @@ public class TicketController implements TicketOperations<CostSync> {
 		double cost = t.isPresent() ? beerCostCalculator.calculateCost(t.get()) :
 										  beerCostCalculator.calculateCost(getNoCostTicket());
 
-
 		//We save the cost to MongoDB
-
 		save(new CostSync(customerName,cost));
 
-		//
+		//Single<CostSync> found = find(customerName).toSingle();
+		Double currentCost = Double.valueOf(cost);
 		CostSync found = find(customerName).blockingGet();
 		if (found!=null) {
-			System.out.println("WE Have from Mongo "+found.toString());
-			return Single.just(found.getCost());
-		} else {
-			System.out.println("WE Have from NO Mongo DB JUST COST "+cost);
-			return Single.just(Double.valueOf(cost));
+			//System.out.println("WE Have from Mongo "+found.toString());
+			//found.subscribe(query -> query.getCost() );
+			currentCost=found.getCost();
 		}
-
-
+		return Single.just(currentCost);
 	}
 
 	@Get(uri = "/users", produces = MediaType.TEXT_EVENT_STREAM)

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package micronaut.demo.beer;
+package micronaut.demo.beer.controller;
 
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Get;

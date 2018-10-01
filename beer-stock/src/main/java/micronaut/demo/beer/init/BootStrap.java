@@ -7,6 +7,9 @@ import groovy.util.logging.Slf4j;
 import io.micronaut.context.event.ApplicationEventListener;
 import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.runtime.server.event.ServerStartupEvent;
+import io.reactivex.Flowable;
+import io.reactivex.Maybe;
+import io.reactivex.Single;
 import micronaut.demo.beer.dbConfig.CostConfiguration;
 import micronaut.demo.beer.dbConfig.StockConfiguration;
 import micronaut.demo.beer.domain.Beer;
@@ -16,7 +19,15 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.Arrays;
 
+import static com.mongodb.client.model.Filters.eq;
+
+/**
+ * Upon start up of the stock application it will generate some default beers and default pricing per beer type
+ *
+ */
 @Slf4j
 @CompileStatic
 @Singleton
@@ -44,7 +55,49 @@ public class BootStrap implements ApplicationEventListener<ServerStartupEvent> {
 
     void setupDefaults() {
 
+        ArrayList<String> beers =  new ArrayList<>(Arrays.asList("Budweiser", "Heineken", "Peroni", "Coors"));
 
+        for (String beer : beers) {
+
+            /**
+             * Generate actual beer object
+             * by default all getting a 1000 bottles and 2 barrels of larger
+             */
+            Maybe<Beer> currentBeer = Flowable.fromPublisher(
+                    getStock()
+                            .find(eq("name", beer))
+                            .limit(1)
+            ).firstElement();
+
+            Beer beerObject = new Beer(beer, 1000L, 2);
+
+            currentBeer.switchIfEmpty(
+                    Single.fromPublisher(getStock().insertOne(beerObject))
+                            .map(success -> beerObject)
+            );
+
+
+            /**
+             * Generate the costs for those beer names
+             * by default all getting priced at business end at 0.99 per bottle and 0.85 per pint
+             * So this is internal prices - not what is sold to the client..
+             *
+             * Selling on the markup is set by the beer-billing applications..
+             *
+             * Changes to the markup in billing will then reprice the percentage charged on top of these prices
+             *
+             */
+            Maybe<BeerCost> currentCost = Flowable.fromPublisher(
+                    getCosts()
+                            .find(eq("name",beer))
+                            .limit(1)
+            ).firstElement();
+            BeerCost beerCostObject = new BeerCost(beer, 0.99,0.85);
+            currentCost.switchIfEmpty(
+                    Single.fromPublisher(getCosts().insertOne(beerCostObject))
+                            .map(success -> beerCostObject)
+            );
+        }
     }
 
     private MongoCollection<Beer> getStock() {

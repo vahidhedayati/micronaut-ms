@@ -3,20 +3,20 @@ package micronaut.demo.beer.controller;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
 import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.validation.Validated;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
-import micronaut.demo.beer.dbConfig.CostConfiguration;
-import micronaut.demo.beer.domain.Beer;
 import micronaut.demo.beer.domain.BeerCost;
+import micronaut.demo.beer.domain.CostConfiguration;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
+
 @Controller("/cost")
 @Validated
 public class CostController implements CostOperations<BeerCost> {
@@ -34,6 +34,7 @@ public class CostController implements CostOperations<BeerCost> {
         this.mongoClient = mongoClient;
     }
 
+    /*
     @Override
     public Single<List<BeerCost>> list() {
         return Flowable.fromPublisher(
@@ -41,31 +42,35 @@ public class CostController implements CostOperations<BeerCost> {
                         .find()
         ).toList();
     }
+    */
 
+    @Get("/")
     @Override
-    public Single<List<BeerCost>> search(String name) {
+    public Maybe<BeerCost> baseCosts() {
         return Flowable.fromPublisher(
                 getCollection()
-                        .find(eq("name", name))
-        ).toList();
+                        .find()
+        ).firstElement();
     }
 
+
+
     @Override
-    public Maybe<BeerCost> find(String username) {
+    public Maybe<BeerCost> find(Double field) {
         return Flowable.fromPublisher(
                 getCollection()
-                        .find(eq("name", username))
+                        .find(eq("pintMarkup", field))
                         .limit(1)
         ).firstElement();
     }
 
 
     @Override
-    public Single<BeerCost> save(@Valid BeerCost pet) {
-        return find(pet.getName())
+    public Single<BeerCost> save(@Valid BeerCost cost) {
+        return find(cost.getPintMarkup())
                 .switchIfEmpty(
-                        Single.fromPublisher(getCollection().insertOne(pet))
-                                .map(success -> pet)
+                        Single.fromPublisher(getCollection().insertOne(cost))
+                                .map(success -> cost)
                 );
 
     }

@@ -26,6 +26,11 @@ public class WaiterController {
         this.embeddedServer=embeddedServer;
     }
 
+    /*
+    Single<MyViewModel> source =
+    Single.zip(source1, source2, source3, MyViewModel::new);
+     */
+
     @Get("/beer/{customerName}")
     //@NewSpan
     public Single<Beer> serveBeerToCustomer(@NotBlank String customerName) {

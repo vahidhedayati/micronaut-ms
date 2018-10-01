@@ -6,6 +6,13 @@ package micronaut.demo.beer.domain;
 public class BeerCost {
 
 
+	public double getBottleMarkup() {
+		return bottleMarkup;
+	}
+
+	public double getPintMarkup() {
+		return pintMarkup;
+	}
 
 	private double bottleMarkup;
 	private double pintMarkup;
