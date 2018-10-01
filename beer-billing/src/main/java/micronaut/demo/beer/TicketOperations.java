@@ -26,10 +26,8 @@ import micronaut.demo.beer.domain.CostSync;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * @author graemerocher
- * @since 1.0
- */
+
+
 @Validated
 public interface TicketOperations<T extends CostSync> {
 

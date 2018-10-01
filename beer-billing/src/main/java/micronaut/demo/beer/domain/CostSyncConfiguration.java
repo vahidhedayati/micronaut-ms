@@ -17,10 +17,6 @@ package micronaut.demo.beer.domain;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
 
-/**
- * @author graemerocher
- * @since 1.0
- */
 @ConfigurationProperties("costsync")
 public class CostSyncConfiguration {
     private String databaseName = "beerbilling";
