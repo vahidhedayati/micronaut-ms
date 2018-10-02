@@ -40,7 +40,6 @@ dependencies {
     compile "io.micronaut:http-client"
     compile "io.micronaut:http-server-netty"
 
-    compile "io.micronaut.configuration:mongo-reactive"
 
     compileOnly "io.micronaut:inject-java"
     runtime "ch.qos.logback:logback-classic:1.2.3"

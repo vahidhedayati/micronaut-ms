@@ -3,7 +3,7 @@ import StockRow from "./StockRow";
 import {array} from 'prop-types'
 
 const StockTable = ({stocks}) => <div>
-{stocks.map((v) => <StockRow stock={v}/>)}
+{stocks.map((v) => <StockRow  stock={v}/>)}
 </div>
 
 StockTable.propTypes = {

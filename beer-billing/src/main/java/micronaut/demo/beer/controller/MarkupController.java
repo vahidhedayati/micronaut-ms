@@ -10,7 +10,7 @@ import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import micronaut.demo.beer.domain.BeerMarkup;
-import micronaut.demo.beer.domain.MarkupConfiguration;
+import micronaut.demo.beer.domain.BeerMarkupConfiguration;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -22,12 +22,12 @@ import static com.mongodb.client.model.Filters.eq;
 public class MarkupController implements MarkupOperations<BeerMarkup> {
 
     final EmbeddedServer embeddedServer;
-    private final MarkupConfiguration configuration;
+    private final BeerMarkupConfiguration configuration;
     private MongoClient mongoClient;
 
     @Inject
     public MarkupController(EmbeddedServer embeddedServer,
-                            MarkupConfiguration configuration,
+                            BeerMarkupConfiguration configuration,
                             MongoClient mongoClient) {
         this.embeddedServer = embeddedServer;
         this.configuration = configuration;
@@ -46,17 +46,16 @@ public class MarkupController implements MarkupOperations<BeerMarkup> {
 
     @Get("/")
     @Override
-    public Maybe<BeerMarkup> baseCosts() {
-        return Flowable.fromPublisher(
-                getCollection()
-                        .find()
-        ).firstElement();
+    public Single<BeerMarkup> baseCosts() {
+        return  Flowable.fromPublisher(getCollection().find(eq("name","defaultMarkup"))).firstElement().toSingle();
     }
 
-
+    public Maybe<BeerMarkup> altCosts() {
+        return  Flowable.fromPublisher(getCollection().find(eq("name","defaultMarkup"))).firstElement();
+    }
     @Override
     public Single<BeerMarkup> save(@Valid BeerMarkup cost) {
-        return baseCosts()
+        return altCosts()
                 .switchIfEmpty(
                         Single.fromPublisher(getCollection().insertOne(cost))
                                 .map(success -> cost)

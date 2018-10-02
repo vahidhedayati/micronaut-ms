@@ -13,10 +13,15 @@ public class StockEntity {
     private double barrels; // 1 barrel = 327.318 pints
     private double availablePints;
 
+
+    private double baseBottleCost;
+    private double basePintCost;
+
+
+
+    private double baseHalfPintCost;
+
     private double bottleCost;
-
-
-
     private double pintCost;
     private double halfPintCost;
 
@@ -48,12 +53,26 @@ public class StockEntity {
         this.bottles = stock.getBottles();
         this.availablePints = stock.getAvailablePints();
     }
-
     public StockEntity update(BeerCost cost) {
+        this.baseBottleCost=cost.getBottleCost();
+
+        this.basePintCost=cost.getPintCost();
+        this.baseHalfPintCost =this.getPintCost();
         this.bottleCost=cost.getBottleCost();
         this.pintCost=cost.getPintCost();
-        this.halfPintCost =this.getPintCost();
-        //this.barrels=cost.get
+        this.halfPintCost =this.getPintCost()/2;
+
+        return this;
+    }
+    public StockEntity update(BeerCost cost,  Markup markup) {
+        this.baseBottleCost=cost.getBottleCost();
+
+        this.basePintCost=cost.getPintCost();
+        this.baseHalfPintCost =this.getPintCost();
+        this.bottleCost=cost.getBottleCost()*markup.getBottleMarkup();
+        this.pintCost=cost.getPintCost()*markup.getPintMarkup();
+        this.halfPintCost =this.getPintCost()/2;
+
         return this;
     }
 
@@ -83,5 +102,18 @@ public class StockEntity {
 
     public double getHalfPintCost() {
         return halfPintCost;
+    }
+
+
+    public double getBaseBottleCost() {
+        return baseBottleCost;
+    }
+
+    public double getBasePintCost() {
+        return basePintCost;
+    }
+
+    public double getBaseHalfPintCost() {
+        return baseHalfPintCost;
     }
 }

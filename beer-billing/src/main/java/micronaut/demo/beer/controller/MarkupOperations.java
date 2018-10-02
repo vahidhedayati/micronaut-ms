@@ -15,7 +15,7 @@ public interface MarkupOperations<T extends BeerMarkup> {
 
 
     @Get("/")
-    Maybe<T> baseCosts();
+    Single<T> baseCosts();
 
 
     @Post("/")

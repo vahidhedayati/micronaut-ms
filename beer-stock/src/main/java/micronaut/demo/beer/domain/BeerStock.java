@@ -113,8 +113,8 @@ public class BeerStock {
 	public String toString() {
 		return "BeerStock{" +
 				"name='" + name + '\'' +
-				"bottles='" + bottles + '\'' +
-				"barrels='" + barrels + '\'' +
+				", bottles='" + bottles + '\'' +
+				", barrels='" + barrels + '\'' +
 				", availablePints=" + availablePints +
 				'}';
 	}

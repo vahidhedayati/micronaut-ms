@@ -31,10 +31,10 @@ subprojects { project ->
         }
 
         dependencies {
-            if(project.name == 'stock' ) {
+           // if(project.name == 'stock' ) {
                 //compile "com.ecwid.consul:consul-api:1.4.1"
-                compile "io.micronaut.configuration:mongo-reactive"
-            }
+             //   compile "io.micronaut.configuration:mongo-reactive"
+           // }
             if(project.name != 'something' && !project.path.contains(':someFunction') && !project.path.contains(':frontend')) {
                 // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
                 compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
@@ -51,6 +51,7 @@ subprojects { project ->
                 compile "io.micronaut:tracing"
                 //compile "io.micronaut.configuration:kafka"
 
+                compile "io.micronaut.configuration:mongo-reactive"
 
                 compile "com.ecwid.consul:consul-api:1.4.1"
 
