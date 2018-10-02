@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: beer.front
+---
+testFramework: spock
+sourceLanguage: groovy

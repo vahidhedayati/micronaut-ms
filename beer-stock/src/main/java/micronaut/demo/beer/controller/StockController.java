@@ -46,15 +46,15 @@ public class StockController implements StockOperations<BeerStock> {
 
 
     /**
-     * TODO - current returns a Single list - originall was a Single<List>
-     *     Howto convert back / pros / cons of object as is now ?
+     * TODO - current returns a  Single<StockEntity>  - originally was a Single<List> (List object)
+     *
      *
      *     Trying to get my head around zipping Single<List> appears to be rather complex
      * @return
      */
     @Get("/")
     @Override
-    public Single list() {
+    public  Single<StockEntity> list() {
         Single<List<BeerStock>> beers= Flowable.fromPublisher(getCollection().find()).toList();
         Single<List<BeerCost>> costs= Flowable.fromPublisher(getCost().find()).toList();
         Map<String,StockEntity> map2=new LinkedHashMap<>();
@@ -68,8 +68,9 @@ public class StockController implements StockOperations<BeerStock> {
                             se.update(e);
                         }
                     }
-                    return map2;
-                }).map(a-> a.values());
+                    return map2.values();
+                });
+        System.out.println("SS "+ss.getClass());
         return ss;
     }
 

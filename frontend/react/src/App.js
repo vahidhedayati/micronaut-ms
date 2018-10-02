@@ -3,6 +3,7 @@ import {BrowserRouter as Router, Route, Link} from "react-router-dom";
 
 import logo from './images/logo.png'
 import About from "./about";
+import Stocks from "./stocks";
 import './App.css'
 
 
@@ -24,6 +25,9 @@ class App extends Component {
                                     <Link to="/" className="nav-link">Home</Link>
                                 </li>
                                 <li className='nav-item'>
+                                    <Link to="/stocks" className="nav-link">Stocks</Link>
+                                </li>
+                                <li className='nav-item'>
                                     <Link to="/beer" className="nav-link">Buy a Beer</Link>
                                 </li>
                                 <li className='nav-item'>
@@ -37,12 +41,10 @@ class App extends Component {
                     </nav>
 
                     <div className="container">
-
+                        <Route exact path="/stocks" component={Stocks} />
                         <Route exact path="/beer" component={About} />
                         <Route exact path="/about" component={About} />
                     </div>
-
-
                 </div>
             </Router>
         );

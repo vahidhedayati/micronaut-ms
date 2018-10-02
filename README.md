@@ -11,6 +11,9 @@ Been built into a micronaut project on micronaut:
 | JVM Version: 1.8.0_171
 ```
 
+Please ensure you have MongoDB installed localled
+----
+
 1. Run Consul
 
 To run first either install consul locally and run `./consul agent dev` 
@@ -23,7 +26,7 @@ or if you have installed docker simply run `sudo docker run -p 8500:8500 consul`
 ```
 cd micronaut-ms
 
-./gradlew beer-stock:run beer-billing:run  beer-waiter:run  --parallel
+./gradlew beer-stock:run beer-billing:run  beer-waiter:run  beer-front:run --parallel
 
 ```
 

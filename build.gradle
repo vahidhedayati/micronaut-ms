@@ -26,10 +26,9 @@ subprojects { project ->
 
         dependencyManagement {
             imports {
-                mavenBom 'io.micronaut:bom:1.0.0.BUILD-SNAPSHOT'
+                mavenBom 'io.micronaut:bom:1.0.0.M4'
             }
         }
-
 
         dependencies {
             if(project.name == 'stock' ) {
