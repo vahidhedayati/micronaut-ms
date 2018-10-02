@@ -64,7 +64,7 @@ public class BootStrap implements ApplicationEventListener<ServerStartupEvent> {
             currentBeer.switchIfEmpty(
                     Single.fromPublisher(getCosts().insertOne(beerCost))
                             .map(success -> beerCost)
-            );
+            ).blockingGet();
     }
 
 

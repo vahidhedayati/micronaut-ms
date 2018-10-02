@@ -7,6 +7,7 @@ import io.micronaut.validation.Validated;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import micronaut.demo.beer.domain.BeerStock;
+import micronaut.demo.beer.model.StockEntity;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -15,8 +16,8 @@ import java.util.List;
 public interface StockOperations<T extends BeerStock> {
 
     @Get("/")
-    Single<List<T>> list();
-
+    Single list();
+    //List<StockEntity> list();
 
     @Get("/lookup/{name}")
     Maybe<T> find(String name);

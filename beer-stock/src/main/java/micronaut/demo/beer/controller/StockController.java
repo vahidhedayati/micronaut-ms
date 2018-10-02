@@ -11,13 +11,17 @@ import io.reactivex.Maybe;
 import io.reactivex.Single;
 import micronaut.demo.beer.dbConfig.CostConfiguration;
 import micronaut.demo.beer.dbConfig.StockConfiguration;
-import micronaut.demo.beer.domain.BeerStock;
 import micronaut.demo.beer.domain.BeerCost;
+import micronaut.demo.beer.domain.BeerStock;
+import micronaut.demo.beer.model.StockEntity;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.mongodb.client.model.Filters.eq;
 @Controller("/stock")
@@ -40,14 +44,42 @@ public class StockController implements StockOperations<BeerStock> {
         this.mongoClient = mongoClient;
     }
 
+
+    /**
+     * TODO - current returns a Single list - originall was a Single<List>
+     *     Howto convert back / pros / cons of object as is now ?
+     *
+     *     Trying to get my head around zipping Single<List> appears to be rather complex
+     * @return
+     */
     @Get("/")
     @Override
-    public Single<List<BeerStock>> list() {
+    public Single list() {
         Single<List<BeerStock>> beers= Flowable.fromPublisher(getCollection().find()).toList();
-        //Single<List<BeerCost>> costs= Flowable.fromPublisher(getCost().find()).toList();
-        return beers; ///Single.zip(beers,costs);
+        Single<List<BeerCost>> costs= Flowable.fromPublisher(getCost().find()).toList();
+        Map<String,StockEntity> map2=new LinkedHashMap<>();
+        Single ss = Single.zip(beers, costs, (result1,result2)->{
+                    for(BeerStock s : result1){
+                        map2.put(s.getName(),new StockEntity(s));
+                    }
+                    for(BeerCost e: result2) {
+                        StockEntity se = map2.get(e.getName());
+                        if (se!=null) {
+                            se.update(e);
+                        }
+                    }
+                    return map2;
+                }).map(a-> a.values());
+        return ss;
     }
 
+    @Get("/aa")
+    public Single<List<BeerStock>> list1() {
+        Single<List<BeerStock>> beers= Flowable.fromPublisher(getCollection().find()).toList();
+        System.out.println("Beers "+beers);
+        //Single<List<BeerCost>> costs= Flowable.fromPublisher(getCost().find()).toList();
+        return Flowable.fromPublisher(getCollection().find()).toList(); ///Single.zip(beers,costs);
+    }
     /*
     Observable<Customer> customers = //...
 Observable<Order> orders = customers
@@ -115,8 +147,8 @@ he need to map from a single item to Iterable is so popular tha
     }
     private MongoCollection<BeerCost> getCost() {
         return mongoClient
-                .getDatabase(configuration.getDatabaseName())
-                .getCollection(configuration.getCollectionName(), BeerCost.class);
+                .getDatabase(costConfig.getDatabaseName())
+                .getCollection(costConfig.getCollectionName(), BeerCost.class);
     }
 
 }

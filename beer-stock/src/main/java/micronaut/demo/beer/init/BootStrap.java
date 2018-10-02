@@ -56,8 +56,10 @@ public class BootStrap implements ApplicationEventListener<ServerStartupEvent> {
     void setupDefaults() {
 
         ArrayList<String> beers =  new ArrayList<>(Arrays.asList("Budweiser", "Heineken", "Peroni", "Coors"));
-
+        int i =0;
         for (String beer : beers) {
+            System.out.println("Setting up beer: "+beer);
+            i++;
 
             /**
              * Generate actual beer object
@@ -72,9 +74,14 @@ public class BootStrap implements ApplicationEventListener<ServerStartupEvent> {
             BeerStock beerObject = new BeerStock(beer, 1000L, 2);
 
             currentBeer.switchIfEmpty(
+
                     Single.fromPublisher(getStock().insertOne(beerObject))
                             .map(success -> beerObject)
-            );
+
+            ).subscribe(System.out::println);
+
+            BeerStock stock = currentBeer.blockingGet();
+            System.out.println("We actually have :::::::: "+stock.getName());
 
 
             /**
@@ -92,11 +99,15 @@ public class BootStrap implements ApplicationEventListener<ServerStartupEvent> {
                             .find(eq("name",beer))
                             .limit(1)
             ).firstElement();
-            BeerCost beerCostObject = new BeerCost(beer, 0.99,0.85);
+            //Cost the beers differently per beer type
+            BeerCost beerCostObject = new BeerCost(beer, 0.99*i,0.85*i);
             currentCost.switchIfEmpty(
                     Single.fromPublisher(getCosts().insertOne(beerCostObject))
                             .map(success -> beerCostObject)
-            );
+            ).subscribe(System.out::println);
+            BeerCost cost = currentCost.blockingGet();
+            System.out.println("We actually have :::::::: "+cost.getName()+" "+cost.getPintCost());
+
         }
     }
 

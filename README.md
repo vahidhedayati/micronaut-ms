@@ -23,7 +23,7 @@ or if you have installed docker simply run `sudo docker run -p 8500:8500 consul`
 ```
 cd micronaut-ms
 
-./gradlew beer-waiter:run  beer-billing:run beer-stock --parallel
+./gradlew beer-stock:run beer-billing:run  beer-waiter:run  --parallel
 
 ```
 
