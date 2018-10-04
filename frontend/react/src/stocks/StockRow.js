@@ -6,7 +6,11 @@ const StockRow = ({stock}) => <div className="card vendor-card">
   <div className="card-body">
     <h5 className="card-title">{stock.name}</h5>
     <p className="card-text">
+        Markupname: {stock.markupName}
+    </p>
+    <p className="card-text">
         Bottles Available: {stock.bottles}
+
         (Barrels: {stock.barrels} - Pints Available: {stock.availablePints})
         Bottle cost: (Customer: {stock.bottleCost}) (WholeSale:{stock.baseBottleCost})
         Pint cost: (Customer: {stock.pintCost}) (WholeSale: {stock.basePintCost})
@@ -18,6 +22,7 @@ const StockRow = ({stock}) => <div className="card vendor-card">
 StockRow.propTypes = {
     stock: shape({
     name: string,
+        markupName:string,
     bottles: number,
         availablePints: number,
         barrels: number,

@@ -5,16 +5,17 @@ import io.micronaut.http.client.annotation.Client;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import micronaut.demo.beer.model.BeerStock;
+import micronaut.demo.beer.model.StockEntity;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
-@Client(id = "cost", path = "/cost")
+@Client(id = "stock", path = "/cost")
 public interface StockControllerClient {
 
 
     @Get("/")
-    public Single<List<BeerStock>> list();
+    public Single<List<StockEntity>> list();
 
     @Get("/lookup/{name}")
     public Maybe<BeerStock> find(@NotBlank String name);

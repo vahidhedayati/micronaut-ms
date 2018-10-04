@@ -6,6 +6,7 @@ import io.micronaut.retry.annotation.CircuitBreaker;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import micronaut.demo.beer.domain.BeerStock;
+import micronaut.demo.beer.model.StockEntity;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
@@ -16,7 +17,7 @@ public interface StockControllerClient {
 
 
     @Get("/")
-    public Single<List<BeerStock>> list();
+    public Single<List<StockEntity>>list();
 
     @Get("/lookup/{name}")
     public Maybe<BeerStock> find(@NotBlank String name);

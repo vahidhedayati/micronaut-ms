@@ -8,36 +8,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class BeerMarkup {
 
-	public String getName() {
-		return this.name;
-	}
-
-
-
-	public double getBottleMarkup() {
-		return this.bottleMarkup;
-	}
-
-	public double getPintMarkup() {
-		return this.pintMarkup;
-	}
 
 	private double bottleMarkup;
 
-	public void setBottleMarkup(double bottleMarkup) {
-		this.bottleMarkup = bottleMarkup;
-	}
-
-	public void setPintMarkup(double pintMarkup) {
-		this.pintMarkup = pintMarkup;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	private double pintMarkup;
 	private String name;
+
 	@JsonCreator
 	public BeerMarkup(@JsonProperty("name") String name, @JsonProperty("bottleMarkup") double bottleMarkup, @JsonProperty("pintMarkup") double pintMarkup) {
 		this.name=name;
@@ -48,7 +25,32 @@ public class BeerMarkup {
 	public BeerMarkup() {}
 
 
+    public String getName() {
+        return this.name;
+    }
+    public double getBottleMarkup() {
+        return this.bottleMarkup;
+    }
+    public double getPintMarkup() {
+        return this.pintMarkup;
+    }
 
+    public void setBottleMarkup(double bottleMarkup) {
+        this.bottleMarkup = bottleMarkup;
+    }
+
+    public void setPintMarkup(double pintMarkup) {
+        this.pintMarkup = pintMarkup;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
+
+
+    /*
 	@Override
 	public String toString() {
 		return "BeerMarkup{" +
@@ -57,6 +59,7 @@ public class BeerMarkup {
 				", pintMarkup=" + this.pintMarkup +
 				'}';
 	}
+	*/
 
 
 

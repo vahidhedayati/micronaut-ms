@@ -14,12 +14,13 @@ import micronaut.demo.beer.dbConfig.CostConfiguration;
 import micronaut.demo.beer.dbConfig.StockConfiguration;
 import micronaut.demo.beer.domain.BeerCost;
 import micronaut.demo.beer.domain.BeerStock;
-import micronaut.demo.beer.model.Markup;
+import micronaut.demo.beer.model.BeerMarkup;
 import micronaut.demo.beer.model.StockEntity;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,54 +49,64 @@ public class StockController implements StockOperations<BeerStock> {
 
 
     /**
-     * TODO - current returns a  Single<StockEntity>  - originally was a Single<List> (List object)
+     * This uses Single.zip to combine multiple domain objects in this microservice
+     * and sends out as a new model out to the gateway application beer-front
      *
+     * also connects to markupControllerClient and gets markup that is appended to
+     * the stockEntity object received from this app - if no beer-billing it will fall back to MarkupClientFallBack and
+     * return a default markup percentage to resell to clients.
      *
-     *     Trying to get my head around zipping Single<List> appears to be rather complex
-     * @return
+     * The issue with this specific example model is that beer-billing is needed to charge customers so - for a more fuller
+     * solution the messages probably need to go to a queue that is saved for replay and marked as completed etc just to make sure
+     * all transactions are captured otherwise in this specific model - when billing is down the shop will actually not be
+     * able to serve beer there may be waiters but no way to actually serve the beer - as such ... so the defaults
+     * here although set really will not be sellable.. due to the way it is modelled but beer stock / waiters present
+     * just no billing system to charge through so the function to sell beer would at that point be down i guess.
+     *
      */
+
     @Get("/")
     @Override
     public  Single<StockEntity> list() {
+
+        // Firstly collect the list of beerStock as a Single<List
         Single<List<BeerStock>> beers= Flowable.fromPublisher(getCollection().find()).toList();
+
+        // Secondly collect the list of beerCost as a Single<List
         Single<List<BeerCost>> costs= Flowable.fromPublisher(getCost().find()).toList();
-        Single<Markup> markupMaybe1 = markupControllerClient.baseCosts();
+
+
+        //Thirdly using the client get the baseCosts from the beer-billing - i.e. the markup
+        Single<BeerMarkup> markupMaybe1 =  markupControllerClient.baseCosts().onErrorReturnItem(new BeerMarkup("shouldNotBeCalled",50.16,50.16));
+
+
+        /**
+         * Generate a new hashMap to store the name then a new object called StockEntity which combines
+         * both above lists using Single.zip and returns then new Single<StockEntity>
+         */
         Map<String,StockEntity> map2=new LinkedHashMap<>();
-        Single ss = Single.zip(beers, costs,markupMaybe1, (result1,result2,markup)->{
+
+
+        /**
+         * Now using zip combine all of the 3 Single lists/objects together to make a new object called
+         * StockEntity...
+         */
+        Single ss = Single.zip(beers, costs, markupMaybe1,(result1,result2, result3)->{
                     for(BeerStock s : result1){
                         map2.put(s.getName(),new StockEntity(s));
                     }
                     for(BeerCost e: result2) {
                         StockEntity se = map2.get(e.getName());
                         if (se!=null) {
-                            System.out.println("MARKUP>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> "+markup.getClass()+" "+markup.getBottleMarkup()+" "+markup.getName()+" "+markup.getPintMarkup());
-                            se.update(e,markup);
+                            se.update(e,result3);
                         }
                     }
                     return map2.values();
                 });
-        System.out.println("SS "+ss.getClass());
+        //System.out.println("SS "+ss.getClass());
         return ss;
     }
 
-    @Get("/aa")
-    public Single<List<BeerStock>> list1() {
-        Single<List<BeerStock>> beers= Flowable.fromPublisher(getCollection().find()).toList();
-        System.out.println("Beers "+beers);
-        //Single<List<BeerCost>> costs= Flowable.fromPublisher(getCost().find()).toList();
-        return Flowable.fromPublisher(getCollection().find()).toList(); ///Single.zip(beers,costs);
-    }
-    /*
-    Observable<Customer> customers = //...
-Observable<Order> orders = customers
-.flatMap(customer ->
-Observable.from(customer.getOrders()));
-, equivalent and equally verbose:
-Observable<Order> orders = customers
-.map(Customer::getOrders)
-.flatMap(Observable::from);
-he need to map from a single item to Iterable is so popular tha
-     */
 
 
     @Get("/lookup/{name}")

@@ -9,7 +9,7 @@ import micronaut.demo.beer.model.BeerCost;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
-@Client(id = "cost", path = "/cost")
+@Client(id = "stock", path = "/cost")
 public interface CostControllerClient {
 
 
