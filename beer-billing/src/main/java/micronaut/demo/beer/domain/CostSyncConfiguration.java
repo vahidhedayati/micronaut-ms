@@ -19,7 +19,7 @@ import io.micronaut.context.annotation.ConfigurationProperties;
 
 @ConfigurationProperties("costsync")
 public class CostSyncConfiguration {
-    private String databaseName = "beerbilling";
+    private String databaseName = "billing";
     private String collectionName = "tabs";
 
     public String getDatabaseName() {

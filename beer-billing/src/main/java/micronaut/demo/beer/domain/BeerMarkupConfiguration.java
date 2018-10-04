@@ -4,7 +4,7 @@ import io.micronaut.context.annotation.ConfigurationProperties;
 
 @ConfigurationProperties("markup")
 public class BeerMarkupConfiguration {
-    private String databaseName = "beerbilling";
+    private String databaseName = "billing";
     private String collectionName = "markup";
 
     public String getDatabaseName() {

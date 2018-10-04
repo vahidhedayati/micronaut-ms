@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import java.util.List;
+
 import static com.mongodb.client.model.Filters.eq;
 
 /**
@@ -37,15 +39,15 @@ public class BootStrap implements ApplicationEventListener<ServerStartupEvent> {
 
     final EmbeddedServer embeddedServer;
     private MongoClient mongoClient;
-    private final BeerMarkupConfiguration costConfig;
+    private final BeerMarkupConfiguration configuration;
 
     final static Logger log = LoggerFactory.getLogger(BootStrap.class);
 
     @Inject
-    public BootStrap(EmbeddedServer embeddedServer, MongoClient mongoClient, BeerMarkupConfiguration costConfig) {
+    public BootStrap(EmbeddedServer embeddedServer, MongoClient mongoClient, BeerMarkupConfiguration configuration) {
         this.embeddedServer = embeddedServer;
         this.mongoClient = mongoClient;
-        this.costConfig=costConfig;
+        this.configuration=configuration;
 
     }
 
@@ -56,8 +58,17 @@ public class BootStrap implements ApplicationEventListener<ServerStartupEvent> {
     }
 
     void setupDefaults() {
-            Maybe<BeerMarkup> currentBeer = Flowable.fromPublisher(getCosts().find(eq("name","defaultMarkup"))
-                    .limit(1)).firstElement();
+            List<BeerMarkup> markups = Flowable.fromPublisher(getCosts().find()).toList().blockingGet();
+
+            for (int i =0; i < markups.size(); i++) {
+
+                BeerMarkup markup=markups.get(i);
+                System.out.println("Iterate >>> "+markup.getBottleMarkup()+" "+markup.getName());
+
+            }
+
+            Maybe<BeerMarkup> currentBeer = Flowable.fromPublisher(getCosts().find(eq("name","defaultMarkup")).limit(1)).firstElement();
+                   ;
             BeerMarkup beerCost = new BeerMarkup("defaultMarkup",5.11,5.12);
             currentBeer.switchIfEmpty(
                     Single.fromPublisher(getCosts().insertOne(beerCost))
@@ -65,14 +76,15 @@ public class BootStrap implements ApplicationEventListener<ServerStartupEvent> {
             ).subscribe(s-> System.out.println("RESULTS -------------------------------------------------------->>"+s));
 
         BeerMarkup stock = currentBeer.blockingGet();
-        System.out.println("MARKUP--------------------------------------------------------- :::::::: "+stock.getBottleMarkup()+" "+stock.getName()+" "+stock.getPintMarkup());
+       // System.out.println("MARKUP--------------------------------------------------------- :::::::: "+stock.getBottleMarkup()+" "+stock.getName()+" "+stock.getPintMarkup());
+        System.out.println("MARKUP--------------------------------------------------------- :::::::: "+stock);
 
     }
 
 
     private MongoCollection<BeerMarkup> getCosts() {
         return mongoClient
-                .getDatabase(costConfig.getDatabaseName())
-                .getCollection(costConfig.getCollectionName(), BeerMarkup.class);
+                .getDatabase(configuration.getDatabaseName())
+                .getCollection(configuration.getCollectionName(), BeerMarkup.class);
     }
 }

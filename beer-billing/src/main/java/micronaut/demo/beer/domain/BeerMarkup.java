@@ -1,28 +1,45 @@
 package micronaut.demo.beer.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * A generic markup percentage price on each bottle/pint sold
  */
 public class BeerMarkup {
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
-	private String name;
+
 
 	public double getBottleMarkup() {
-		return bottleMarkup;
+		return this.bottleMarkup;
 	}
 
 	public double getPintMarkup() {
-		return pintMarkup;
+		return this.pintMarkup;
 	}
 
 	private double bottleMarkup;
-	private double pintMarkup;
 
-	public BeerMarkup(String name, double bottleMarkup, double pintMarkup) {
+	public void setBottleMarkup(double bottleMarkup) {
+		this.bottleMarkup = bottleMarkup;
+	}
+
+	public void setPintMarkup(double pintMarkup) {
+		this.pintMarkup = pintMarkup;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	private double pintMarkup;
+	private String name;
+	@JsonCreator
+	public BeerMarkup(@JsonProperty("name") String name, @JsonProperty("bottleMarkup") double bottleMarkup, @JsonProperty("pintMarkup") double pintMarkup) {
 		this.name=name;
 		this.bottleMarkup = bottleMarkup;
 		this.pintMarkup = pintMarkup;
@@ -32,16 +49,15 @@ public class BeerMarkup {
 
 
 
-/*
 	@Override
 	public String toString() {
 		return "BeerMarkup{" +
-				"name='" + name + '\'' +
-				",bottleMarkup='" + bottleMarkup + '\'' +
-				", pintMarkup=" + pintMarkup +
+				"name='" + this.name + '\'' +
+				",bottleMarkup='" + this.bottleMarkup + '\'' +
+				", pintMarkup=" + this.pintMarkup +
 				'}';
 	}
 
-*/
+
 
 }
