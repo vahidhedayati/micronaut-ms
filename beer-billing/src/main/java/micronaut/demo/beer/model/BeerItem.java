@@ -11,6 +11,10 @@ public class BeerItem {
 	private int amount;
 
 
+
+	private double price;
+
+
 	public BeerItem() {
 
 	}
@@ -24,11 +28,13 @@ public class BeerItem {
 	public int getAmount() {
 		return amount;
 	}
-	public BeerItem(String name, BeerSize size, int amount) {
+	public double getPrice() { return price; }
+	public BeerItem(String name, BeerSize size, int amount, double price) {
 		super();
 		this.name = name;
 		this.size = size;
 		this.amount=amount;
+		this.price=price;
 	}
 	
 

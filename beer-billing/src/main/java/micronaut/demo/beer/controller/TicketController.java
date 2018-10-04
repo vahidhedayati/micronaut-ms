@@ -17,6 +17,7 @@ import io.micronaut.validation.Validated;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
+import micronaut.demo.beer.BeerSize;
 import micronaut.demo.beer.domain.CostSync;
 import micronaut.demo.beer.domain.CostSyncConfiguration;
 import micronaut.demo.beer.model.BeerItem;
@@ -112,7 +113,7 @@ public class TicketController implements TicketOperations<CostSync> {
 
 	@Post("/addBeer/{customerName}")
 	public HttpResponse<BeerItem> addBeerToCustomerBill(@Body BeerItem beer, @NotBlank String customerName) {
-
+        System.out.println("Servig a beer i Ticket app");
 
 		Optional<Ticket> t = getTicketForUser(customerName);
 		Ticket ticket = t.isPresent() ?  t.get() : new Ticket();
@@ -179,7 +180,7 @@ public class TicketController implements TicketOperations<CostSync> {
 
 	@ContinueSpan
 	private Ticket getNoCostTicket() {
-		BeerItem smallBeer = new BeerItem("Korona", BeerItem.Size.EMPTY);
+		BeerItem smallBeer = new BeerItem("Korona", BeerSize.PINT,0,0.00);
 		Ticket noCost = new Ticket();
 		noCost.add(smallBeer);
 		return noCost;

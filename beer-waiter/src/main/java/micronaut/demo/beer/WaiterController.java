@@ -1,7 +1,11 @@
 package micronaut.demo.beer;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
 import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.validation.Validated;
 import io.reactivex.Single;
@@ -31,11 +35,12 @@ public class WaiterController {
     Single.zip(source1, source2, source3, MyViewModel::new);
      */
 
-    @Get("/beer/{customerName}/{beerName}/{beerType}/{amount}")
+    @Post(uri = "/beer", consumes = MediaType.APPLICATION_JSON)
     //@NewSpan
-    public Single<Beer> serveBeerToCustomer(@NotBlank String customerName,@NotBlank String beerName,@NotBlank BeerSize beerType,@NotBlank int amount) {
-        Beer beer = new Beer(beerName,beerType,amount);
-        BeerItem beerItem = new BeerItem(beerName,beerType,amount);
+    public Single<Beer> serveBeerToCustomer(@JsonProperty("customerName")  String customerName, @JsonProperty("beerName")  String beerName, @JsonProperty("beerType")  String beerType, @JsonProperty("amount")  String amount, @JsonProperty("price")  String price) {
+        System.out.println("Waiter controller serving a beer"+customerName+" >>> bt"+beerType);
+        Beer beer = new Beer(beerName,BeerSize.valueOf(beerType),Integer.valueOf(amount),Double.valueOf(price));
+        BeerItem beerItem = new BeerItem(beerName,BeerSize.valueOf(beerType),Integer.valueOf(amount),Double.valueOf(price));
         ticketControllerClient.addBeerToCustomerBill(beerItem, customerName);
         return Single.just(beer);
     }

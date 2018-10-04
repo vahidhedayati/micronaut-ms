@@ -90,10 +90,10 @@ public class StockEntity {
     public StockEntity update(BeerCost cost,  BeerMarkup markup) {
         this.baseBottleCost=cost.getBottleCost();
         this.basePintCost=cost.getPintCost();
-        this.baseHalfPintCost =this.getPintCost();
+        this.baseHalfPintCost =cost.getPintCost()/2;
         this.bottleCost=cost.getBottleCost()*markup.getBottleMarkup();
         this.pintCost=cost.getPintCost()*markup.getPintMarkup();
-        this.halfPintCost =this.getPintCost()/2;
+        this.halfPintCost =cost.getPintCost()*markup.getPintMarkup()/2;
         this.markupName=markup.getName();
         return this;
     }

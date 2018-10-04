@@ -15,10 +15,10 @@ function noBottles() {
         </p>
     )
 }
-function showBottle(stock) {
+function showBottle(stock,buy) {
     return (<p className="card-text">
             Bottles Available: {stock.bottles} -
-            Per Bottle cost: {stock.bottleCost}
+            Per Bottle cost: {stock.bottleCost}  <input type="text" className="btn btn-primary readonly" name="beerType" data-bname={stock.name} data-price={stock.bottleCost} value="BOTTLE" onClick={buy}/>
             </p>
             )
 }
@@ -29,16 +29,16 @@ function noPints() {
         </p>
     )
 }
-function showPints(stock) {
+function showPints(stock,buy) {
     return (
         <p className="card-text">
         Pints Available: {stock.availablePints} -
-        Pint cost:  {stock.pintCost}
-        Half Pint cost:  {stock.halfPintCost}
+        Pint cost:  {stock.pintCost}  <input type="text" className="btn btn-primary readonly" name="beerType" data-price={stock.pintCost} value="PINT" onClick={buy}/> <br/>
+        Half Pint cost:  {stock.halfPintCost} <input type="text" className="btn btn-primary readonly" name="beerType"  data-bname={stock.name} data-price={stock.halfPintCost} value="HALF_PINT" onClick={buy}/>
         </p>
     )
 }
-const StockRow = ({stock, customerName, amount, updateAmount}) => <div className="card vendor-card">
+const StockRow = ({stock, customerName, amount, updateAmount,buy}) => <div className="card vendor-card">
 
 
   <div className="card-body">
@@ -46,8 +46,8 @@ const StockRow = ({stock, customerName, amount, updateAmount}) => <div className
     { (stock.bottles > 1 || stock.availablePints > 1 ) ?
         amount ? amount : amountForm(amount, updateAmount)
         : '' }
-    { stock.bottles > 1 ?  showBottle(stock) : noBottles() }
-    { stock.availablePints > 1 ?  showPints(stock) : noPints() }
+    { stock.bottles > 1 ?  showBottle(stock,buy) : noBottles() }
+    { stock.availablePints > 1 ?  showPints(stock,buy) : noPints() }
   </div>
 
 </div>

@@ -1,5 +1,9 @@
 package micronaut.demo.beer.client;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.retry.annotation.CircuitBreaker;
 import io.reactivex.Single;
@@ -13,9 +17,10 @@ import javax.validation.constraints.NotBlank;
 @CircuitBreaker(delay = "1s", attempts = "5", multiplier = "3", reset = "100s")
 public interface WaiterControllerClient {
 
-    @Get("/beer/{customerName}/{beerName}/{beerType}/{amount}")
-    Single<Beer> serveBeerToCustomer(@NotBlank String customerName, @NotBlank String beerName, @NotBlank BeerSize beerType, @NotBlank int amount);
-    
+    @Post(uri = "/beer", consumes = MediaType.APPLICATION_JSON)
+    Single<Beer> serveBeerToCustomer(@JsonProperty("customerName")  String customerName, @JsonProperty("beerName")  String beerName, @JsonProperty("beerType")  String beerType, @JsonProperty("amount")  String amount, @JsonProperty("price")  String price);
+
+
     @Get("/bill/{customerName}")
     Single<CustomerBill> bill(@NotBlank String customerName);
 }

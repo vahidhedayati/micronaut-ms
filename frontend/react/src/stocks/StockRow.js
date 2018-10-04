@@ -9,12 +9,14 @@ const StockRow = ({stock}) => <div className="card vendor-card">
         Markupname: {stock.markupName}
     </p>
     <p className="card-text">
-        Bottles Available: {stock.bottles}
+        Bottles Available: {stock.bottles} <br/>
+        Bottle cost: (Customer: {stock.bottleCost}) (WholeSale:{stock.baseBottleCost}) <br/>
 
-        (Barrels: {stock.barrels} - Pints Available: {stock.availablePints})
-        Bottle cost: (Customer: {stock.bottleCost}) (WholeSale:{stock.baseBottleCost})
-        Pint cost: (Customer: {stock.pintCost}) (WholeSale: {stock.basePintCost})
-        Half Pint cost: (Customer: {stock.halfPintCost}) (WholeSale: {stock.baseHalfPintCost})
+        (Barrels: {stock.barrels} - Pints Available: {stock.availablePints}) <br/>
+
+
+        Pint cost: (Customer: {stock.pintCost}) (WholeSale: {stock.basePintCost}) <br/>
+            Half Pint cost: (Customer: {stock.halfPintCost}) (WholeSale: {stock.baseHalfPintCost})
 </p>
   </div>
 </div>

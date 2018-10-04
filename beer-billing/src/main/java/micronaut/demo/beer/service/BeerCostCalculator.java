@@ -1,7 +1,6 @@
     package micronaut.demo.beer.service;
 
     import io.micronaut.context.annotation.Value;
-    import micronaut.demo.beer.model.BeerItem;
     import micronaut.demo.beer.model.Ticket;
 
     public class BeerCostCalculator implements CostCalculator {
@@ -40,18 +39,7 @@
             return ticket
                     .getBeerItems()
                     .stream()
-                    .map( beer ->  calculateBeerCost(beer))
+                    .map( beer ->  beer.getPrice())
                     .mapToDouble(i->i).sum();
-        }
-
-        private double calculateBeerCost(BeerItem beer) {
-
-            switch (beer.getSize()) {
-                case SMALL : return 1* beerBaseCost;
-                case MEDIUM: return 2* beerBaseCost;
-                case PINT: return 3* beerBaseCost;
-                case EMPTY: return beerBaseCost;
-                default: return 99;
-            }
         }
     }

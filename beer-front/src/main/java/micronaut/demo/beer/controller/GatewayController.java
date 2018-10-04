@@ -1,15 +1,14 @@
-package micronaut.demo.beer;
+package micronaut.demo.beer.controller;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.*;
 import io.reactivex.Single;
 import micronaut.demo.beer.client.StockControllerClient;
 import micronaut.demo.beer.client.WaiterControllerClient;
 import micronaut.demo.beer.model.CustomerBill;
-
+import micronaut.demo.beer.enums.BeerSize;
+import micronaut.demo.beer.model.Beer;
 import javax.validation.constraints.NotBlank;
 import java.net.URI;
 import java.util.Collections;
@@ -40,10 +39,11 @@ public class GatewayController {
    }
 
 
-    @Get("/beer/{customerName}/{beerName}/{beerType}/{amount}")
-    public Single<Beer> serveBeerToCustomer(@NotBlank String customerName, @NotBlank String beerName, @NotBlank BeerSize beerType, @NotBlank int amount) {
-        return waiterControllerClient.serveBeerToCustomer(customerName,beerName,beerType,amount)
-                .onErrorReturnItem(new Beer("out of stock",BeerSize.PINT,0));
+    @Post(uri = "/beer", consumes = MediaType.APPLICATION_JSON)
+    Single<Beer> serveBeerToCustomer(@Body("customerName")  String customerName, @Body("beerName")  String beerName, @Body("beerType")  String beerType, @Body("amount")  String amount, @Body("price")  String price) {
+            System.out.println("Serving "+beerName+" "+price);
+        return waiterControllerClient.serveBeerToCustomer(customerName,beerName,beerType,amount,price)
+                .onErrorReturnItem(new Beer("out of stock",BeerSize.PINT,0, 0.00));
     }
 
     @Get("/bill/{customerName}")
