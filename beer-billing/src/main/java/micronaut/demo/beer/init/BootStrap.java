@@ -58,7 +58,7 @@ public class BootStrap implements ApplicationEventListener<ServerStartupEvent> {
     void setupDefaults() {
             Maybe<BeerMarkup> currentBeer = Flowable.fromPublisher(getCosts().find(eq("name","defaultMarkup"))
                     .limit(1)).firstElement();
-            BeerMarkup beerCost = new BeerMarkup("defaultMarkup",5.00d,5.00d);
+            BeerMarkup beerCost = new BeerMarkup("defaultMarkup",5.11,5.12);
             currentBeer.switchIfEmpty(
                     Single.fromPublisher(getCosts().insertOne(beerCost))
                             .map(success -> beerCost)

@@ -1,18 +1,21 @@
 plugins {
     id "io.spring.dependency-management" version "1.0.6.RELEASE"
-    id "com.github.johnrengelman.shadow" version "2.0.4"
+    id "com.github.johnrengelman.shadow" version "4.0.0"
     id "net.ltgt.apt-eclipse" version "0.18"
-    id "net.ltgt.apt-idea" version "0.18"
+    id "net.ltgt.apt-idea" version "0.18"	
 }
 subprojects { project ->
 
     if(!project.path.contains(':frontend')) {
-        apply plugin:"java"
-        apply plugin:"io.spring.dependency-management"
+        apply plugin: "java"
 
-        if(project.name != 'api' && project.name != 'functions') {
 
-            apply plugin:"application"
+
+        apply plugin: "io.spring.dependency-management"
+
+        if (project.name != 'api' && project.name != 'functions') {
+
+            apply plugin: "application"
             apply plugin: 'com.github.johnrengelman.shadow'
             shadowJar {
                 mergeServiceFiles()
@@ -21,23 +24,21 @@ subprojects { project ->
 
         repositories {
             mavenLocal()
-            jcenter()            
+            jcenter()
+            mavenCentral()
+            maven { url "https://jcenter.bintray.com" }
         }
 
         dependencyManagement {
             imports {
-                mavenBom 'io.micronaut:bom:1.0.0.M4'
+                mavenBom 'io.micronaut:bom:1.0.0.RC1'
             }
         }
 
         dependencies {
-           // if(project.name == 'stock' ) {
-                //compile "com.ecwid.consul:consul-api:1.4.1"
-             //   compile "io.micronaut.configuration:mongo-reactive"
-           // }
-            if(project.name != 'something' && !project.path.contains(':someFunction') && !project.path.contains(':frontend')) {
+            if (project.name != 'something' && !project.path.contains(':someFunction') && !project.path.contains(':frontend')) {
                 // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-                compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+                //compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 
                 compile "io.micronaut.configuration:hibernate-validator"
                 compile "io.micronaut.configuration:hibernate-gorm"
@@ -45,7 +46,7 @@ subprojects { project ->
                 runtime "org.apache.tomcat:tomcat-jdbc:8.0.44"
                 compile "io.micronaut:discovery-client"
                 // https://mvnrepository.com/artifact/io.micronaut/tracing
-               // compile group: 'io.micronaut', name: 'tracing', version: '1.0.0.M4'
+                // compile group: 'io.micronaut', name: 'tracing', version: '1.0.0.M4'
                 // https://mvnrepository.com/artifact/io.micronaut.configuration/kafka
                 //compile group: 'io.micronaut.configuration', name: 'kafka', version: '1.0.0.M4'
                 compile "io.micronaut:tracing"
@@ -53,13 +54,12 @@ subprojects { project ->
 
                 compile "io.micronaut.configuration:mongo-reactive"
 
-                compile "com.ecwid.consul:consul-api:1.4.1"
-
+                //compile "com.ecwid.consul:consul-api:1.4.1"
 
                 // https://mvnrepository.com/artifact/org.projectlombok/lombok
                 compile group: 'org.projectlombok', name: 'lombok', version: '1.18.2'
             }
         }
     }
-
 }
+

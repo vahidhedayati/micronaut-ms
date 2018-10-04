@@ -1,18 +1,35 @@
-apply plugin: 'groovy'
 
-mainClassName = "beer.front.Application"
+apply plugin:"application"
+apply plugin:"groovy"
 
-dependencies {
-    compileOnly "io.micronaut:inject-groovy"
-    compileOnly "io.micronaut:inject-java"
-    compile "io.micronaut:runtime-groovy"
-    compile "io.micronaut:http-server-netty"
-    //compile project(":api")
-    compile "io.micronaut:http-client"
-    compile "io.micronaut:function-client"
+version "0.1"
+group "beer.front"
 
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "https://jcenter.bintray.com" }
+}
 
-    testCompile("org.spockframework:spock-core:1.1-groovy-2.4") {
-        exclude module:'groovy-all'
+dependencyManagement {
+    imports {
+        mavenBom 'io.micronaut:bom:1.0.0.RC1'
     }
 }
+
+dependencies {
+    implementation "io.micronaut:runtime-groovy"
+    implementation "io.micronaut:validation"
+    implementation "io.micronaut:http-client"
+    implementation "io.micronaut:http-server-netty"
+    compileOnly "io.micronaut:inject-groovy"
+    runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
+    testImplementation "io.micronaut:inject-groovy"
+    testImplementation("org.spockframework:spock-core:1.2-groovy-2.4") {
+        exclude group: "org.codehaus.groovy", module: "groovy-all"
+    }
+}
+
+run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1')
+
+mainClassName = "beer.front.Application"

@@ -1,7 +1,7 @@
 package micronaut.demo.beer.client;
 
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.client.Client;
+import io.micronaut.http.client.annotation.Client
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import micronaut.demo.beer.model.BeerStock;
@@ -21,12 +21,12 @@ public interface StockControllerClient {
 
 
     @Get("/pints/{name}/{amount}")
-    public Single<BeerStock> pints(@NotBlank String customerName, @NotBlank String amount);
+    public Single<BeerStock> pints(@NotBlank String name, @NotBlank String amount);
 
     @Get("/halfPints/{name}/{amount}")
-    public Single<BeerStock> halfPints(@NotBlank String customerName, @NotBlank String amount);
+    public Single<BeerStock> halfPints(@NotBlank String name, @NotBlank String amount);
 
 
     @Get("/bottles/{name}/{amount}")
-    public Single<BeerStock> bottles(@NotBlank String customerName, @NotBlank String amount);
+    public Single<BeerStock> bottles(@NotBlank String name, @NotBlank String amount);
 }

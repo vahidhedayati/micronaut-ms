@@ -1,7 +1,7 @@
 package micronaut.demo.beer.client;
 
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.client.Client;
+import io.micronaut.http.client.annotation.Client;
 import io.micronaut.retry.annotation.CircuitBreaker;
 import io.reactivex.Maybe;
 import micronaut.demo.beer.domain.BeerMarkup;

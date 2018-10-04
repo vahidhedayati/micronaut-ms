@@ -100,10 +100,10 @@ he need to map from a single item to Iterable is so popular tha
 
     @Get("/lookup/{name}")
     @Override
-    public Maybe<BeerStock> find(String username) {
+    public Maybe<BeerStock> find(String name) {
         return Flowable.fromPublisher(
                 getCollection()
-                        .find(eq("name", username))
+                        .find(eq("name", name))
                         .limit(1)
         ).firstElement();
     }

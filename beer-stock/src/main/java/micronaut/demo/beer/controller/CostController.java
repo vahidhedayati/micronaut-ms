@@ -50,21 +50,21 @@ public class CostController implements CostOperations<BeerCost> {
     }
 
     @Override
-    public Maybe<BeerCost> find(String username) {
+    public Maybe<BeerCost> find(String name) {
         return Flowable.fromPublisher(
                 getCollection()
-                        .find(eq("name", username))
+                        .find(eq("name", name))
                         .limit(1)
         ).firstElement();
     }
 
 
     @Override
-    public Single<BeerCost> save(@Valid BeerCost pet) {
-        return find(pet.getName())
+    public Single<BeerCost> save(@Valid BeerCost beerCost) {
+        return find(beerCost.getName())
                 .switchIfEmpty(
-                        Single.fromPublisher(getCollection().insertOne(pet))
-                                .map(success -> pet)
+                        Single.fromPublisher(getCollection().insertOne(beerCost))
+                                .map(success -> beerCost)
                 );
 
     }
