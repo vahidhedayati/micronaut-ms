@@ -53,6 +53,7 @@ Videos
 
 1. [Basic run through and fallover explained](https://www.youtube.com/watch?v=J_U7tuWy-C0)
 
+2. [Fallback from app1 to fallback of 2nd microservice failure](https://www.youtube.com/watch?v=ppTBVbVi-rQ)
 
 
 To launch the site call http://localhost:3000 on the browser
