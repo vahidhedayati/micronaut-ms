@@ -3,7 +3,7 @@ package micronaut.demo.beer.client;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.retry.annotation.CircuitBreaker;
-import io.reactivex.Maybe;
+import io.reactivex.Single;
 import micronaut.demo.beer.domain.BeerMarkup;
 
 @Client("/markup")
@@ -11,6 +11,6 @@ import micronaut.demo.beer.domain.BeerMarkup;
 public interface MarkupControllerClient {
 
     @Get("/")
-    public Maybe<BeerMarkup> baseCosts();
+    public Single<BeerMarkup> baseCosts();
 
 }

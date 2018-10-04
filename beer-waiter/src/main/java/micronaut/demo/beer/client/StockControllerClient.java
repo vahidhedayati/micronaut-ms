@@ -15,7 +15,7 @@ public interface StockControllerClient {
 
 
     @Get("/")
-    public Single<List<StockEntity>> list();
+    public Single list();
 
     @Get("/lookup/{name}")
     public Maybe<BeerStock> find(@NotBlank String name);

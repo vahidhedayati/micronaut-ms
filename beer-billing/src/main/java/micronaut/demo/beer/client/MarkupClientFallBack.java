@@ -1,10 +1,8 @@
 package micronaut.demo.beer.client;
 
-import io.micronaut.retry.annotation.CircuitBreaker;
 import io.micronaut.retry.annotation.Fallback;
-import io.reactivex.Maybe;
 import io.reactivex.Single;
-import micronaut.demo.beer.model.BeerMarkup;
+import micronaut.demo.beer.domain.BeerMarkup;
 
 /**
  * This is the fall back controller for no markup i.e. if the beer-billing application is down this file is called
