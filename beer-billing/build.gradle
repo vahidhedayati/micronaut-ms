@@ -1,23 +1,4 @@
 
-
-apply plugin:"application"
-apply plugin:"java"
-
-version "0.1"
-group "beer.billing"
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-    maven { url "https://jcenter.bintray.com" }
-}
-
-dependencyManagement {
-    imports {
-        mavenBom 'io.micronaut:bom:1.0.0.RC1'
-    }
-}
-
 dependencies {
     annotationProcessor "io.micronaut:inject-java"
     annotationProcessor "io.micronaut:validation"
@@ -33,9 +14,7 @@ dependencies {
     testImplementation "org.hamcrest:hamcrest-all:1.3"
 }
 
-
-run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1')
-
+shadowJar {
+    mergeServiceFiles()
+}
 mainClassName = "beer.billing.Application"
-compileJava.options.compilerArgs += '-parameters'
-compileTestJava.options.compilerArgs += '-parameters'

@@ -59,7 +59,7 @@ public class BeerCost {
 	public String toString() {
 		return "BeerCost{" +
 				"name='" + name + '\'' +
-				"bottleCost='" + bottleCost + '\'' +
+				", bottleCost='" + bottleCost + '\'' +
 				", pintCost=" + pintCost +
 				'}';
 	}

@@ -1,13 +1,12 @@
 package micronaut.demo.beer.client;
 
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.client.annotation.Client;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import micronaut.demo.beer.model.BeerStock;
 
 import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 @Client(id = "stock", path = "/stock")
 public interface StockControllerClient {

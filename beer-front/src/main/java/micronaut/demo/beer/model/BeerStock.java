@@ -1,5 +1,9 @@
 package micronaut.demo.beer.model;
 
+import micronaut.demo.beer.enums.BeerSize;
+
+import java.math.BigDecimal;
+
 public class BeerStock {
 
 	private  String name;
@@ -69,13 +73,48 @@ public class BeerStock {
 	}
 
 
+	public BeerStock addPint(int amount) {
+		if (this.getBarrels()>0) {
+			this.availablePints=this.getAvailablePints() - (BeerSize.PINT.getValue()*amount);
+			updateBarrels();
+			return this;
+		}
+		return null;
+	}
+
+	public BeerStock addHalfPint(int amount) {
+		if (this.getBarrels()>0) {
+			this.availablePints=this.getAvailablePints() - (BeerSize.HALF_PINT.getValue()*amount);
+			updateBarrels();
+			return this;
+		}
+		return null;
+	}
+
+
+	public BeerStock addBottle(int amount) {
+		if (this.getBottles()>0 && this.getBottles()-amount>0) {
+			this.bottles=this.getBottles()-amount;
+			return this;
+		}
+		return null;
+	}
+
+	public void updateBarrels() {
+		Double cv = this.getAvailablePints() / new Double(327.318);
+		int currentBarrels = new BigDecimal(cv.toString()).intValue();
+		//The amount of pints sold has now overlapped into another barrel
+		if (currentBarrels < this.getBarrels()) {
+			this.barrels=currentBarrels;
+		}
+	}
 
 	@Override
 	public String toString() {
 		return "BeerStock{" +
 				"name='" + name + '\'' +
-				"bottles='" + bottles + '\'' +
-				"barrels='" + barrels + '\'' +
+				", bottles='" + bottles + '\'' +
+				", barrels='" + barrels + '\'' +
 				", availablePints=" + availablePints +
 				'}';
 	}
