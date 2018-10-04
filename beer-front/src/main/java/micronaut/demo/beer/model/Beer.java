@@ -1,19 +1,13 @@
 package micronaut.demo.beer.model;
 
-import micronaut.demo.beer.BeerSize;
+import micronaut.demo.beer.enums.BeerSize;
 
-public class BeerItem {
+public class Beer {
 	private  String name;
-	private  BeerSize size;
-
-
-
+	private BeerSize size;
 	private int amount;
 
 
-	public BeerItem() {
-
-	}
 
 	public String getName() {
 		return name;
@@ -24,13 +18,14 @@ public class BeerItem {
 	public int getAmount() {
 		return amount;
 	}
-	public BeerItem(String name, BeerSize size, int amount) {
+	public Beer() {
+		
+	}
+	
+	public Beer(String name, BeerSize size, int amount) {
 		super();
 		this.name = name;
 		this.size = size;
 		this.amount=amount;
 	}
-	
-
-
 }

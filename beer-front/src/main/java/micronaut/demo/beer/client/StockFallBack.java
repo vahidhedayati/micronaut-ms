@@ -36,13 +36,14 @@ public class StockFallBack implements StockControllerClient {
     public Single<BeerStock> halfPints(String name, String amount) {
         return Single.just(new BeerStock("out of stock",0,0));
     }
- @Override
+
+    @Override
     public  Single<BeerStock> bottles(String name, String amount) {
         return Single.just(new BeerStock("out of stock",0,0));
     }
 
 
-
+    @Override
     public Maybe<BeerStock> find(String name) {
         // return Single.just(new BeerStock("out of stock",0,0)).toMaybe();
         return Maybe.empty();

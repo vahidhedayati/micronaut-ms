@@ -5,11 +5,13 @@ import io.micronaut.retry.annotation.CircuitBreaker;
 import io.reactivex.Single;
 import micronaut.demo.beer.Beer;
 import micronaut.demo.beer.BeerSize;
-import micronaut.demo.beer.CustomerBill;
+import micronaut.demo.beer.model.CustomerBill;
+
 
 import javax.validation.constraints.NotBlank;
 
-@Client("/waiter")
+
+@Client(id = "waiter", path = "/waiter")
 @CircuitBreaker(delay = "1s", attempts = "5", multiplier = "3", reset = "100s")
 public interface WaiterControllerClient {
 

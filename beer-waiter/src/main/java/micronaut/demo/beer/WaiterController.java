@@ -31,12 +31,11 @@ public class WaiterController {
     Single.zip(source1, source2, source3, MyViewModel::new);
      */
 
-    @Get("/beer/{customerName}")
+    @Get("/beer/{customerName}/{beerName}/{beerType}/{amount}")
     //@NewSpan
-    public Single<Beer> serveBeerToCustomer(@NotBlank String customerName) {
-        Beer beer = new Beer("mahou", Beer.Size.MEDIUM);
-        BeerItem beerItem = new BeerItem(beer.getName(), BeerItem.Size.MEDIUM);
-
+    public Single<Beer> serveBeerToCustomer(@NotBlank String customerName,@NotBlank String beerName,@NotBlank BeerSize beerType,@NotBlank int amount) {
+        Beer beer = new Beer(beerName,beerType,amount);
+        BeerItem beerItem = new BeerItem(beerName,beerType,amount);
         ticketControllerClient.addBeerToCustomerBill(beerItem, customerName);
         return Single.just(beer);
     }
