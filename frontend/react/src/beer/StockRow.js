@@ -15,11 +15,12 @@ function noBottles() {
         </p>
     )
 }
-function showBottle(stock,buy,active) {
+function showBottle(stock,buy,active,billingUp,waiterUp) {
     return (<p className="card-text">
             Bottles Available: {stock.bottles} -
             Per Bottle cost: {stock.bottleCost}
-            <input type="text" className={active ===stock.name+"_BOTTLE"? 'btn btn-danger readonly': "btn btn-primary readonly"} name="beerType" data-bname={stock.name} data-price={stock.bottleCost} value="BOTTLE" onClick={buy}/>
+    {billingUp==200 ? <input type="text" className={active ===stock.name+"_BOTTLE"? 'btn btn-danger readonly': "btn btn-primary readonly"} name="beerType" data-bname={stock.name} data-price={stock.bottleCost} value="BOTTLE" onClick={buy}/> : ""}
+
             </p>
             )
 }
@@ -30,25 +31,30 @@ function noPints() {
         </p>
     )
 }
-function showPints(stock,buy,active) {
+function showPints(stock,buy,active,billingUp,waiterUp) {
     return (
         <p className="card-text">
         Pints Available: {stock.availablePints} -
-        Pint cost:  {stock.pintCost}  <input type="text" className={(active ===stock.name+"_PINT") ? 'btn btn-danger readonly': 'btn btn-primary readonly'} name="beerType"  data-bname={stock.name}  data-price={stock.pintCost} value="PINT" onClick={buy}/> <br/>
-        Half Pint cost:  {stock.halfPintCost} <input type="text" className={active ===stock.name+"_HALF_PINT" ? 'btn btn-danger readonly': 'btn btn-primary readonly'} name="beerType"  data-bname={stock.name} data-price={stock.halfPintCost} value="HALF_PINT" onClick={buy}/>
+        Pint cost:  {stock.pintCost}
+    {billingUp==200 ?  <input type="text" className={(active ===stock.name+"_PINT") ? 'btn btn-danger readonly': 'btn btn-primary readonly'} name="beerType"  data-bname={stock.name}  data-price={stock.pintCost} value="PINT" onClick={buy}/> : "" }
+    <br/>
+        Half Pint cost:  {stock.halfPintCost}
+
+        {billingUp==200 ?  <input type="text" className={active ===stock.name+"_HALF_PINT" ? 'btn btn-danger readonly': 'btn btn-primary readonly'} name="beerType"  data-bname={stock.name} data-price={stock.halfPintCost} value="HALF_PINT" onClick={buy}/> : "" }
         </p>
     )
 }
-const StockRow = ({stock, customerName, amount, updateAmount,buy,active}) => <div className="card vendor-card">
+const StockRow = ({stock, customerName, amount, updateAmount,buy,active,stockUp,billingUp,waiterUp}) => <div className="card vendor-card">
 
 
   <div className="card-body">
     <h5 className="card-title">{stock.name}</h5>
+
     { (stock.bottles > 1 || stock.availablePints > 1 ) ?
         amount ? amount : amountForm(amount, updateAmount)
         : '' }
-    { stock.bottles > 1 ?  showBottle(stock,buy,active) : noBottles() }
-    { stock.availablePints > 1 ?  showPints(stock,buy,active) : noPints() }
+    { stock.bottles > 1 ?  showBottle(stock,buy,active,billingUp,waiterUp) : noBottles() }
+    { stock.availablePints > 1 ?  showPints(stock,buy,active,billingUp,waiterUp) : noPints() }
   </div>
 
 </div>

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import config from "../config";
 import StockTable from "./StockTable";
+import Health from "../healthcheck";
 import {Table,Row, Col} from 'react-bootstrap';
 
 class Beer extends Component {
@@ -14,9 +15,30 @@ class Beer extends Component {
             bought:'',
             price:'',
             beerName:'',
-            active:''
+            active:'',
+            waiterUp:'',
+            stockUp:'',
+            billingUp:''
+
         }
+        //checkStock2 = checkStock2.bind(this)
     }
+    getWaiter(val){
+        // do not forget to bind getData in constructor
+        console.log("WE GOT THIS waiterUp"+ val);
+        this.setState({waiterUp: val});
+    }
+    getBilling(val){
+        // do not forget to bind getData in constructor
+        console.log("WE GOT THIS billingUp"+ val);
+        this.setState({billingUp: val});
+    }
+    getStock(val){
+        // do not forget to bind getData in constructor
+        console.log("WE GOT THIS stockUp"+ val);
+        this.setState({stockUp: val});
+    }
+
 
     serveBeer(customerName,beerType,amount,price,beerName) {
         fetch(`${config.SERVER_URL}/beer`, {
@@ -31,6 +53,7 @@ class Beer extends Component {
     .catch(e => console.warn(e));
 
     }
+
 
     logout(event) {
         this.setState({ customerName:"" });
@@ -70,39 +93,49 @@ class Beer extends Component {
       const updateName = this.updateName.bind(this);
       const updateAmount = this.updateAmount.bind(this);
       const buy = this.buy.bind(this);
+
       const logout = this.logout.bind(this);
       // const handleNameChange= this.handleNameChange.bind(this);
+      //const cc = checkStock2.bind(this);
+      const {customerName,stocks,amount,bought,active,waiterUp,stockUp,billingUp} = this.state;
 
-      const {customerName,stocks,amount,bought,active} = this.state;
+    const getWaiter = this.getWaiter.bind(this);
+    const getBilling = this.getBilling.bind(this);
+    const getStock = this.getStock.bind(this);
 
-      function loadBar() {
 
-          return (
-
+      function loadBar(getWaiter,getBilling,getStock) {
+          return (<Row>
+              <Col >
+              <Health sendWaiter={getWaiter} sendBilling={getBilling}  sendStock={getStock} />
+              </Col>
+              <Col>
               <StockTable stocks={stocks} customerName={customerName} logout={logout} amount={amount}
-              updateAmount={updateAmount} buy={buy} active={active} />
-
-
+              updateAmount={updateAmount} buy={buy} active={active} waiterUp={waiterUp} stockUp={stockUp} billingUp={billingUp} />
+          </Col>
+          </Row>
           )
       }
-      function loadUserForm() {
+      function loadUserForm(getWaiter,getBilling,getStock) {
           return (
               <Row>
-
-               <h1>Provide a name !</h1>
-
-
+            <h2>Provide a name ! </h2>
               <Row>
               <Col >
                 <input type="text" defaultValue={customerName} name="customerName" onBlur={ updateName }/>
               </Col>
 
               </Row>
+              <Row>
+              <Col>
+                    <br/><br/><Health sendWaiter={getWaiter} sendBilling={getBilling}  sendStock={getStock} />
+              </Col>
+              </Row>
           </Row>
           )
       }
 
-    return (customerName ?loadBar() : loadUserForm())
+    return (customerName ?loadBar(getWaiter,getBilling,getStock) : loadUserForm(getWaiter,getBilling,getStock))
   }
 }
 

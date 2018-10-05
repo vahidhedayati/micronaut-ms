@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {BrowserRouter as Router, Route, Link} from "react-router-dom";
-
 import logo from './images/logo.png'
 import About from "./about";
 import Stocks from "./stocks";
@@ -9,14 +8,12 @@ import './App.css'
 
 
 class App extends Component {
-    constructor() {
-        super();
-
+    constructor(props) {
+        super(props);
         this.state = {
             customerName: ''
         }
     }
-
     render() {
         return (
             <Router>
@@ -51,8 +48,8 @@ class App extends Component {
 
                     <div className="container">
                         <Route exact path="/stocks" component={Stocks} />
-                        <Route exact path="/beer" component={Beer} />
-                        <Route exact path="/about" component={About} />
+                        <Route exact path="/beer" component={Beer}/>
+                        <Route exact path="/about" component={About}/>
                     </div>
                 </div>
             </Router>

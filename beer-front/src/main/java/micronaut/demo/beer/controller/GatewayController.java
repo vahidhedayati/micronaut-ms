@@ -44,9 +44,20 @@ public class GatewayController {
    }
 
     @Get("/billingStatus")
-    public HttpResponse status() {
+    public HttpResponse billingStatus() {
         return markupControllerClient.status();
     }
+
+    @Get("/waiterStatus")
+    public HttpResponse waiterStatus() {
+        return waiterControllerClient.status();
+    }
+
+    @Get("/stockStatus")
+    public HttpResponse stockStatus() {
+        return stockControllerClient.status();
+    }
+
 
     @Post(uri = "/beer", consumes = MediaType.APPLICATION_JSON)
     Single<Beer> serveBeerToCustomer(@Body("customerName")  String customerName, @Body("beerName")  String beerName, @Body("beerType")  String beerType, @Body("amount")  String amount, @Body("price")  String price) {
