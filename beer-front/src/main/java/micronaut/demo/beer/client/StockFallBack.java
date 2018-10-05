@@ -1,5 +1,7 @@
 package micronaut.demo.beer.client;
 
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.annotation.Get;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.retry.annotation.Fallback;
 import io.reactivex.Maybe;
@@ -17,6 +19,10 @@ import java.util.List;
 @Fallback
 public class StockFallBack implements StockControllerClient {
 
+    @Get("/status")
+    public HttpResponse status() {
+        return HttpResponse.serverError();
+    }
 
     @Override
     public Single list() {

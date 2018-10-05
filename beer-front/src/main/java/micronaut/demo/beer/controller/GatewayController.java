@@ -4,11 +4,13 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.reactivex.Single;
+import micronaut.demo.beer.client.MarkupControllerClient;
 import micronaut.demo.beer.client.StockControllerClient;
 import micronaut.demo.beer.client.WaiterControllerClient;
-import micronaut.demo.beer.model.CustomerBill;
 import micronaut.demo.beer.enums.BeerSize;
 import micronaut.demo.beer.model.Beer;
+import micronaut.demo.beer.model.CustomerBill;
+
 import javax.validation.constraints.NotBlank;
 import java.net.URI;
 import java.util.Collections;
@@ -19,11 +21,14 @@ public class GatewayController {
 
     private final StockControllerClient stockControllerClient;
     private final WaiterControllerClient waiterControllerClient;
+    private final MarkupControllerClient markupControllerClient;
 
-
-    GatewayController(StockControllerClient stockControllerClient,WaiterControllerClient waiterControllerClient) {
+    GatewayController(StockControllerClient stockControllerClient,
+                      WaiterControllerClient waiterControllerClient,
+                      MarkupControllerClient markupControllerClient) {
         this.stockControllerClient = stockControllerClient;
         this.waiterControllerClient=waiterControllerClient;
+        this.markupControllerClient=markupControllerClient;
     }
 
     @Produces(MediaType.TEXT_HTML)
@@ -38,6 +43,10 @@ public class GatewayController {
         return stockControllerClient.list().onErrorReturnItem(Collections.emptyList());
    }
 
+    @Get("/billingStatus")
+    public HttpResponse status() {
+        return markupControllerClient.status();
+    }
 
     @Post(uri = "/beer", consumes = MediaType.APPLICATION_JSON)
     Single<Beer> serveBeerToCustomer(@Body("customerName")  String customerName, @Body("beerName")  String beerName, @Body("beerType")  String beerType, @Body("amount")  String amount, @Body("price")  String price) {

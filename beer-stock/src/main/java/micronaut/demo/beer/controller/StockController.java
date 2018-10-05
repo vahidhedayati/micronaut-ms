@@ -2,6 +2,7 @@ package micronaut.demo.beer.controller;
 
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoCollection;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.runtime.server.EmbeddedServer;
@@ -107,6 +108,11 @@ public class StockController implements StockOperations<BeerStock> {
         return ss;
     }
 
+
+    @Get("/status")
+    public HttpResponse status() {
+        return HttpResponse.ok();
+    }
 
 
     @Get("/lookup/{name}")

@@ -1,6 +1,7 @@
 package micronaut.demo.beer;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -28,6 +29,11 @@ public class WaiterController {
     public WaiterController(TicketControllerClient ticketControllerClient,EmbeddedServer embeddedServer) {
         this.ticketControllerClient = ticketControllerClient;
         this.embeddedServer=embeddedServer;
+    }
+
+    @Get("/status")
+    public HttpResponse status() {
+        return HttpResponse.ok();
     }
 
     /*

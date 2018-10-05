@@ -1,5 +1,6 @@
 package micronaut.demo.beer.client;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Get;
@@ -19,6 +20,9 @@ public interface WaiterControllerClient {
 
     @Post(uri = "/beer", consumes = MediaType.APPLICATION_JSON)
     Single<Beer> serveBeerToCustomer(@JsonProperty("customerName")  String customerName, @JsonProperty("beerName")  String beerName, @JsonProperty("beerType")  String beerType, @JsonProperty("amount")  String amount, @JsonProperty("price")  String price);
+
+    @Get("/status")
+    HttpResponse status();
 
 
     @Get("/bill/{customerName}")

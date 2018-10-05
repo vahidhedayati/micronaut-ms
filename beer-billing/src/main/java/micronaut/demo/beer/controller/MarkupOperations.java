@@ -1,5 +1,6 @@
 package micronaut.demo.beer.controller;
 
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
@@ -13,6 +14,8 @@ import javax.validation.Valid;
 @Validated
 public interface MarkupOperations<T extends BeerMarkup> {
 
+    @Get("/status")
+    HttpResponse status();
 
     @Get("/")
     Single<T> baseCosts();

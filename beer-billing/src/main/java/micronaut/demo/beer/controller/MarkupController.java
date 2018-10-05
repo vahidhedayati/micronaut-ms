@@ -2,8 +2,11 @@ package micronaut.demo.beer.controller;
 
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoCollection;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
 import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.validation.Validated;
 import io.reactivex.Flowable;
@@ -43,6 +46,11 @@ public class MarkupController implements MarkupOperations<BeerMarkup> {
         ).toList();
     }
     */
+
+    @Get("/status")
+    public HttpResponse status() {
+        return HttpResponse.ok();
+    }
 
     @Get("/")
     @Override

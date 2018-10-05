@@ -1,5 +1,6 @@
 package micronaut.demo.beer.controller;
 
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
@@ -17,6 +18,9 @@ public interface StockOperations<T extends BeerStock> {
     @Get("/")
     Single list();
     //List<StockEntity> list();
+
+    @Get("/status")
+    HttpResponse status();
 
     @Get("/lookup/{name}")
     Maybe<T> find(String name);

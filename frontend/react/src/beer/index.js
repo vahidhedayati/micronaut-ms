@@ -13,7 +13,8 @@ class Beer extends Component {
             beerType:'',
             bought:'',
             price:'',
-            beerName:''
+            beerName:'',
+            active:''
         }
     }
 
@@ -37,7 +38,9 @@ class Beer extends Component {
 
     }
     buy(event) {
-       console.log("--- "+event.target.value+" "+event.target.attributes['data-price'].value)
+        //this.toggleClass(event.target.attributes['data-bname'].value);
+        this.setState({ active: event.target.attributes['data-bname'].value+"_"+event.target.value});
+        console.log("--- "+event.target.value+" "+event.target.attributes['data-price'].value)
         this.setState({ beerType: event.target.value });
         //console.log(" > "+`${config.SERVER_URL}/beer/${customerName}/${beerType}/${amount}`)
         //fetch(config.SERVER_URL+'/beer/'+customerName+"/"+beerType+"/"+amount);
@@ -70,11 +73,14 @@ class Beer extends Component {
       const logout = this.logout.bind(this);
       // const handleNameChange= this.handleNameChange.bind(this);
 
-      const {customerName,stocks,amount,bought} = this.state;
+      const {customerName,stocks,amount,bought,active} = this.state;
 
       function loadBar() {
+
           return (
-              <StockTable stocks={stocks} customerName={customerName} logout={logout} amount={amount} updateAmount={updateAmount} buy={buy} />
+
+              <StockTable stocks={stocks} customerName={customerName} logout={logout} amount={amount}
+              updateAmount={updateAmount} buy={buy} active={active} />
 
 
           )

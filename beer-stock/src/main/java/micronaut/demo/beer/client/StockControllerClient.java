@@ -1,5 +1,6 @@
 package micronaut.demo.beer.client;
 
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.retry.annotation.CircuitBreaker;
@@ -17,19 +18,22 @@ public interface StockControllerClient {
 
 
     @Get("/")
-    public Single list();
+    Single list();
+
+    @Get("/status")
+    HttpResponse status();
 
     @Get("/lookup/{name}")
-    public Maybe<BeerStock> find(@NotBlank String name);
+    Maybe<BeerStock> find(@NotBlank String name);
 
 
     @Get("/pints/{name}/{amount}")
-    public Single<BeerStock> pints(@NotBlank String name, @NotBlank String amount);
+    Single<BeerStock> pints(@NotBlank String name, @NotBlank String amount);
 
     @Get("/halfPints/{name}/{amount}")
-    public Single<BeerStock> halfPints(@NotBlank String name, @NotBlank String amount);
+    Single<BeerStock> halfPints(@NotBlank String name, @NotBlank String amount);
 
 
     @Get("/bottles/{name}/{amount}")
-    public Single<BeerStock> bottles(@NotBlank String name, @NotBlank String amount);
+    Single<BeerStock> bottles(@NotBlank String name, @NotBlank String amount);
 }
