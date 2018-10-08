@@ -47,13 +47,35 @@ class Beer extends Component {
             headers: {'Content-Type': 'application/json'}
         }).then((r) => {
             r.status === 200 ?
-            this.setState({bought: true}) :
+            this.addBeer(beerType,beerName,amount):
             this.setState({bought: false})
     }).then((json) => console.log(json))
     .catch(e => console.warn(e));
 
     }
-
+    renderSwitch(beerType) {
+        switch(beerType) {
+            case 'PINT':
+                return "pints";
+            case 'HALF_PINT':
+                return "halfPints";
+            default:
+                return "bottles";
+        }
+    }
+    addBeer(beerType,beerName,amount) {
+        var url="";
+        fetch(`${config.SERVER_URL}/${this.renderSwitch(beerType)}`, {
+            method: 'POST',
+            body: JSON.stringify({name:beerName, amount:amount}),
+            headers: {'Content-Type': 'application/json'}
+        }).then((r) => {
+            r.status === 200 ?
+            this.setState({bought: true}):
+            this.setState({bought: false})
+    }).then((json) => console.log(json))
+    .catch(e => console.warn(e));
+    }
 
     logout(event) {
         this.setState({ customerName:"" });

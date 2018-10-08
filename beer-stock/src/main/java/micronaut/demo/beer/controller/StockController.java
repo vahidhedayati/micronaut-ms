@@ -1,10 +1,15 @@
 package micronaut.demo.beer.controller;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
 import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.validation.Validated;
 import io.reactivex.Flowable;
@@ -17,6 +22,10 @@ import micronaut.demo.beer.domain.BeerCost;
 import micronaut.demo.beer.domain.BeerStock;
 import micronaut.demo.beer.model.BeerMarkup;
 import micronaut.demo.beer.model.StockEntity;
+import org.bson.BSONObject;
+import org.bson.BasicBSONObject;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -125,31 +134,65 @@ public class StockController implements StockOperations<BeerStock> {
         ).firstElement();
     }
 
-    @Get("/pints/{name}/{amount}")
-    public Single<Maybe> pints(@NotBlank String name, @NotBlank String amount) {
+    @Post(uri = "/pints", consumes = MediaType.APPLICATION_JSON)
+    public Single<Maybe> pints(@JsonProperty("name") String name,@JsonProperty("amount") String amount) {
+        System.out.println("Adding pints to the backend");
         Maybe<BeerStock> found = find(name);
         if (found!=null) {
-            return Single.just(found.map(beer-> beer.addPint(Integer.valueOf(amount))));
+            found.subscribe(beer->System.out.println("Current Beer Object -->>>"+beer));
+            BeerStock st = found.blockingGet();
+            st.addPint(Integer.valueOf(amount));
+            Flowable.fromPublisher(getCollection().updateOne(Filters.eq("name", name), Updates.set("availablePints", st.getAvailablePints()))).blockingFirst();
+
+            Maybe<BeerStock> found1 = find(name);
+            found1.subscribe(beer->System.out.println("New Beer Object -->>>"+beer));
+        } else {
+            System.out.println("Issue  /pints could not find "+name);
         }
-        return null;
+        return Single.just(found);
     }
 
-    @Get("/halfPints/{name}/{amount}")
-    public Single<Maybe> halfPints(@NotBlank String name, @NotBlank String amount) {
+    @Post(uri = "/halfPints", consumes = MediaType.APPLICATION_JSON)
+    public Single<Maybe> halfPints(@JsonProperty("name") String name,@JsonProperty("amount") String amount) {
+        System.out.println("Adding halfPints to the backend");
         Maybe<BeerStock> found = find(name);
         if (found!=null) {
-            return Single.just(found.map(beer-> beer.addHalfPint(Integer.valueOf(amount))));
+            found.subscribe(beer->System.out.println("Current Beer Object -->>>"+beer));
+            BeerStock st = found.blockingGet();
+            st.addHalfPint(Integer.valueOf(amount));
+            Flowable.fromPublisher(getCollection().updateOne(Filters.eq("name", name), Updates.set("availablePints", st.getAvailablePints()))).blockingFirst();
+
+            Maybe<BeerStock> found1 = find(name);
+            found1.subscribe(beer->System.out.println("New Beer Object -->>>"+beer));
+        } else {
+            System.out.println("Issue  /halfPints could not find "+name);
         }
-        return null;
+        return Single.just(found);
     }
 
-    @Get("/bottles/{name}/{amount}")
-    public Single<Maybe> bottles(@NotBlank String name, @NotBlank String amount) {
+    @Post(uri = "/bottles", consumes = MediaType.APPLICATION_JSON)
+    public Single<Maybe> bottles(@JsonProperty("name") String name,@JsonProperty("amount") String amount) {
+        System.out.println("Adding bottles to the backend");
         Maybe<BeerStock> found = find(name);
         if (found!=null) {
-            return Single.just(found.map(beer-> beer.addBottle(Integer.valueOf(amount))));
+            found.subscribe(beer->System.out.println("Current Beer Object -->>>"+beer));
+            //found.subscribe(beer-> beer.addBottle(Integer.valueOf(amount)));
+            BeerStock st = found.blockingGet();
+            st.addBottle(Integer.valueOf(amount));
+            //Bson filter = new Document("name", name);
+            //Bson newValue = new Document("bottles", st.getBottles());
+            //Bson updateOperationDocument = new Document("$set", newValue);
+            //System.out.println(st.getBottles()+" >  0000 >> "+amount);
+            Flowable.fromPublisher(getCollection().updateOne(Filters.eq("name", name), Updates.set("bottles", st.getBottles()))).blockingFirst();
+
+
+            Maybe<BeerStock> found1 = find(name);
+            found1.subscribe(beer->System.out.println("New Beer Object -->>>"+beer));
+            //return Single.just(found1);
+        } else {
+            System.out.println("Issue  /bottles could not find "+name);
         }
-        return null;
+        return Single.just(found);
     }
 
     @Override

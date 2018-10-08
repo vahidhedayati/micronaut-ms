@@ -1,6 +1,7 @@
 package micronaut.demo.beer.client;
 
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.retry.annotation.Fallback;
@@ -34,17 +35,17 @@ public class StockFallBack implements StockControllerClient {
     }
 
     @Override
-    public Single<BeerStock> pints(String name, String amount) {
+    public Single<BeerStock> pints(@Body("name") String name, @Body("amount") String amount) {
         return Single.just(new BeerStock("out of stock",0,0));
     }
 
     @Override
-    public Single<BeerStock> halfPints(String name, String amount) {
+    public Single<BeerStock> halfPints(@Body("name") String name, @Body("amount") String amount) {
         return Single.just(new BeerStock("out of stock",0,0));
     }
 
     @Override
-    public  Single<BeerStock> bottles(String name, String amount) {
+    public Single<BeerStock> bottles(@Body("name") String name, @Body("amount") String amount) {
         return Single.just(new BeerStock("out of stock",0,0));
     }
 

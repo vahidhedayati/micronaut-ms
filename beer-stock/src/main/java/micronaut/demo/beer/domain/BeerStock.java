@@ -75,29 +75,26 @@ public class BeerStock {
 
 	public BeerStock addPint(int amount) {
 		if (this.getBarrels()>0) {
-			this.availablePints=this.getAvailablePints() - (BeerSize.PINT.getValue()*amount);
+			this.availablePints=this.getAvailablePints() - amount;
 			updateBarrels();
-			return this;
 		}
-		return null;
+		return this;
 	}
 
 	public BeerStock addHalfPint(int amount) {
 		if (this.getBarrels()>0) {
-			this.availablePints=this.getAvailablePints() - (BeerSize.HALF_PINT.getValue()*amount);
+			this.availablePints=this.getAvailablePints() - (amount/2);
 			updateBarrels();
-			return this;
 		}
-		return null;
+		return this;
 	}
 
 
 	public BeerStock addBottle(int amount) {
 		if (this.getBottles()>0 && this.getBottles()-amount>0) {
-			this.bottles=this.getBottles()-amount;
-			return this;
+			this.setBottles(this.getBottles()-amount);
 		}
-		return null;
+		return this;
 	}
 
 	public void updateBarrels() {

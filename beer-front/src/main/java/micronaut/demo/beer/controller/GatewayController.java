@@ -9,6 +9,7 @@ import micronaut.demo.beer.client.StockControllerClient;
 import micronaut.demo.beer.client.WaiterControllerClient;
 import micronaut.demo.beer.enums.BeerSize;
 import micronaut.demo.beer.model.Beer;
+import micronaut.demo.beer.model.BeerStock;
 import micronaut.demo.beer.model.CustomerBill;
 
 import javax.validation.constraints.NotBlank;
@@ -64,6 +65,27 @@ public class GatewayController {
             System.out.println("Serving "+beerName+" "+price);
         return waiterControllerClient.serveBeerToCustomer(customerName,beerName,beerType,amount,price)
                 .onErrorReturnItem(new Beer("out of stock",BeerSize.PINT,0, 0.00));
+    }
+
+    @Post(uri = "/pints", consumes = MediaType.APPLICATION_JSON)
+    Single<BeerStock> addPints(@Body("name")  String name, @Body("amount")  String amount) {
+        System.out.println("addPints "+name+" "+amount);
+        return stockControllerClient.pints(name,amount)
+                .onErrorReturnItem(new BeerStock());
+    }
+
+    @Post(uri = "/halfPints", consumes = MediaType.APPLICATION_JSON)
+    Single<BeerStock> halfPints(@Body("name")  String name, @Body("amount")  String amount) {
+        System.out.println("halfPints "+name+" "+amount);
+        return stockControllerClient.halfPints(name,amount)
+                .onErrorReturnItem(new BeerStock());
+    }
+
+    @Post(uri = "/bottles", consumes = MediaType.APPLICATION_JSON)
+    Single<BeerStock> bottles(@Body("name")  String name, @Body("amount")  String amount) {
+        System.out.println("bottles "+name+" "+amount);
+        return stockControllerClient.bottles(name,amount)
+                .onErrorReturnItem(new BeerStock());
     }
 
     @Get("/bill/{customerName}")
