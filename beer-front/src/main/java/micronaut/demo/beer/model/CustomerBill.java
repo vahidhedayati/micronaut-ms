@@ -4,9 +4,21 @@ public class CustomerBill {
 	private  double cost;
 	private int deskId;
 
+	public int getWaiterId() {
+		return waiterId;
+	}
+
+	public void setWaiterId(int waiterId) {
+		this.waiterId = waiterId;
+	}
+
+	private int waiterId;
+
 	public int getDeskId() {
 		return deskId;
 	}
+
+
 
 	public void setDeskId(int deskId) {
 		this.deskId = deskId;

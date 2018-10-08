@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import config from "../config";
 import StockTable from "./StockTable";
 import Health from "../healthcheck";
-import {Table,Row, Col} from 'react-bootstrap';
+import {Row, Col} from 'react-bootstrap';
 
 class Beer extends Component {
     constructor(props) {
@@ -18,7 +18,9 @@ class Beer extends Component {
             active:'',
             waiterUp:'',
             stockUp:'',
-            billingUp:''
+            billingUp:'',
+            currentBill:{}
+
 
         }
         //checkStock2 = checkStock2.bind(this)
@@ -47,7 +49,7 @@ class Beer extends Component {
             headers: {'Content-Type': 'application/json'}
         }).then((r) => {
             r.status === 200 ?
-            this.addBeer(beerType,beerName,amount):
+            this.addBeer(beerType,beerName,amount,customerName):
             this.setState({bought: false})
     }).then((json) => console.log(json))
     .catch(e => console.warn(e));
@@ -63,7 +65,7 @@ class Beer extends Component {
                 return "bottles";
         }
     }
-    addBeer(beerType,beerName,amount) {
+    addBeer(beerType,beerName,amount,customerName) {
         var url="";
         fetch(`${config.SERVER_URL}/${this.renderSwitch(beerType)}`, {
             method: 'POST',
@@ -71,12 +73,23 @@ class Beer extends Component {
             headers: {'Content-Type': 'application/json'}
         }).then((r) => {
             r.status === 200 ?
-            this.loadStocks():
+            this.loadBill(customerName,true):
             this.setState({bought: false})
     }).then((json) => console.log(json))
     .catch(e => console.warn(e));
     }
 
+    loadBill(customerName,reload) {
+        fetch(`${config.SERVER_URL}/bill/${customerName}`)
+            .then(r => r.json())
+            .then(json => this.setState({currentBill: json}))
+            .catch(e => console.warn(e));
+        if (reload) {
+            //Reload the stocks again
+            this.loadStocks();
+        }
+
+    }
     logout(event) {
         this.setState({ customerName:"" });
         localStorage.setItem('customerName', "")
@@ -98,14 +111,14 @@ class Beer extends Component {
         this.setState({ customerName: event.target.value })
 
             localStorage.setItem('customerName', event.target.value)
-
+        this.loadBill(event.target.value);
     }
 
     loadStocks() {
         fetch(`${config.SERVER_URL}/stock`)
             .then(r => r.json())
-    .then(json => this.setState({stocks: json}))
-    .catch(e => console.warn(e))
+            .then(json => this.setState({stocks: json}))
+            .catch(e => console.warn(e))
     }
     componentDidMount() {
        this.loadStocks();
@@ -122,21 +135,23 @@ class Beer extends Component {
       const logout = this.logout.bind(this);
       // const handleNameChange= this.handleNameChange.bind(this);
       //const cc = checkStock2.bind(this);
-      const {customerName,stocks,amount,bought,active,waiterUp,stockUp,billingUp} = this.state;
+      const {customerName,stocks,amount,bought,active,waiterUp,stockUp,billingUp,currentBill} = this.state;
 
     const getWaiter = this.getWaiter.bind(this);
     const getBilling = this.getBilling.bind(this);
     const getStock = this.getStock.bind(this);
+      const  loadBill= this.loadBill.bind(this);
 
-
-      function loadBar(getWaiter,getBilling,getStock) {
+      function loadBar(loadBill,customerName,getWaiter,getBilling,getStock) {
+          loadBill(customerName)
           return (<Row>
               <Col >
               <Health sendWaiter={getWaiter} sendBilling={getBilling}  sendStock={getStock} />
               </Col>
               <Col>
               <StockTable stocks={stocks} customerName={customerName} logout={logout} amount={amount}
-              updateAmount={updateAmount} buy={buy} active={active} waiterUp={waiterUp} stockUp={stockUp} billingUp={billingUp} />
+              updateAmount={updateAmount} buy={buy} active={active} waiterUp={waiterUp} stockUp={stockUp} billingUp={billingUp}
+          currentBill={currentBill} />
           </Col>
           </Row>
           )
@@ -160,7 +175,7 @@ class Beer extends Component {
           )
       }
 
-    return (customerName ?loadBar(getWaiter,getBilling,getStock) : loadUserForm(getWaiter,getBilling,getStock))
+    return (customerName ?  loadBar(loadBill,customerName,getWaiter,getBilling,getStock) : loadUserForm(getWaiter,getBilling,getStock))
   }
 }
 

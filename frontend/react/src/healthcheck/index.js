@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import config from "../config";
 
-import {number,func,string}  from 'prop-types'
+import {number,func}  from 'prop-types'
 class Health extends Component {
 
     static propTypes = {
@@ -30,8 +30,9 @@ class Health extends Component {
     }
 
     render() {
+
         const {waiterUp,billingUp,stockUp} = this.state;
-        return (`Stock up ${stockUp==200?'Up':'Down'} Waiter: ${waiterUp==200?'Up':'Down'} Billing ${billingUp==200?'Up':'Down'} `)
+        return (`Stock up ${stockUp===200?'Up':'Down'} Waiter: ${waiterUp===200?'Up':'Down'} Billing ${billingUp===200?'Up':'Down'} `)
     }
 
     updateStock(state) {

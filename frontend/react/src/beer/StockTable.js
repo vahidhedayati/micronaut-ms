@@ -1,17 +1,36 @@
 import React from 'react';
 import StockRow from "./StockRow";
 import {array} from 'prop-types'
+//import { library } from '@fortawesome/fontawesome-svg-core';
+import { faUser, faSignOutAlt,faMoneyBill,faServer,faClone } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+const StockTable = ({stocks,customerName,logout, amount, updateAmount,buy,active,stockUp,billingUp,waiterUp,currentBill}) => <div>
+<nav className="navbar navbar-expand-lg navbar-light bg-light">
+
+    <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
+
+    <li className="nav-item">
+        <FontAwesomeIcon color="#6DB65B" icon={faUser} /> {customerName}
+    </li>
+<li className="nav-item">
+    <FontAwesomeIcon color="blue" icon={faMoneyBill} /> {currentBill.cost}
+
+    <FontAwesomeIcon color="orange" icon={faServer} /> {currentBill.deskId}
+    <FontAwesomeIcon color="cyan" icon={faClone} /> {currentBill.waiterId}
+</li>
+
+</ul>
+<span className="form-inline my-2 my-lg-0">
+    <button className="link" onClick={logout} name="logout"><FontAwesomeIcon  color="red"  icon={faSignOutAlt}/>
+logout</button>
+</span>
+</nav>
 
 
 
-const StockTable = ({stocks,customerName,logout, amount, updateAmount,buy,active,stockUp,billingUp,waiterUp}) => <div>
- <h2>Welcome {customerName} now buy a beer if any available</h2>
+{stocks.map(v => <StockRow  key={v.name} stock={v} customerName={customerName}  amount={amount} updateAmount={updateAmount} buy={buy} active={active} waiterUp={waiterUp} stockUp={stockUp} billingUp={billingUp} />)}
 
-
-<button onClick={logout} name="logout">logout</button>
-
-
-{stocks.map((v) => <StockRow  stock={v} customerName={customerName}  amount={amount} updateAmount={updateAmount} buy={buy} active={active} waiterUp={waiterUp} stockUp={stockUp} billingUp={billingUp} />)}
 </div>
 
 StockTable.propTypes = {

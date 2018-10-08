@@ -59,6 +59,7 @@ public class WaiterController {
         Ticket ticket= singleTicket.blockingGet();
         CustomerBill bill = new CustomerBill(singleCost.blockingGet().doubleValue());
         bill.setDeskId(ticket.getDeskId());
+        bill.setWaiterId(embeddedServer.getPort());
         return Single.just(bill);
     }
 }

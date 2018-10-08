@@ -90,6 +90,7 @@ public class GatewayController {
 
     @Get("/bill/{customerName}")
     public Single<CustomerBill> bill(@NotBlank String customerName) {
+        System.out.println("Getting bill for "+customerName);
         return waiterControllerClient.bill(customerName)
                 .onErrorReturnItem(new CustomerBill());
     }
