@@ -19,14 +19,16 @@ function showBottle(stock,buy,active,billingUp,waiterUp,amount) {
     return (<p className="card-text">
             Bottles Available: {stock.bottles} -
             Per Bottle cost: {stock.bottleCost}
-    {(waiterUp === 200 ?
+    {amount ?
+        (waiterUp === 200 ?
         (billingUp===200 ?
             (amount < stock.bottles ?
         <input type="text"   className={active ===stock.name+"_BOTTLE"? 'btn btn-danger readonly': "btn btn-primary readonly"}
         name="beerType" data-bname={stock.name} data-price={stock.bottleCost} defaultValue="BOTTLE" onClick={buy}/>
-        : <span className='btn btn-danger'>Out of stock</span>)
-    : <span className='btn btn-danger'>Billing system is offline</span>)
-    : <span className='btn btn-danger'>Waiter is busy or not around - please try again</span>)}
+    :<span className='btn btn-danger'>Out of stock</span>)
+    :<span className='btn btn-danger'>Billing system is offline</span>)
+    :<span className='btn btn-danger'>Waiter is busy or not around - please try again</span>)
+    :<span className='btn btn-danger'>Type in numeric amount required</span>}
 
             </p>
             )
@@ -43,24 +45,28 @@ function showPints(stock,buy,active,billingUp,waiterUp,amount) {
         <p className="card-text">
         Pints Available: {stock.availablePints} -
         Pint cost:  {stock.pintCost}
-    {(waiterUp === 200 ?
+    {amount ?
+        (waiterUp === 200 ?
         (billingUp===200 ?
             (amount < stock.availablePints ?
             <input type="text"  className={(active ===stock.name+"_PINT") ? 'btn btn-danger readonly': 'btn btn-primary readonly'}
             name="beerType"  data-bname={stock.name}  data-price={stock.pintCost} defaultValue="PINT" onClick={buy}/>
-    : <span className='btn btn-danger'>Out of stock</span>)
-    : <span className='btn btn-danger'>Billing system is offline</span>)
-    : <span className='btn btn-danger'>Waiter is busy or not around - please try again</span>)}
+    :<span className='btn btn-danger'>Out of stock</span>)
+    :<span className='btn btn-danger'>Billing system is offline</span>)
+    :<span className='btn btn-danger'>Waiter is busy or not around - please try again</span>)
+    :<span className='btn btn-danger'>Type in numeric amount required</span>}
     <br/>
         Half Pint cost:  {stock.halfPintCost}
-        {(waiterUp === 200 ?
+        {amount ?
+            (waiterUp === 200 ?
             (billingUp===200 ?
                 (amount < stock.availablePints*2 ?
             <input type="text" className={active ===stock.name+"_HALF_PINT" ? 'btn btn-danger readonly': 'btn btn-primary readonly'}
              name="beerType"  data-bname={stock.name} data-price={stock.halfPintCost} defaultValue="HALF_PINT" onClick={buy}/>
-        : <span className='btn btn-danger'>Out of stock</span>)
-        : <span className='btn btn-danger'>Billing system is offline</span>)
-        : <span className='btn btn-danger'>Waiter is busy or not around - please try again</span>)}
+        :<span className='btn btn-danger'>Out of stock</span>)
+        :<span className='btn btn-danger'>Billing system is offline</span>)
+        :<span className='btn btn-danger'>Waiter is busy or not around - please try again</span>)
+        :<span className='btn btn-danger'>Type in numeric amount required</span>}
         </p>
     )
 }

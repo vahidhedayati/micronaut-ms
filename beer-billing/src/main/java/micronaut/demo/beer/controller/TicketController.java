@@ -1,5 +1,7 @@
 package micronaut.demo.beer.controller;
 
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import io.micronaut.http.HttpResponse;
@@ -60,6 +62,7 @@ public class TicketController implements TicketOperations<CostSync> {
 		return Flowable.fromPublisher(
 				getCollection()
 						.find(eq("username", name))
+
 		).toList();
 	}
 
@@ -151,8 +154,14 @@ public class TicketController implements TicketOperations<CostSync> {
 		double cost = t.isPresent() ? beerCostCalculator.calculateCost(t.get()) :
 										  beerCostCalculator.calculateCost(getNoCostTicket());
 
+
+	//	Flowable.fromPublisher(getCollection().updateOne(Filters.eq("username", customerName), Updates.set("cost", cost))).blockingFirst();
+
 		//We save the cost to MongoDB
-		save(new CostSync(customerName,cost));
+
+
+
+		//We save the cost to MongoDB
 
 		//Single<CostSync> found = find(customerName).toSingle();
 		Double currentCost = Double.valueOf(cost);
@@ -160,9 +169,31 @@ public class TicketController implements TicketOperations<CostSync> {
 		if (found!=null) {
 			//System.out.println("WE Have from Mongo "+found.toString());
 			//found.subscribe(query -> query.getCost() );
+			Flowable.fromPublisher(getCollection().updateOne(Filters.eq("username", customerName), Updates.set("cost", cost))).blockingFirst();
 			currentCost=found.getCost();
+		} else {
+			save(new CostSync(customerName,cost));
 		}
+
 		return Single.just(currentCost);
+
+
+
+
+		/*
+		Maybe<CostSync> found = find(customerName);
+		if (found!=null) {
+			Flowable.fromPublisher(getCollection().updateOne(Filters.eq("username", customerName), Updates.set("cost", cost))).blockingFirst();
+			return found.toSingle().map(m-> m.getCost());
+		} else {
+			CostSync current = new CostSync(customerName,cost);
+			Flowable.fromPublisher(getCollection().insertOne(current)).map(success -> current);
+			return  Single.just(cost);
+		}
+		*/
+
+
+
 	}
 
 	@Get(uri = "/users", produces = MediaType.TEXT_EVENT_STREAM)

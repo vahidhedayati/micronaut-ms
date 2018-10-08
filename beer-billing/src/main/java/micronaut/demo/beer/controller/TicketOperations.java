@@ -36,7 +36,7 @@ public interface TicketOperations<T extends CostSync> {
 
 
     @Get("/username/{name}")
-    Single<List<T>> byUsername(String name);
+    Single<List<CostSync>>  byUsername(String name);
 
     @Get("/{username}")
     Maybe<T> find(String username);
