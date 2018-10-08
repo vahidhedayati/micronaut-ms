@@ -15,6 +15,7 @@ import micronaut.demo.beer.model.CustomerBill;
 import javax.validation.constraints.NotBlank;
 import java.net.URI;
 import java.util.Collections;
+import java.util.Date;
 
 @Controller("/")
 public class GatewayController {
@@ -90,7 +91,7 @@ public class GatewayController {
 
     @Get("/bill/{customerName}")
     public Single<CustomerBill> bill(@NotBlank String customerName) {
-        System.out.println("Getting bill for "+customerName);
+        System.out.println("Getting bill for "+customerName+" "+new Date());
         return waiterControllerClient.bill(customerName)
                 .onErrorReturnItem(new CustomerBill());
     }

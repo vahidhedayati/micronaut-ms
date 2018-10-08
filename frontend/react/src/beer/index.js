@@ -142,8 +142,13 @@ class Beer extends Component {
     const getStock = this.getStock.bind(this);
       const  loadBill= this.loadBill.bind(this);
 
-      function loadBar(loadBill,customerName,getWaiter,getBilling,getStock) {
-          loadBill(customerName)
+      function loadBar(currentBill,loadBill,customerName,getWaiter,getBilling,getStock) {
+          console.log('loading bill'+currentBill.cost);
+          if (currentBill.cost==undefined) {
+              console.log('loading bill');
+              loadBill(customerName)
+          }
+
           return (<Row>
               <Col >
               <Health sendWaiter={getWaiter} sendBilling={getBilling}  sendStock={getStock} />
@@ -175,7 +180,7 @@ class Beer extends Component {
           )
       }
 
-    return (customerName ?  loadBar(loadBill,customerName,getWaiter,getBilling,getStock) : loadUserForm(getWaiter,getBilling,getStock))
+    return (customerName ?  loadBar(currentBill,loadBill,customerName,getWaiter,getBilling,getStock) : loadUserForm(getWaiter,getBilling,getStock))
   }
 }
 

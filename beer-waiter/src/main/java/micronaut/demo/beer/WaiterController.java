@@ -16,6 +16,8 @@ import micronaut.demo.beer.model.Ticket;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotBlank;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Controller("/waiter")
 @Validated
@@ -56,10 +58,19 @@ public class WaiterController {
     public Single<CustomerBill> bill(@NotBlank String customerName) {
         Single<Ticket> singleTicket = ticketControllerClient.bill(customerName);
         Single<Double> singleCost= ticketControllerClient.cost(customerName);
+        Map<String,CustomerBill> map2=new LinkedHashMap<>();
+        return Single.zip(singleTicket, singleCost,(result1,result2)->{
+            CustomerBill bill = new CustomerBill(result2.doubleValue());
+            bill.setDeskId(result1.getDeskId());
+            bill.setWaiterId(embeddedServer.getPort());
+            return bill;
+        });
+        /*
         Ticket ticket= singleTicket.blockingGet();
         CustomerBill bill = new CustomerBill(singleCost.blockingGet().doubleValue());
         bill.setDeskId(ticket.getDeskId());
         bill.setWaiterId(embeddedServer.getPort());
         return Single.just(bill);
+        */
     }
 }
