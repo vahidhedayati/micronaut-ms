@@ -39,7 +39,7 @@
             return ticket
                     .getBeerItems()
                     .stream()
-                    .map( beer ->  beer.getPrice())
+                    .map( beer ->  beer.getPrice()*beer.getAmount())
                     .mapToDouble(i->i).sum();
         }
     }
