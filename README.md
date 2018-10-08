@@ -1,7 +1,7 @@
 Forked from: https://github.com/mfarache/micronaut-ms. The project did not appear to work for me so I have made it from scratch taking the content of the other project:
 
 
-Please note under development - Below instructions will currently not work
+
 --- 
 
 Been built into a micronaut project on micronaut:
@@ -13,6 +13,17 @@ Been built into a micronaut project on micronaut:
 
 Please ensure you have MongoDB installed locally
 ----
+
+Please ensure you are also running kafka 
+----
+```
+-> sudo /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties
+
+-> sudo /opt/kafka/bin/kafka-topics.sh --list --zookeeper localhost:2181
+```
+
+
+
 
 1. Run Consul
 
@@ -26,7 +37,7 @@ or if you have installed docker simply run `sudo docker run -p 8500:8500 consul`
 ```
 cd micronaut-ms
 
-./gradlew beer-stock:run beer-billing:run  beer-waiter:run  beer-front:run --parallel
+./gradlew beer-stock:run beer-billing:run beer-tab:run  beer-waiter:run  beer-front:run --parallel
 
 ```
 
@@ -36,13 +47,13 @@ cd micronaut-ms
 
 3. Then launch separate instances again
 ```
-./gradlew beer-waiter:run  beer-billing:run beer-stock --parallel
+./gradlew beer-waiter:run  beer-billing:run beer-stock:run beer-tab:run --parallel
 ```
 
 
 4. Then launch separate instances again (This now making 3 instances of billing / waiter / stock all running )
 ```
-./gradlew beer-waiter:run  beer-billing:run beer-stock --parallel
+./gradlew beer-waiter:run  beer-billing:run beer-stock:run beer-tab:run --parallel
 ```
 
 

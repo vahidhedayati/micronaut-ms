@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: beer.tab
+---
+testFramework: junit
+sourceLanguage: java

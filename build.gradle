@@ -36,6 +36,11 @@ subprojects { project ->
         }
 
         dependencies {
+
+            if (project.name=='tab'||project.name=='billing') {
+                compile "io.micronaut.configuration:kafka"
+            }
+
             if (project.name != 'something' && !project.path.contains(':someFunction') && !project.path.contains(':frontend')) {
                 // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
                 //compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
@@ -50,7 +55,7 @@ subprojects { project ->
                 // https://mvnrepository.com/artifact/io.micronaut.configuration/kafka
                 //compile group: 'io.micronaut.configuration', name: 'kafka', version: '1.0.0.M4'
                 compile "io.micronaut:tracing"
-                //compile "io.micronaut.configuration:kafka"
+                //
 
                 compile "io.micronaut.configuration:mongo-reactive"
 
