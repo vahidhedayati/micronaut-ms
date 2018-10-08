@@ -15,7 +15,7 @@ function noBottles() {
         </p>
     )
 }
-function showBottle(stock,buy,active,billingUp,waiterUp,amount) {
+function showBottle(stock,buy,active,billingUp,waiterUp,amount,tabUp) {
     return (<p className="card-text">
             Bottles Available: {stock.bottles} -
             Per Bottle cost: {stock.bottleCost}
@@ -40,7 +40,7 @@ function noPints() {
         </p>
     )
 }
-function showPints(stock,buy,active,billingUp,waiterUp,amount) {
+function showPints(stock,buy,active,billingUp,waiterUp,amount,tabUp) {
     return (
         <p className="card-text">
         Pints Available: {stock.availablePints} -
@@ -70,7 +70,7 @@ function showPints(stock,buy,active,billingUp,waiterUp,amount) {
         </p>
     )
 }
-const StockRow = ({stock, customerName, amount, updateAmount,buy,active,stockUp,billingUp,waiterUp}) => <div className="card vendor-card">
+const StockRow = ({stock, customerName, amount, updateAmount,buy,active,stockUp,billingUp,waiterUp,tabUp}) => <div className="card vendor-card">
 
 
   <div className="card-body">
@@ -79,8 +79,8 @@ const StockRow = ({stock, customerName, amount, updateAmount,buy,active,stockUp,
     { (stock.bottles > 1 || stock.availablePints > 1 ) ?
         amount ? amount : amountForm(amount, updateAmount)
         : '' }
-    { stock.bottles > 1 ?  showBottle(stock,buy,active,billingUp,waiterUp,amount) : noBottles() }
-    { stock.availablePints > 1 ?  showPints(stock,buy,active,billingUp,waiterUp,amount) : noPints() }
+    { stock.bottles > 1 ?  showBottle(stock,buy,active,billingUp,waiterUp,amount,tabUp) : noBottles() }
+    { stock.availablePints > 1 ?  showPints(stock,buy,active,billingUp,waiterUp,amount,tabUp) : noPints() }
   </div>
 
 </div>

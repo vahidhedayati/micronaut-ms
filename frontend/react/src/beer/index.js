@@ -19,6 +19,7 @@ class Beer extends Component {
             waiterUp:'',
             stockUp:'',
             billingUp:'',
+            tabUp:'',
             currentBill:{}
 
 
@@ -40,7 +41,11 @@ class Beer extends Component {
         console.log("WE GOT THIS stockUp"+ val);
         this.setState({stockUp: val});
     }
-
+    getTab(val){
+        // do not forget to bind getData in constructor
+        console.log("WE GOT THIS tabUp"+ val);
+        this.setState({tabUp: val});
+    }
 
     serveBeer(customerName,beerType,amount,price,beerName) {
         fetch(`${config.SERVER_URL}/beer`, {
@@ -135,14 +140,15 @@ class Beer extends Component {
       const logout = this.logout.bind(this);
       // const handleNameChange= this.handleNameChange.bind(this);
       //const cc = checkStock2.bind(this);
-      const {customerName,stocks,amount,bought,active,waiterUp,stockUp,billingUp,currentBill} = this.state;
+      const {customerName,stocks,amount,bought,active,waiterUp,stockUp,billingUp,currentBill,tabUp} = this.state;
 
     const getWaiter = this.getWaiter.bind(this);
     const getBilling = this.getBilling.bind(this);
     const getStock = this.getStock.bind(this);
       const  loadBill= this.loadBill.bind(this);
+      const getTab = this.getTab.bind(this);
 
-      function loadBar(currentBill,loadBill,customerName,getWaiter,getBilling,getStock) {
+      function loadBar(currentBill,loadBill,customerName,getWaiter,getBilling,getStock,getTab) {
           console.log('loading bill'+currentBill.cost);
           if (currentBill.cost==undefined) {
               console.log('loading bill');
@@ -151,17 +157,17 @@ class Beer extends Component {
 
           return (<Row>
               <Col >
-              <Health sendWaiter={getWaiter} sendBilling={getBilling}  sendStock={getStock} />
+              <Health sendWaiter={getWaiter} sendBilling={getBilling}  sendStock={getStock} sendTab={getTab} />
               </Col>
               <Col>
               <StockTable stocks={stocks} customerName={customerName} logout={logout} amount={amount}
-              updateAmount={updateAmount} buy={buy} active={active} waiterUp={waiterUp} stockUp={stockUp} billingUp={billingUp}
+              updateAmount={updateAmount} buy={buy} active={active} waiterUp={waiterUp} stockUp={stockUp} billingUp={billingUp} tabUp={tabUp}
           currentBill={currentBill} />
           </Col>
           </Row>
           )
       }
-      function loadUserForm(getWaiter,getBilling,getStock) {
+      function loadUserForm(getWaiter,getBilling,getStock,getTab) {
           return (
               <Row>
             <h2>Provide a name ! </h2>
@@ -173,14 +179,14 @@ class Beer extends Component {
               </Row>
               <Row>
               <Col>
-                    <br/><br/><Health sendWaiter={getWaiter} sendBilling={getBilling}  sendStock={getStock} />
+                    <br/><br/><Health sendWaiter={getWaiter} sendBilling={getBilling}  sendStock={getStock} getTab={getTab} />
               </Col>
               </Row>
           </Row>
           )
       }
 
-    return (customerName ?  loadBar(currentBill,loadBill,customerName,getWaiter,getBilling,getStock) : loadUserForm(getWaiter,getBilling,getStock))
+    return (customerName ?  loadBar(currentBill,loadBill,customerName,getWaiter,getBilling,getStock,getTab) : loadUserForm(getWaiter,getBilling,getStock,getTab))
   }
 }
 

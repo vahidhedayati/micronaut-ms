@@ -6,6 +6,7 @@ import io.micronaut.http.annotation.*;
 import io.reactivex.Single;
 import micronaut.demo.beer.client.MarkupControllerClient;
 import micronaut.demo.beer.client.StockControllerClient;
+import micronaut.demo.beer.client.TabControllerClient;
 import micronaut.demo.beer.client.WaiterControllerClient;
 import micronaut.demo.beer.enums.BeerSize;
 import micronaut.demo.beer.model.Beer;
@@ -24,13 +25,16 @@ public class GatewayController {
     private final StockControllerClient stockControllerClient;
     private final WaiterControllerClient waiterControllerClient;
     private final MarkupControllerClient markupControllerClient;
+    private final TabControllerClient tabControllerClient;
 
     GatewayController(StockControllerClient stockControllerClient,
                       WaiterControllerClient waiterControllerClient,
-                      MarkupControllerClient markupControllerClient) {
+                      MarkupControllerClient markupControllerClient,
+                      TabControllerClient tabControllerClient) {
         this.stockControllerClient = stockControllerClient;
         this.waiterControllerClient=waiterControllerClient;
         this.markupControllerClient=markupControllerClient;
+        this.tabControllerClient=tabControllerClient;
     }
 
     @Produces(MediaType.TEXT_HTML)
@@ -58,6 +62,11 @@ public class GatewayController {
     @Get("/stockStatus")
     public HttpResponse stockStatus() {
         return stockControllerClient.status();
+    }
+
+    @Get("/tabStatus")
+    public HttpResponse tabStatus() {
+        return tabControllerClient.status();
     }
 
 

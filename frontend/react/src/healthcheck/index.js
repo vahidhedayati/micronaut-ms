@@ -8,13 +8,15 @@ class Health extends Component {
         waiterUp: number,
         stockUp: number,
         billingUp: number,
+        tabUp:number,
         render: func.isRequired,
     };
 
     state = {
         waiterUp:0,
         stockUp:0,
-        billingUp:0
+        billingUp:0,
+        tabUp:0
     }
 
 
@@ -22,17 +24,19 @@ class Health extends Component {
         this.checkingBilling();
         this.checkStock1();
         this.checkingWaiter();
+        this.checkTab();
         setTimeout(function() { //Start the timer
             this.props.sendWaiter(this.state.waiterUp);
             this.props.sendBilling(this.state.billingUp);
             this.props.sendStock(this.state.stockUp);
+            this.props.sendTab(this.state.tabUp);
         }.bind(this), 1000)
     }
 
     render() {
 
-        const {waiterUp,billingUp,stockUp} = this.state;
-        return (`Stock up ${stockUp===200?'Up':'Down'} Waiter: ${waiterUp===200?'Up':'Down'} Billing ${billingUp===200?'Up':'Down'} `)
+        const {waiterUp,billingUp,stockUp,tabUp} = this.state;
+        return (`Stock up ${stockUp===200?'Up':'Down'} Waiter: ${waiterUp===200?'Up':'Down'} Billing ${billingUp===200?'Up':'Down'} Tab ${tabUp===200?'Up':'Down'} `)
     }
 
     updateStock(state) {
@@ -50,7 +54,11 @@ class Health extends Component {
             this.setState({waiterUp: r.status})
         )
     }
-
+    checkTab() {
+        fetch(`${config.SERVER_URL}/tabStatus`).then((r) =>
+            this.setState({tabUp: r.status})
+        )
+    }
     checkingBilling() {
         fetch(`${config.SERVER_URL}/billingStatus`).then((r) =>
             this.setState({billingUp: r.status})

@@ -37,7 +37,7 @@ subprojects { project ->
 
         dependencies {
 
-            if (project.name=='tab'||project.name=='billing') {
+            if ((project.path.contains(':tab'))||project.path.contains(':billing')) {
                 compile "io.micronaut.configuration:kafka"
             }
 

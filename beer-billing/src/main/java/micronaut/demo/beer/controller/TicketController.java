@@ -116,7 +116,7 @@ public class TicketController implements TicketOperations<CostSync> {
 
 	@Post("/addBeer/{customerName}")
 	public HttpResponse<BeerItem> addBeerToCustomerBill(@Body BeerItem beer, @NotBlank String customerName) {
-        System.out.println("Servig a beer i Ticket app");
+        System.out.println("Serving a beer in Ticket app");
 
 		Optional<Ticket> t = getTicketForUser(customerName);
 		Ticket ticket = t.isPresent() ?  t.get() : new Ticket();

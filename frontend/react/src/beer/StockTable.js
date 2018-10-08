@@ -5,7 +5,7 @@ import {array} from 'prop-types'
 import { faUser, faSignOutAlt,faMoneyBill,faServer,faClone } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const StockTable = ({stocks,customerName,logout, amount, updateAmount,buy,active,stockUp,billingUp,waiterUp,currentBill}) => <div>
+const StockTable = ({stocks,customerName,logout, amount, updateAmount,buy,active,stockUp,billingUp,waiterUp,currentBill,tabUp}) => <div>
 <nav className="navbar navbar-expand-lg navbar-light bg-light">
 
     <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
