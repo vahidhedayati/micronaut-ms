@@ -62,6 +62,33 @@ public class BootStrap implements ApplicationEventListener<ServerStartupEvent> {
             i++;
 
             /**
+             * Generate the costs for those beer names
+             * by default all getting priced at business end at 0.99 per bottle and 0.85 per pint
+             * So this is internal prices - not what is sold to the client..
+             *
+             * Selling on the markup is set by the beer-billing applications..
+             *
+             * Changes to the markup in billing will then reprice the percentage charged on top of these prices
+             *
+             */
+            Maybe<BeerCost> currentCost = Flowable.fromPublisher(
+                    getCosts()
+                            .find(eq("name",beer))
+                            .limit(1)
+            ).firstElement();
+            //Cost the beers differently per beer type
+            BeerCost beerCostObject = new BeerCost(beer, 0.99+i,0.85+i);
+            currentCost.switchIfEmpty(
+                    Single.fromPublisher(getCosts().insertOne(beerCostObject))
+                            .map(success -> beerCostObject)
+            ).subscribe(beerCost-> System.out.println("BeerCost "+beerCost));
+            //.subscribe(System.out::println);
+            //
+            BeerCost cost = currentCost.blockingGet();
+            System.out.println("BeerCost =  ::::: "+cost);
+
+
+            /**
              * Generate actual beer object
              * by default all getting a 1000 bottles and 2 barrels of larger
              */
@@ -80,33 +107,10 @@ public class BootStrap implements ApplicationEventListener<ServerStartupEvent> {
 
             ).subscribe(System.out::println);
 
-            BeerStock stock = currentBeer.blockingGet();
-            System.out.println("We actually have :::::::: "+stock.getName());
+            //BeerStock stock = currentBeer.blockingGet();
+            //System.out.println("We actually have :::::::: "+stock.getName());
 
 
-            /**
-             * Generate the costs for those beer names
-             * by default all getting priced at business end at 0.99 per bottle and 0.85 per pint
-             * So this is internal prices - not what is sold to the client..
-             *
-             * Selling on the markup is set by the beer-billing applications..
-             *
-             * Changes to the markup in billing will then reprice the percentage charged on top of these prices
-             *
-             */
-            Maybe<BeerCost> currentCost = Flowable.fromPublisher(
-                    getCosts()
-                            .find(eq("name",beer))
-                            .limit(1)
-            ).firstElement();
-            //Cost the beers differently per beer type
-            BeerCost beerCostObject = new BeerCost(beer, 0.99*i,0.85*i);
-            currentCost.switchIfEmpty(
-                    Single.fromPublisher(getCosts().insertOne(beerCostObject))
-                            .map(success -> beerCostObject)
-            ).subscribe(System.out::println);
-            BeerCost cost = currentCost.blockingGet();
-            System.out.println("We actually have :::::::: "+cost.getName()+" "+cost.getPintCost());
 
         }
     }

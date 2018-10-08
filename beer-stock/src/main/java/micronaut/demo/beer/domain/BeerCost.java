@@ -11,7 +11,7 @@ public class BeerCost {
 	private double pintCost;
 
 
-	/*
+
 	@JsonCreator
 	public BeerCost(@JsonProperty("name") String name,
                     @JsonProperty("cost") double bottleCost, @JsonProperty("cost") double pintCost) {
@@ -20,15 +20,16 @@ public class BeerCost {
 		this.pintCost = pintCost;
 
 	}
-	*/
+
 
 	public BeerCost() {}
 
-	public BeerCost(String name, double bottleCost, double pintCost) {
+	/*public BeerCost(String name, double bottleCost, double pintCost) {
 		this.name = name;
 		this.bottleCost = bottleCost;
 		this.pintCost = pintCost;
 	}
+	*/
 
 
 	public void setName(String name) {

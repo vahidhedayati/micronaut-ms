@@ -58,3 +58,32 @@ Videos
 
 To launch the site call http://localhost:3000 on the browser
 
+
+
+Notes
+
+Removing DBs CLI, this is on Linux using mongo client:
+```
+mongo
+MongoDB shell version v3.4.7
+connecting to: mongodb://127.0.0.1:27017
+MongoDB server version: 3.4.7
+Server has startup warnings: 
+> show dbs;
+admin                 0.000GB
+beerbilling           0.000GB
+beerstock             0.000GB
+billing               0.000GB
+local                 0.000GB
+petclinic             0.000GB
+sett-todolist-master  0.000GB
+> use beerstock
+switched to db beerstock
+> db.dropDatabase();
+{ "dropped" : "beerstock", "ok" : 1 }
+
+```
+
+The commands are `mongo` followed by `use {dbName};` then `db.dropDatabase()`
+
+I had to do this to beerStock due to how it was done - recreate test etc 

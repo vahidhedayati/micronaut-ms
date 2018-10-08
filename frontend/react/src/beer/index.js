@@ -71,7 +71,7 @@ class Beer extends Component {
             headers: {'Content-Type': 'application/json'}
         }).then((r) => {
             r.status === 200 ?
-            this.setState({bought: true}):
+            this.loadStocks():
             this.setState({bought: false})
     }).then((json) => console.log(json))
     .catch(e => console.warn(e));
@@ -101,11 +101,14 @@ class Beer extends Component {
 
     }
 
-    componentDidMount() {
+    loadStocks() {
         fetch(`${config.SERVER_URL}/stock`)
-      .then(r => r.json())
-      .then(json => this.setState({stocks: json}))
-      .catch(e => console.warn(e))
+            .then(r => r.json())
+    .then(json => this.setState({stocks: json}))
+    .catch(e => console.warn(e))
+    }
+    componentDidMount() {
+       this.loadStocks();
     }
 
 
