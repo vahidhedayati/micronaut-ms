@@ -68,6 +68,7 @@ Videos
 
 3. [Basic react front end walk through](https://www.youtube.com/watch?v=ashTfrjSCFA)
 
+4. [Final video kafka running on tab application](https://www.youtube.com/watch?v=yNUJ27pe8ng)
 
 To launch the site call http://localhost:3000 on the browser
 
