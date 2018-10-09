@@ -7,13 +7,24 @@ import io.reactivex.Single;
 import micronaut.demo.beer.model.BeerItem;
 import micronaut.demo.beer.model.Ticket;
 
+import javax.inject.Inject;
 import javax.validation.constraints.NotBlank;
 @Client(id = "billing", path = "/billing")
 @Fallback
 public class NoCostTicket implements TicketControllerClient{
+
+    private final TabControllerClient tabControllerClient;
+
+    @Inject
+    NoCostTicket(TabControllerClient tabControllerClient) {
+        this.tabControllerClient=tabControllerClient;
+    }
+
     @Override
     public HttpResponse<BeerItem> addBeerToCustomerBill(BeerItem beer, @NotBlank String customerName) {
-        return HttpResponse.ok();
+        System.out.println("We are imitating a fall back but actually doing a call to another app");
+        return tabControllerClient.addBeerToCustomerBill(beer, customerName);
+        //return HttpResponse.ok();
     }
 
     @Override

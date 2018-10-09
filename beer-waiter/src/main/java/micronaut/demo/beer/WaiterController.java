@@ -10,6 +10,7 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.validation.Validated;
 import io.reactivex.Single;
+import micronaut.demo.beer.client.TabControllerClient;
 import micronaut.demo.beer.client.TicketControllerClient;
 import micronaut.demo.beer.model.BeerItem;
 import micronaut.demo.beer.model.Ticket;
@@ -26,11 +27,13 @@ public class WaiterController {
     TicketControllerClient ticketControllerClient;
 
     final EmbeddedServer embeddedServer;
+    private final TabControllerClient tabControllerClient;
 
     @Inject
-    public WaiterController(TicketControllerClient ticketControllerClient,EmbeddedServer embeddedServer) {
+    public WaiterController(TicketControllerClient ticketControllerClient,EmbeddedServer embeddedServer,TabControllerClient tabControllerClient) {
         this.ticketControllerClient = ticketControllerClient;
         this.embeddedServer=embeddedServer;
+        this.tabControllerClient=tabControllerClient;
     }
 
     @Get("/status")
@@ -50,6 +53,17 @@ public class WaiterController {
         Beer beer = new Beer(beerName,BeerSize.valueOf(beerType),Integer.valueOf(amount),Double.valueOf(price));
         BeerItem beerItem = new BeerItem(beerName,BeerSize.valueOf(beerType),Integer.valueOf(amount),Double.valueOf(price));
         ticketControllerClient.addBeerToCustomerBill(beerItem, customerName);
+        return Single.just(beer);
+    }
+
+
+    @Post(uri = "/tab", consumes = MediaType.APPLICATION_JSON)
+    //@NewSpan
+    public Single<Beer> tabBeerToCustomer(@JsonProperty("customerName")  String customerName, @JsonProperty("beerName")  String beerName, @JsonProperty("beerType")  String beerType, @JsonProperty("amount")  String amount, @JsonProperty("price")  String price) {
+        System.out.println("Waiter controller tabbing a beer"+customerName+" >>> bt"+beerType);
+        Beer beer = new Beer(beerName,BeerSize.valueOf(beerType),Integer.valueOf(amount),Double.valueOf(price));
+        BeerItem beerItem = new BeerItem(beerName,BeerSize.valueOf(beerType),Integer.valueOf(amount),Double.valueOf(price));
+        tabControllerClient.addBeerToCustomerBill(beerItem, customerName);
         return Single.just(beer);
     }
     

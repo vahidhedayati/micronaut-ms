@@ -25,6 +25,7 @@ public class TabFallBack implements TabControllerClient {
 
     @Override
     public HttpResponse<BeerItem> addBeerToCustomerBill(BeerItem beer, @NotBlank String customerName) {
+        System.out.println("This is the fall back of the fallback - of no NoCostTicket calling TabControllerClient which failed and fell here");
         return HttpResponse.ok();
     }
 }

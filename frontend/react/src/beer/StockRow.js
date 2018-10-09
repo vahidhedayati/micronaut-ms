@@ -15,10 +15,15 @@ function noBottles() {
         </p>
     )
 }
-function showBottle(stock,buy,active,billingUp,waiterUp,amount,tabUp) {
+function showBottle(stock,buy,active,billingUp,waiterUp,amount,tabUp,tab) {
     return (<p className="card-text">
             Bottles Available: {stock.bottles} -
             Per Bottle cost: {stock.bottleCost}
+            <div className="btn btn-success">
+        No validation
+<input type="text"   className={active ===stock.name+"_BOTTLE"? 'btn btn-danger readonly': "btn btn-primary readonly"}
+    name="beerType" data-bname={stock.name} data-price={stock.bottleCost} defaultValue="BOTTLE" onClick={buy}/>
+    </div>
     {amount ?
         (waiterUp === 200 ?
         (billingUp===200 ?
@@ -26,7 +31,10 @@ function showBottle(stock,buy,active,billingUp,waiterUp,amount,tabUp) {
         <input type="text"   className={active ===stock.name+"_BOTTLE"? 'btn btn-danger readonly': "btn btn-primary readonly"}
         name="beerType" data-bname={stock.name} data-price={stock.bottleCost} defaultValue="BOTTLE" onClick={buy}/>
     :<span className='btn btn-danger'>Out of stock</span>)
-    :<span className='btn btn-danger'>Billing system is offline</span>)
+    :(tabUp==200
+        ?<input type="text"   className={active ===stock.name+"_BOTTLE"? 'btn btn-danger readonly': "btn btn-success readonly"}
+        name="beerType" data-bname={stock.name} data-price={stock.bottleCost} defaultValue="BOTTLE" onClick={tab}/>
+        :<span className='btn btn-danger'>Billing/Tab system is offline</span>))
     :<span className='btn btn-danger'>Waiter is busy or not around - please try again</span>)
     :<span className='btn btn-danger'>Type in numeric amount required</span>}
 
@@ -40,7 +48,7 @@ function noPints() {
         </p>
     )
 }
-function showPints(stock,buy,active,billingUp,waiterUp,amount,tabUp) {
+function showPints(stock,buy,active,billingUp,waiterUp,amount,tabUp,tab) {
     return (
         <p className="card-text">
         Pints Available: {stock.availablePints} -
@@ -52,7 +60,10 @@ function showPints(stock,buy,active,billingUp,waiterUp,amount,tabUp) {
             <input type="text"  className={(active ===stock.name+"_PINT") ? 'btn btn-danger readonly': 'btn btn-primary readonly'}
             name="beerType"  data-bname={stock.name}  data-price={stock.pintCost} defaultValue="PINT" onClick={buy}/>
     :<span className='btn btn-danger'>Out of stock</span>)
-    :<span className='btn btn-danger'>Billing system is offline</span>)
+    :(tabUp==200
+        ?(<input type="text"   className={active ===stock.name+"_BOTTLE"? 'btn btn-danger readonly': "btn btn-success readonly"}
+        name="beerType" data-bname={stock.name} data-price={stock.bottleCost} defaultValue="BOTTLE" onClick={tab}/>)
+    :<span className='btn btn-danger'>Billing/Tab system is offline -----> {tabUp}</span>))
     :<span className='btn btn-danger'>Waiter is busy or not around - please try again</span>)
     :<span className='btn btn-danger'>Type in numeric amount required</span>}
     <br/>
@@ -64,13 +75,16 @@ function showPints(stock,buy,active,billingUp,waiterUp,amount,tabUp) {
             <input type="text" className={active ===stock.name+"_HALF_PINT" ? 'btn btn-danger readonly': 'btn btn-primary readonly'}
              name="beerType"  data-bname={stock.name} data-price={stock.halfPintCost} defaultValue="HALF_PINT" onClick={buy}/>
         :<span className='btn btn-danger'>Out of stock</span>)
-        :<span className='btn btn-danger'>Billing system is offline</span>)
+        :(tabUp==200
+            ?(<input type="text"   className={active ===stock.name+"_BOTTLE"? 'btn btn-danger readonly': "btn btn-success readonly"}
+            name="beerType" data-bname={stock.name} data-price={stock.bottleCost} defaultValue="BOTTLE" onClick={buy}/>)
+        :<span className='btn btn-danger'>Billing/Tab system is offline</span>))
         :<span className='btn btn-danger'>Waiter is busy or not around - please try again</span>)
         :<span className='btn btn-danger'>Type in numeric amount required</span>}
         </p>
     )
 }
-const StockRow = ({stock, customerName, amount, updateAmount,buy,active,stockUp,billingUp,waiterUp,tabUp}) => <div className="card vendor-card">
+const StockRow = ({stock, customerName, amount, updateAmount,buy,active,stockUp,billingUp,waiterUp,tabUp,tab}) => <div className="card vendor-card">
 
 
   <div className="card-body">
@@ -79,8 +93,8 @@ const StockRow = ({stock, customerName, amount, updateAmount,buy,active,stockUp,
     { (stock.bottles > 1 || stock.availablePints > 1 ) ?
         amount ? amount : amountForm(amount, updateAmount)
         : '' }
-    { stock.bottles > 1 ?  showBottle(stock,buy,active,billingUp,waiterUp,amount,tabUp) : noBottles() }
-    { stock.availablePints > 1 ?  showPints(stock,buy,active,billingUp,waiterUp,amount,tabUp) : noPints() }
+    { stock.bottles > 1 ?  showBottle(stock,buy,active,billingUp,waiterUp,amount,tabUp,tab) : noBottles() }
+    { stock.availablePints > 1 ?  showPints(stock,buy,active,billingUp,waiterUp,amount,tabUp,tab) : noPints() }
   </div>
 
 </div>

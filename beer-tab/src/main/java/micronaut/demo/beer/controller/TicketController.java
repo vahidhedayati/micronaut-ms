@@ -42,7 +42,7 @@ public class TicketController {
      */
     @Post("/addBeer/{customerName}")
     public HttpResponse<BeerItem> addBeerToCustomerBill(@Body BeerItem beer, @NotBlank String customerName) {
-        System.out.println("Serving a beer on tab app");
+        System.out.println("Serving a beer on tab app ");
         eventPublisher.beerRegisteredEvent(customerName,beer);
         return HttpResponse.ok(beer);
     }

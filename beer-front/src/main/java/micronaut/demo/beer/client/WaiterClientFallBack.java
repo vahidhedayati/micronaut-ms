@@ -31,6 +31,11 @@ public class WaiterClientFallBack implements WaiterControllerClient {
         return Single.just(new Beer());
     }
 
+    @Post(uri = "/tab", consumes = MediaType.APPLICATION_JSON)
+    public Single<Beer> tabBeerToCustomer(@Body("customerName")  String customerName, @Body("beerName")  String beerName, @Body("beerType")  String beerType, @Body("amount")  String amount, @Body("price")  String price) {
+        return Single.just(new Beer());
+    }
+
     @Get("/bill/{customerName}")
     public Single<CustomerBill> bill(@NotBlank String customerName) {
         return Single.just(new CustomerBill());

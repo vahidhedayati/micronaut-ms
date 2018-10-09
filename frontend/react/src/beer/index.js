@@ -46,6 +46,19 @@ class Beer extends Component {
         console.log("WE GOT THIS tabUp"+ val);
         this.setState({tabUp: val});
     }
+    tabBeer(customerName,beerType,amount,price,beerName) {
+        fetch(`${config.SERVER_URL}/tab`, {
+            method: 'POST',
+            body: JSON.stringify({customerName:customerName, beerName:beerName, beerType: beerType,amount:amount,price:price}),
+            headers: {'Content-Type': 'application/json'}
+        }).then((r) => {
+            r.status === 200 ?
+            this.addBeer(beerType,beerName,amount,customerName):
+            this.setState({bought: false})
+    }).then((json) => console.log(json))
+    .catch(e => console.warn(e));
+
+    }
 
     serveBeer(customerName,beerType,amount,price,beerName) {
         fetch(`${config.SERVER_URL}/beer`, {
@@ -109,6 +122,11 @@ class Beer extends Component {
         //fetch(config.SERVER_URL+'/beer/'+customerName+"/"+beerType+"/"+amount);
         this.serveBeer(this.state.customerName,event.target.value,this.state.amount,event.target.attributes['data-price'].value,event.target.attributes['data-bname'].value);
     }
+    tab(event) {
+        this.setState({ active: event.target.attributes['data-bname'].value+"_"+event.target.value});
+        this.setState({ beerType: event.target.value });
+        this.tabBeer(this.state.customerName,event.target.value,this.state.amount,event.target.attributes['data-price'].value,event.target.attributes['data-bname'].value);
+    }
     updateAmount(event) {
         this.setState({ amount: event.target.value });
     }
@@ -136,15 +154,15 @@ class Beer extends Component {
       const updateName = this.updateName.bind(this);
       const updateAmount = this.updateAmount.bind(this);
       const buy = this.buy.bind(this);
-
+      const tab = this.tab.bind(this);
       const logout = this.logout.bind(this);
       // const handleNameChange= this.handleNameChange.bind(this);
       //const cc = checkStock2.bind(this);
       const {customerName,stocks,amount,bought,active,waiterUp,stockUp,billingUp,currentBill,tabUp} = this.state;
 
-    const getWaiter = this.getWaiter.bind(this);
-    const getBilling = this.getBilling.bind(this);
-    const getStock = this.getStock.bind(this);
+      const getWaiter = this.getWaiter.bind(this);
+      const getBilling = this.getBilling.bind(this);
+      const getStock = this.getStock.bind(this);
       const  loadBill= this.loadBill.bind(this);
       const getTab = this.getTab.bind(this);
 
@@ -162,6 +180,7 @@ class Beer extends Component {
               <Col>
               <StockTable stocks={stocks} customerName={customerName} logout={logout} amount={amount}
               updateAmount={updateAmount} buy={buy} active={active} waiterUp={waiterUp} stockUp={stockUp} billingUp={billingUp} tabUp={tabUp}
+          tab={tab}
           currentBill={currentBill} />
           </Col>
           </Row>
@@ -179,7 +198,7 @@ class Beer extends Component {
               </Row>
               <Row>
               <Col>
-                    <br/><br/><Health sendWaiter={getWaiter} sendBilling={getBilling}  sendStock={getStock} getTab={getTab} />
+                    <br/><br/><Health sendWaiter={getWaiter} sendBilling={getBilling}  sendStock={getStock} sendTab={getTab} />
               </Col>
               </Row>
           </Row>

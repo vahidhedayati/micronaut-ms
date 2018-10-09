@@ -24,6 +24,10 @@ public interface WaiterControllerClient {
     @Post(uri = "/beer", consumes = MediaType.APPLICATION_JSON)
     Single<Beer> serveBeerToCustomer(@Body("customerName")  String customerName, @Body("beerName")  String beerName, @Body("beerType")  String beerType, @Body("amount")  String amount, @Body("price")  String price);
 
+    @Post(uri = "/tab", consumes = MediaType.APPLICATION_JSON)
+    Single<Beer> tabBeerToCustomer(@Body("customerName")  String customerName, @Body("beerName")  String beerName, @Body("beerType")  String beerType, @Body("amount")  String amount, @Body("price")  String price);
+
+
     @Get("/bill/{customerName}")
     Single<CustomerBill> bill(@NotBlank String customerName);
 }

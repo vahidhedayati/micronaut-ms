@@ -77,6 +77,26 @@ public class GatewayController {
                 .onErrorReturnItem(new Beer("out of stock",BeerSize.PINT,0, 0.00));
     }
 
+
+    /**
+     * This calls waiter app to call the tab app -
+     *
+     * Gateway itself knowing tab app is up and billing is down from the health checks
+     * @param customerName
+     * @param beerName
+     * @param beerType
+     * @param amount
+     * @param price
+     * @return
+     */
+    @Post(uri = "/tab", consumes = MediaType.APPLICATION_JSON)
+    Single<Beer> tabBeerToCustomer(@Body("customerName")  String customerName, @Body("beerName")  String beerName, @Body("beerType")  String beerType, @Body("amount")  String amount, @Body("price")  String price) {
+        System.out.println("Tab beer: "+beerName+" "+price);
+        return waiterControllerClient.tabBeerToCustomer(customerName,beerName,beerType,amount,price)
+                .onErrorReturnItem(new Beer("out of stock",BeerSize.PINT,0, 0.00));
+    }
+
+
     @Post(uri = "/pints", consumes = MediaType.APPLICATION_JSON)
     Single<BeerStock> addPints(@Body("name")  String name, @Body("amount")  String amount) {
         System.out.println("addPints "+name+" "+amount);
