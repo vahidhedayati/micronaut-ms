@@ -73,8 +73,37 @@ Videos
 To launch the site call http://localhost:3000 on the browser
 
 
+Event sourcing microservices
+----
 
-Notes
+During research and talking with fellow work colleagues, it became aparent that to have a resilient microservice 
+architecture in place event sourcing is an important part of ensuring if things were to go down you would have a way of replaying
+transactions back in sequence sent.
+
+In this demo project there are 2 kafka applications `beer-billing` which listens to kafka events and `beer-tab` 
+which is a very primitive micro service application, it simply mimicks a beer sale which it publishes as an event to `kafka`
+
+When `beer-billing` comes alive the kafka stream awaiting is replayed and upon boot those transactions are added back in to mongo db.
+
+
+In this example there is 1 instance of `mongodb` it would probably be safe to have 2 mongo clusters 1 for `billing` 
+which all instances of `billing` that start point to and another mongo cluster for the `beer-stock` application. 
+which all instances of stock point to the this cluster.
+
+Useful links:
+
+https://ghost.kontena.io/event-sourcing-microservices-with-kafka/
+
+https://medium.com/lcom-techblog/scalable-microservices-with-event-sourcing-and-redis-6aa245574db0
+
+https://dzone.com/articles/event-driven-microservices-patterns
+
+https://blog.couchbase.com/event-sourcing-event-logging-an-essential-microservice-pattern/  
+
+
+
+Mongo DB Notes
+--------
 
 Removing DBs CLI, this is on Linux using mongo client:
 ```
