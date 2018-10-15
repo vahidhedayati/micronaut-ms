@@ -70,6 +70,7 @@ public class WaiterController {
     @Get("/bill/{customerName}")
     //@NewSpan
     public Single<CustomerBill> bill(@NotBlank String customerName) {
+        System.out.println("billing>>> "+customerName);
         Single<Ticket> singleTicket = ticketControllerClient.bill(customerName);
         Single<Double> singleCost= ticketControllerClient.cost(customerName);
         Map<String,CustomerBill> map2=new LinkedHashMap<>();

@@ -46,7 +46,7 @@ public class TicketController implements TicketOperations<CostSync> {
 	final EmbeddedServer embeddedServer;
 	final CostCalculator beerCostCalculator;
 	final BillService billService;
-	private final CostSyncConfiguration configuration;
+	private final CostSyncConfiguration costSyncConfiguration;
 	private MongoClient mongoClient;
 
 	@Override
@@ -79,31 +79,31 @@ public class TicketController implements TicketOperations<CostSync> {
 
 
 	@Override
-	public Single<CostSync> save(@Valid CostSync pet) {
-		return find(pet.getUsername())
+	public Single<CostSync> save(@Valid CostSync costSync) {
+		return find(costSync.getUsername())
 				.switchIfEmpty(
-						Single.fromPublisher(getCollection().insertOne(pet))
-								.map(success -> pet)
+						Single.fromPublisher(getCollection().insertOne(costSync))
+								.map(success -> costSync)
 				);
 
 	}
 
 	private MongoCollection<CostSync> getCollection() {
 		return mongoClient
-				.getDatabase(configuration.getDatabaseName())
-				.getCollection(configuration.getCollectionName(), CostSync.class);
+				.getDatabase(costSyncConfiguration.getDatabaseName())
+				.getCollection(costSyncConfiguration.getCollectionName(), CostSync.class);
 	}
 
 
 	@Inject
 	public TicketController(EmbeddedServer embeddedServer,
 							CostCalculator beerCostCalculator,
-							BillService billService, CostSyncConfiguration configuration,
+							BillService billService,  CostSyncConfiguration costSyncConfiguration,
 							MongoClient mongoClient) {
 		this.embeddedServer = embeddedServer;
 		this.beerCostCalculator = beerCostCalculator;
 		this.billService = billService;
-		this.configuration = configuration;
+		this.costSyncConfiguration = costSyncConfiguration;
 		this.mongoClient = mongoClient;
 	}
 
@@ -147,6 +147,11 @@ public class TicketController implements TicketOperations<CostSync> {
         return Single.just(ticket);
     }
 
+	/**
+	 * This appends or updates to the users total on mongodb
+	 * @param customerName
+	 * @return
+	 */
 	@Get("/cost/{customerName}")
 	@NewSpan("cost")
 	public Single<Double> cost(@NotBlank String customerName) {
@@ -154,47 +159,22 @@ public class TicketController implements TicketOperations<CostSync> {
 		double cost = t.isPresent() ? beerCostCalculator.calculateCost(t.get()) :
 										  beerCostCalculator.calculateCost(getNoCostTicket());
 
-
-	//	Flowable.fromPublisher(getCollection().updateOne(Filters.eq("username", customerName), Updates.set("cost", cost))).blockingFirst();
-
-		//We save the cost to MongoDB
-
-
-
-		//We save the cost to MongoDB
-
-		//Single<CostSync> found = find(customerName).toSingle();
-		Double currentCost = Double.valueOf(cost);
+		Double currentCost = cost;
 		CostSync found = find(customerName).blockingGet();
-		if (found!=null) {
-			//System.out.println("WE Have from Mongo "+found.toString());
-			//found.subscribe(query -> query.getCost() );
-			Flowable.fromPublisher(getCollection().updateOne(Filters.eq("username", customerName), Updates.set("cost", cost))).blockingFirst();
+		if (found!=null && found.getCost()!=null) {
+			if (cost>0) {
+				Flowable.fromPublisher(getCollection().updateOne(Filters.eq("username", customerName), Updates.set("cost", cost))).blockingFirst();
+			}
 			currentCost=found.getCost();
 		} else {
-			save(new CostSync(customerName,cost));
+			CostSync syncSingle = save(new CostSync(customerName,cost)).blockingGet();
+			if (syncSingle!=null && syncSingle.getCost()!=null) {
+				currentCost=syncSingle.getCost();
+			}
 		}
-
 		return Single.just(currentCost);
-
-
-
-
-		/*
-		Maybe<CostSync> found = find(customerName);
-		if (found!=null) {
-			Flowable.fromPublisher(getCollection().updateOne(Filters.eq("username", customerName), Updates.set("cost", cost))).blockingFirst();
-			return found.toSingle().map(m-> m.getCost());
-		} else {
-			CostSync current = new CostSync(customerName,cost);
-			Flowable.fromPublisher(getCollection().insertOne(current)).map(success -> current);
-			return  Single.just(cost);
-		}
-		*/
-
-
-
 	}
+
 
 	@Get(uri = "/users", produces = MediaType.TEXT_EVENT_STREAM)
 	Publisher<Event<String>> users() {

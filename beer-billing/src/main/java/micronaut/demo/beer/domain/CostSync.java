@@ -8,39 +8,34 @@ public class CostSync {
     private String username;
     private Double cost;
 
-
-    @JsonCreator
-    public CostSync(@JsonProperty("username") String username, @JsonProperty("cost") Double cost) {
+    public CostSync(String username, Double cost) {
         this.username = username;
         this.cost = cost;
     }
 
-    public CostSync() {
-    }
-
-    protected void setUsername(String u) {
-        this.username = u;
-    }
-
-    protected void setCost(String u) {
-        this.cost = Double.valueOf(u);
-    }
-    protected void setCost(Double u) { this.cost = u; }
-
-    public String getUsername() {
-        return this.username;
-    }
-
-    public Double getCost(){
-       return this.cost;
-    }
-
+    public CostSync() {}
 
     @Override
     public String toString() {
         return "CostSync{" +
-                "username='" + username + '\'' +
-                ", cost=" + cost +
+                "username='" + this.username + '\'' +
+                ", cost=" + this.cost +
                 '}';
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Double getCost() {
+        return cost;
+    }
+
+    public void setCost(Double cost) {
+        this.cost = cost;
     }
 }
