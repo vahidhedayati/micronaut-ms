@@ -1,6 +1,7 @@
     package micronaut.demo.beer.service;
 
     import io.micronaut.context.annotation.Value;
+    import micronaut.demo.beer.model.BeerItem;
     import micronaut.demo.beer.model.Ticket;
 
     public class BeerCostCalculator implements CostCalculator {
@@ -31,6 +32,12 @@
 
         public double calculateCost(Ticket ticket) {
             double costNoVat = allBeersCost(ticket);
+            double costVat = costNoVat*vat/100;
+            return costNoVat+costVat;
+        }
+
+        public double calculateBeerCost(BeerItem beerItem) {
+            double costNoVat = beerItem.getPrice()*beerItem.getPrice();
             double costVat = costNoVat*vat/100;
             return costNoVat+costVat;
         }

@@ -124,15 +124,22 @@ public class TicketController implements TicketOperations<CostSync> {
 
 		billService.createBillForCostumer(customerName, ticket);
 
+		Double currentCost =  beerCostCalculator.calculateBeerCost(beer);
 
-		/**
-		 * Above 4 lines disabled and are executed in TransactionRegisteredListener with Kafka
-		 * Disabled to use mongodb shared across multiple beer-billing instances
-		 */
-		//eventPublisher.beerRegisteredEvent(customerName,beer);
 
-		// Alternative method not used not completed in Listener file either
-	 	// eventPublisher.transactionRegisteredEvent(customerName, createEvent(ticket, customerName));
+		CostSync found = find(customerName).blockingGet();
+		if (found!=null && found.getCost()!=null) {
+			Double cost=found.getCost();
+			System.out.println("1 Cost "+cost);
+			if (currentCost>0) {
+				Flowable.fromPublisher(getCollection().updateOne(Filters.eq("username", customerName), Updates.set("cost", cost+currentCost))).blockingFirst();
+				currentCost+=cost;
+			}
+		} else {
+			System.out.println("2 Cost "+currentCost);
+			save(new CostSync(customerName,currentCost)).blockingGet();
+
+		}
 
 		return HttpResponse.ok(beer);
 	}
@@ -158,22 +165,10 @@ public class TicketController implements TicketOperations<CostSync> {
 		Optional<Ticket> t = getTicketForUser(customerName);
 		double cost = t.isPresent() ? beerCostCalculator.calculateCost(t.get()) :
 										  beerCostCalculator.calculateCost(getNoCostTicket());
-
 		Double currentCost = cost;
 		CostSync found = find(customerName).blockingGet();
 		if (found!=null && found.getCost()!=null) {
 			currentCost=found.getCost();
-			if (cost>0) {
-				Flowable.fromPublisher(getCollection().updateOne(Filters.eq("username", customerName), Updates.set("cost", cost+currentCost))).blockingFirst();
-				currentCost=cost+found.getCost();
-			}
-		} else {
-			save(new CostSync(customerName,cost));
-
-			//CostSync syncSingle = save(new CostSync(customerName,cost)).blockingGet();
-			//if (syncSingle!=null && syncSingle.getCost()!=null) {
-			//	currentCost=syncSingle.getCost();
-			//}
 		}
 		return Single.just(currentCost);
 	}
@@ -198,6 +193,10 @@ public class TicketController implements TicketOperations<CostSync> {
 		Ticket noCost = new Ticket();
 		noCost.add(smallBeer);
 		return noCost;
+	}
+	@ContinueSpan
+	private BeerItem getNoBeerItem() {
+		return new BeerItem("Korona", BeerSize.PINT,0,0.00);
 	}
 
 	@ContinueSpan
