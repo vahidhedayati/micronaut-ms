@@ -58,19 +58,16 @@ cd micronaut-ms
 
 
 
-Videos
+Youtube
 ----
 
+1. [Full walk through](https://www.youtube.com/watch?v=KMwfR5bK4iw)
 
-1. [Basic run through and fallover explained](https://www.youtube.com/watch?v=J_U7tuWy-C0)
+I think as per comment on the youtube, I need to look more closely at the rates, @14:14 I was talking about hiked rates 
+and wonder when I was trying to chase different prices when going through `beer-tab` was due to fallback markup rates of [8.16%](https://github.com/vahidhedayati/micronaut-ms/blob/master/beer-stock/src/main/java/micronaut/demo/beer/client/MarkupClientFallBack.java#L18)
 
-2. [Fallback from app1 to fallback of 2nd microservice failure](https://www.youtube.com/watch?v=ppTBVbVi-rQ)
 
-3. [Basic react front end walk through](https://www.youtube.com/watch?v=ashTfrjSCFA)
-
-4. [Final video kafka running on tab application](https://www.youtube.com/watch?v=yNUJ27pe8ng)
-
-To launch the site call http://localhost:3000 on the browser
+> To launch the site call http://localhost:3000 on the browser
 
 
 Event sourcing microservices
