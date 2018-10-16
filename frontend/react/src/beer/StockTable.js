@@ -14,7 +14,7 @@ const StockTable = ({stocks,customerName,logout, amount, updateAmount,buy,active
         <FontAwesomeIcon color="#6DB65B" icon={faUser} /> {customerName}
     </li>
 <li className="nav-item">
-    <FontAwesomeIcon color="blue" icon={faMoneyBill} /> {currentBill.cost}
+    <FontAwesomeIcon color="blue" icon={faMoneyBill} /> {Number(currentBill.cost).toFixed(2)}
 
     <FontAwesomeIcon color="orange" icon={faServer} /> {currentBill.deskId}
     <FontAwesomeIcon color="cyan" icon={faClone} /> {currentBill.waiterId}

@@ -18,29 +18,22 @@ function noBottles() {
 function showBottle(stock,buy,active,billingUp,waiterUp,amount,tabUp,tab) {
     return (<p className="card-text">
             Bottles Available: {stock.bottles} -
-            Per Bottle cost: {stock.bottleCost}
-            <div className="btn btn-success">
-        No validation
-<input type="text"   className={active ===stock.name+"_BOTTLE"? 'btn btn-danger readonly': "btn btn-primary readonly"}
+            Per Bottle cost: { Number(stock.bottleCost).toFixed(2)} (exc vat)
+<hr/>
+            <div className="btn btn-xs btn-success ">
+        Waiter decides:<br/>
+<input type="text"   className={active ===stock.name+"_BOTTLE"? 'btn btn-xs btn-danger readonly': "btn btn-xs btn-primary readonly"}
     name="beerType" data-bname={stock.name} data-price={stock.bottleCost} defaultValue="BOTTLE" onClick={buy}/>
     </div>
-    {amount ?
-        (waiterUp === 200 ?
-        (billingUp===200 ?
-            (amount < stock.bottles ?
-        <input type="text"   className={active ===stock.name+"_BOTTLE"? 'btn btn-danger readonly': "btn btn-primary readonly"}
-        name="beerType" data-bname={stock.name} data-price={stock.bottleCost} defaultValue="BOTTLE" onClick={buy}/>
-    :<span className='btn btn-danger'>Out of stock</span>)
-    :(tabUp==200
-        ?<input type="text"   className={active ===stock.name+"_BOTTLE"? 'btn btn-danger readonly': "btn btn-success readonly"}
-        name="beerType" data-bname={stock.name} data-price={stock.bottleCost} defaultValue="BOTTLE" onClick={tab}/>
-        :<span className='btn btn-danger'>Billing/Tab system is offline</span>))
-    :<span className='btn btn-danger'>Waiter is busy or not around - please try again</span>)
-    :<span className='btn btn-danger'>Type in numeric amount required</span>}
-
-            </p>
-            )
+    <hr/>
+    <div className="btn btn-xs btn-warning ">
+        Nested checks decide on tab/billing<br/>
+        {loadDynamic('BOTTLE',stock.bottleCost,amount,waiterUp,billingUp,stock,buy,tab,active,tabUp) }
+    </div>
+    </p>
+    )
 }
+
 function noPints() {
     return (
         <p className="card-text">
@@ -48,41 +41,45 @@ function noPints() {
         </p>
     )
 }
+
+
 function showPints(stock,buy,active,billingUp,waiterUp,amount,tabUp,tab) {
     return (
         <p className="card-text">
         Pints Available: {stock.availablePints} -
-        Pint cost:  {stock.pintCost}
-    {amount ?
-        (waiterUp === 200 ?
-        (billingUp===200 ?
-            (amount < stock.availablePints ?
-            <input type="text"  className={(active ===stock.name+"_PINT") ? 'btn btn-danger readonly': 'btn btn-primary readonly'}
-            name="beerType"  data-bname={stock.name}  data-price={stock.pintCost} defaultValue="PINT" onClick={buy}/>
-    :<span className='btn btn-danger'>Out of stock</span>)
-    :(tabUp==200
-        ?(<input type="text"   className={active ===stock.name+"_BOTTLE"? 'btn btn-danger readonly': "btn btn-success readonly"}
-        name="beerType" data-bname={stock.name} data-price={stock.bottleCost} defaultValue="BOTTLE" onClick={tab}/>)
-    :<span className='btn btn-danger'>Billing/Tab system is offline -----> {tabUp}</span>))
-    :<span className='btn btn-danger'>Waiter is busy or not around - please try again</span>)
-    :<span className='btn btn-danger'>Type in numeric amount required</span>}
-    <br/>
-        Half Pint cost:  {stock.halfPintCost}
-        {amount ?
-            (waiterUp === 200 ?
-            (billingUp===200 ?
-                (amount < stock.availablePints*2 ?
-            <input type="text" className={active ===stock.name+"_HALF_PINT" ? 'btn btn-danger readonly': 'btn btn-primary readonly'}
-             name="beerType"  data-bname={stock.name} data-price={stock.halfPintCost} defaultValue="HALF_PINT" onClick={buy}/>
-        :<span className='btn btn-danger'>Out of stock</span>)
-        :(tabUp==200
-            ?(<input type="text"   className={active ===stock.name+"_BOTTLE"? 'btn btn-danger readonly': "btn btn-success readonly"}
-            name="beerType" data-bname={stock.name} data-price={stock.bottleCost} defaultValue="BOTTLE" onClick={buy}/>)
-        :<span className='btn btn-danger'>Billing/Tab system is offline</span>))
-        :<span className='btn btn-danger'>Waiter is busy or not around - please try again</span>)
-        :<span className='btn btn-danger'>Type in numeric amount required</span>}
+        Pint cost:  {Number(stock.pintCost).toFixed(2)} (exc vat)
+        {loadDynamic('PINT',stock.pintCost,amount,waiterUp,billingUp,stock,buy,tab,active,tabUp) }
+        <br/>
+        Half Pint cost:  {Number(stock.halfPintCost).toFixed(2)} (exc vat)
+        {loadDynamic('HALF_PINT',stock.halfPintCost,amount,waiterUp,billingUp,stock,buy,tab,active,tabUp) }
         </p>
     )
+}
+
+function loadDynamic(currentValue,cost,amount,waiterUp,billingUp,stock,buy,tab,active,tabUp) {
+    return (
+        <span>
+        {amount ?
+                (waiterUp === 200 ?
+                    (billingUp===200 ?
+                        (amount < stock.bottles ?
+                        <input type="text"   className={active ===stock.name+"_"+currentValue? 'btn btn-xs btn-danger readonly': "btn btn-xs btn-primary readonly"}
+    name="beerType" data-bname={stock.name} data-price={cost} defaultValue={currentValue} onClick={buy}/>
+:<span className='btn btn-xs btn-danger'>Out of stock</span>
+)
+:(tabUp==200
+        ?<input type="text"   className={active ===stock.name+"_"+currentValue? 'btn btn-xs btn-danger readonly': "btn btn-xs btn-success readonly"}
+    name="beerType" data-bname={stock.name} data-price={cost} defaultValue={currentValue} onClick={tab}/>
+:<span className='btn btn-xs btn-danger'>Billing/Tab system is offline</span>
+)
+)
+:<span className='btn  btn-xs btn-danger'>Waiter is busy or not around - please try again</span>
+)
+:<span className='btn  btn-xs btn-danger'>Type in numeric amount required</span>
+}
+</span>
+)
+
 }
 const StockRow = ({stock, customerName, amount, updateAmount,buy,active,stockUp,billingUp,waiterUp,tabUp,tab}) => <div className="card vendor-card">
 
