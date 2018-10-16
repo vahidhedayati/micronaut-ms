@@ -162,15 +162,18 @@ public class TicketController implements TicketOperations<CostSync> {
 		Double currentCost = cost;
 		CostSync found = find(customerName).blockingGet();
 		if (found!=null && found.getCost()!=null) {
-			if (cost>0) {
-				Flowable.fromPublisher(getCollection().updateOne(Filters.eq("username", customerName), Updates.set("cost", cost))).blockingFirst();
-			}
 			currentCost=found.getCost();
-		} else {
-			CostSync syncSingle = save(new CostSync(customerName,cost)).blockingGet();
-			if (syncSingle!=null && syncSingle.getCost()!=null) {
-				currentCost=syncSingle.getCost();
+			if (cost>0) {
+				Flowable.fromPublisher(getCollection().updateOne(Filters.eq("username", customerName), Updates.set("cost", cost+currentCost))).blockingFirst();
+				currentCost=cost+found.getCost();
 			}
+		} else {
+			save(new CostSync(customerName,cost));
+
+			//CostSync syncSingle = save(new CostSync(customerName,cost)).blockingGet();
+			//if (syncSingle!=null && syncSingle.getCost()!=null) {
+			//	currentCost=syncSingle.getCost();
+			//}
 		}
 		return Single.just(currentCost);
 	}

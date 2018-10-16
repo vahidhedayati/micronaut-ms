@@ -7,6 +7,7 @@ import io.micronaut.configuration.kafka.annotation.Topic;
 import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.tracing.annotation.SpanTag;
 import lombok.RequiredArgsConstructor;
+import micronaut.demo.beer.client.TicketControllerClient;
 import micronaut.demo.beer.model.BeerItem;
 import micronaut.demo.beer.model.Ticket;
 import micronaut.demo.beer.service.BillService;
@@ -18,20 +19,23 @@ import java.util.Optional;
 public class TransactionRegisteredListener {
 
     final BillService billService;
+    final TicketControllerClient ticketControllerClient;
 
-
-    public TransactionRegisteredListener(BillService billService) {
+    public TransactionRegisteredListener(BillService billService,TicketControllerClient ticketControllerClient) {
         this.billService = billService;
+        this.ticketControllerClient=ticketControllerClient;
     }
 
     @Topic("beer-registered")
     void  beerRegisteredEvent(@KafkaKey String username, BeerItem beer) {
         System.out.println(username+"---------------------------WE GOT TICKET beer-registered \n\n\n\n\n");
+
         Optional<Ticket> t = getTicketForUser(username);
         Ticket ticket = t.isPresent() ?  t.get() : new Ticket();
         ticket.add(beer);
         System.out.println(username+"---------------------------WE GOT TICKET "+ticket+" billing \n\n\n\n\n");
-        billService.createBillForCostumer(username, ticket);
+        //billService.createBillForCostumer(username, ticket);
+        ticketControllerClient.cost(username);
     }
 
 
