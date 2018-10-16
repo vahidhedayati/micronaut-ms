@@ -37,7 +37,7 @@
         }
 
         public double calculateBeerCost(BeerItem beerItem) {
-            double costNoVat = beerItem.getPrice()*beerItem.getPrice();
+            double costNoVat = beerItem.getPrice()*beerItem.getAmount();
             double costVat = costNoVat*vat/100;
             return costNoVat+costVat;
         }

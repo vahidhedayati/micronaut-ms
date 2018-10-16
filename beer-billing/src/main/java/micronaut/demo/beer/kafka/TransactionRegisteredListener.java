@@ -74,7 +74,7 @@ public class TransactionRegisteredListener implements TicketOperations<CostSync>
         CostSync found = find(customerName).blockingGet();
         if (found!=null && found.getCost()!=null) {
             Double cost=found.getCost();
-            System.out.println("1 Cost "+cost);
+            System.out.println("1 Cost "+cost+" vs "+currentCost);
             if (currentCost>0) {
                 Flowable.fromPublisher(getCollection().updateOne(Filters.eq("username", customerName), Updates.set("cost", cost+currentCost))).blockingFirst();
                 currentCost+=cost;
