@@ -61,6 +61,11 @@ subprojects { project ->
 
                 //compile "com.ecwid.consul:consul-api:1.4.1"
 
+               // compile "io.micronaut:micronaut-tracing"
+                runtime 'io.zipkin.brave:brave-instrumentation-http:5.4.2'
+                runtime 'io.zipkin.reporter2:zipkin-reporter:2.7.9'
+                compile 'io.opentracing.brave:brave-opentracing:0.33.3'
+
                 // https://mvnrepository.com/artifact/org.projectlombok/lombok
                 compile group: 'org.projectlombok', name: 'lombok', version: '1.18.2'
             }

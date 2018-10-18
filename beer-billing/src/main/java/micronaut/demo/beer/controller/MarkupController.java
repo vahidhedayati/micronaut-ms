@@ -8,6 +8,7 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.runtime.server.EmbeddedServer;
+import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.validation.Validated;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
@@ -48,11 +49,13 @@ public class MarkupController implements MarkupOperations<BeerMarkup> {
     */
 
     @Get("/status")
+    @ContinueSpan
     public HttpResponse status() {
         return HttpResponse.ok();
     }
 
     @Get("/")
+    @ContinueSpan
     @Override
     public Single<BeerMarkup> baseCosts() {
         return  Flowable.fromPublisher(getCollection().find(eq("name","defaultMarkup"))).firstElement().toSingle();

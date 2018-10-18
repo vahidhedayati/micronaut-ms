@@ -9,6 +9,11 @@ dependencies {
     implementation "io.micronaut:http-server-netty"
     compileOnly "io.micronaut:inject-java"
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
+
+    runtimeOnly 'io.zipkin.brave:brave-instrumentation-http:5.4.2'
+    runtimeOnly 'io.zipkin.reporter2:zipkin-reporter:2.7.9'
+    implementation 'io.opentracing.brave:brave-opentracing:0.33.3'
+
     testImplementation "junit:junit:4.12"
     testImplementation "io.micronaut:inject-java"
     testImplementation "org.hamcrest:hamcrest-all:1.3"

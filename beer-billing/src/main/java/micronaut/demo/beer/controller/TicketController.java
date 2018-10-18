@@ -109,12 +109,14 @@ public class TicketController implements TicketOperations<CostSync> {
 
 	
 	@Get("/reset/{customerName}")
+	@ContinueSpan
     public HttpResponse resetCustomerBill(@NotBlank String customerName) {
 			billService.createBillForCostumer(customerName, null);
     	    return HttpResponse.ok();
     }
 
 	@Post("/addBeer/{customerName}")
+	@ContinueSpan
 	public HttpResponse<BeerItem> addBeerToCustomerBill(@Body BeerItem beer, @NotBlank String customerName) {
         System.out.println("Serving a beer in Ticket app");
 
@@ -146,7 +148,7 @@ public class TicketController implements TicketOperations<CostSync> {
 
 
 	@Get("/bill/{customerName}")
-	@NewSpan("bill")
+	@ContinueSpan
     public Single<Ticket> bill(@NotBlank String customerName) {
 			Optional<Ticket> t = getTicketForUser(customerName);
     		Ticket ticket = t.isPresent() ?  t.get() : new Ticket();
@@ -160,7 +162,7 @@ public class TicketController implements TicketOperations<CostSync> {
 	 * @return
 	 */
 	@Get("/cost/{customerName}")
-	@NewSpan("cost")
+	@ContinueSpan
 	public Single<Double> cost(@NotBlank String customerName) {
 		Optional<Ticket> t = getTicketForUser(customerName);
 		double cost = t.isPresent() ? beerCostCalculator.calculateCost(t.get()) :

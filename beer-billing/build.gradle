@@ -9,6 +9,9 @@ dependencies {
     implementation "io.micronaut:http-server-netty"
     implementation "io.micronaut.configuration:kafka"
 
+    runtimeOnly 'io.zipkin.brave:brave-instrumentation-http:5.4.2'
+    runtimeOnly 'io.zipkin.reporter2:zipkin-reporter:2.7.9'
+    implementation 'io.opentracing.brave:brave-opentracing:0.33.3'
     compileOnly "io.micronaut:inject-java"
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
     testImplementation "junit:junit:4.12"
