@@ -5,6 +5,8 @@ import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.tracing.annotation.ContinueSpan;
+import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.validation.Validated;
 import micronaut.demo.beer.kafka.EventPublisher;
 import micronaut.demo.beer.model.BeerItem;
@@ -25,6 +27,7 @@ public class TicketController {
 
 
     @Get("/status")
+    @NewSpan("tab-status")
     public HttpResponse status() {
         return HttpResponse.ok();
     }
@@ -41,6 +44,8 @@ public class TicketController {
      * @return
      */
     @Post("/addBeer/{customerName}")
+    @NewSpan("tab-addBeer")
+    @ContinueSpan
     public HttpResponse<BeerItem> addBeerToCustomerBill(@Body BeerItem beer, @NotBlank String customerName) {
         System.out.println("Serving a beer on tab app ");
         eventPublisher.beerRegisteredEvent(customerName,beer);

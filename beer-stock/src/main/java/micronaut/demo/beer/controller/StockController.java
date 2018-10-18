@@ -11,6 +11,7 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.runtime.server.EmbeddedServer;
+import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.validation.Validated;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
@@ -76,6 +77,7 @@ public class StockController implements StockOperations<BeerStock> {
      */
 
     @Get("/")
+    @ContinueSpan
     @Override
     public  Single<StockEntity> list() {
 
@@ -119,12 +121,14 @@ public class StockController implements StockOperations<BeerStock> {
 
 
     @Get("/status")
+    @ContinueSpan
     public HttpResponse status() {
         return HttpResponse.ok();
     }
 
 
     @Get("/lookup/{name}")
+    @ContinueSpan
     @Override
     public Maybe<BeerStock> find(String name) {
         return Flowable.fromPublisher(
@@ -135,6 +139,7 @@ public class StockController implements StockOperations<BeerStock> {
     }
 
     @Post(uri = "/pints", consumes = MediaType.APPLICATION_JSON)
+    @ContinueSpan
     public Single<Maybe> pints(@JsonProperty("name") String name,@JsonProperty("amount") String amount) {
         System.out.println("Adding pints to the backend");
         Maybe<BeerStock> found = find(name);
@@ -153,6 +158,7 @@ public class StockController implements StockOperations<BeerStock> {
     }
 
     @Post(uri = "/halfPints", consumes = MediaType.APPLICATION_JSON)
+    @ContinueSpan
     public Single<Maybe> halfPints(@JsonProperty("name") String name,@JsonProperty("amount") String amount) {
         System.out.println("Adding halfPints to the backend");
         Maybe<BeerStock> found = find(name);
@@ -171,6 +177,7 @@ public class StockController implements StockOperations<BeerStock> {
     }
 
     @Post(uri = "/bottles", consumes = MediaType.APPLICATION_JSON)
+    @ContinueSpan
     public Single<Maybe> bottles(@JsonProperty("name") String name,@JsonProperty("amount") String amount) {
         System.out.println("Adding bottles to the backend");
         Maybe<BeerStock> found = find(name);

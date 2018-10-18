@@ -9,6 +9,7 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.tracing.annotation.ContinueSpan;
+import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.validation.Validated;
 import io.reactivex.Single;
 import micronaut.demo.beer.client.TabControllerClient;
@@ -38,6 +39,7 @@ public class WaiterController {
     }
 
     @Get("/status")
+    @NewSpan("waiter-status")
     @ContinueSpan
     public HttpResponse status() {
         return HttpResponse.ok();
@@ -49,7 +51,7 @@ public class WaiterController {
      */
 
     @Post(uri = "/beer", consumes = MediaType.APPLICATION_JSON)
-    //@NewSpan
+    @NewSpan("waiter-serving-beer")
     @ContinueSpan
     public Single<Beer> serveBeerToCustomer(@JsonProperty("customerName")  String customerName, @JsonProperty("beerName")  String beerName, @JsonProperty("beerType")  String beerType, @JsonProperty("amount")  String amount, @JsonProperty("price")  String price) {
         System.out.println("Waiter controller serving a beer"+customerName+" >>> bt"+beerType);
@@ -62,6 +64,7 @@ public class WaiterController {
 
     @Post(uri = "/tab", consumes = MediaType.APPLICATION_JSON)
     //@NewSpan
+    @NewSpan("waiter-tabbing-beer")
     @ContinueSpan
     public Single<Beer> tabBeerToCustomer(@JsonProperty("customerName")  String customerName, @JsonProperty("beerName")  String beerName, @JsonProperty("beerType")  String beerType, @JsonProperty("amount")  String amount, @JsonProperty("price")  String price) {
         System.out.println("Waiter controller tabbing a beer"+customerName+" >>> bt"+beerType);
@@ -72,6 +75,7 @@ public class WaiterController {
     }
     
     @Get("/bill/{customerName}")
+    @NewSpan("waiter-billing-beer")
     //@NewSpan
     @ContinueSpan
     public Single<CustomerBill> bill(@NotBlank String customerName) {

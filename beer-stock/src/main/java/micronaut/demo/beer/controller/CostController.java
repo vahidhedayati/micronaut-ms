@@ -4,6 +4,7 @@ import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.runtime.server.EmbeddedServer;
+import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.validation.Validated;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
@@ -34,6 +35,7 @@ public class CostController implements CostOperations<BeerCost> {
     }
 
     @Override
+    @ContinueSpan
     public Single<List<BeerCost>> list() {
         return Flowable.fromPublisher(
                 getCollection()
