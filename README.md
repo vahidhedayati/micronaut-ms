@@ -22,6 +22,15 @@ Please ensure you are also running kafka
 -> sudo /opt/kafka/bin/kafka-topics.sh --list --zookeeper localhost:2181
 ```
 
+Please ensure you are running [zipkin](https://github.com/openzipkin/zipkin)
+---
+```
+curl -sSL https://zipkin.io/quickstart.sh | bash -s
+java -jar zipkin.jar
+# or
+docker run -d -p 9411:9411 openzipkin/zipkin
+
+```
 
 
 
@@ -68,6 +77,11 @@ and wonder when I was trying to chase different prices when going through `beer-
 
 
 > To launch the site call http://localhost:3000 on the browser
+
+> To view consul goto http://localhost:8500
+
+> To view tracing via zipkin goto http://localhost:4100
+
 
 
 Event sourcing microservices
