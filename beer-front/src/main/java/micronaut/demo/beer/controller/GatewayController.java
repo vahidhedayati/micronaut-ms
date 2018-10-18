@@ -1,5 +1,6 @@
 package micronaut.demo.beer.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
@@ -18,6 +19,8 @@ import javax.validation.constraints.NotBlank;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller("/")
 public class GatewayController {
@@ -45,12 +48,33 @@ public class GatewayController {
         return HttpResponse.redirect(URI.create("/index.html"));
     }
 
+    @Get("/appStatus")
+    @ContinueSpan
+    public Single appStatus() {
+        String returnString="";
+        Map<String,HttpResponse> responses = new HashMap<String,HttpResponse>();
+        responses.put("billing", markupControllerClient.status());
+        responses.put("waiter", waiterControllerClient.status());
+        responses.put("stock", stockControllerClient.status());
+        responses.put("tab", tabControllerClient.status());
 
-   @Get("/stock")
+        try {
+            ObjectMapper mapperObj = new ObjectMapper();
+            returnString=mapperObj.writeValueAsString(responses);
+        }catch(Exception e){
+
+        }
+        //"{billing:"+ markupControllerClient.status()+",waiter:"+ waiterControllerClient.status()+", stock:"+stockControllerClient.status()+", tab:"+tabControllerClient.status()+" }";
+        return Single.just(responses);
+    }
+
+
+    @Get("/stock")
    @ContinueSpan
    public Single stock() {
         return stockControllerClient.list().onErrorReturnItem(Collections.emptyList());
    }
+
 
     @Get("/billingStatus")
     @ContinueSpan

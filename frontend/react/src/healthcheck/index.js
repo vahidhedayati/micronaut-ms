@@ -21,16 +21,20 @@ class Health extends Component {
 
 
     componentDidMount() {
+        this.checkApps();
+        /*
         this.checkingBilling();
         this.checkStock1();
         this.checkingWaiter();
         this.checkTab();
+        */
+
         setTimeout(function() { //Start the timer
             this.props.sendWaiter(this.state.waiterUp);
             this.props.sendBilling(this.state.billingUp);
             this.props.sendStock(this.state.stockUp);
             this.props.sendTab(this.state.tabUp);
-        }.bind(this), 1000)
+        }.bind(this), 2000)
     }
 
     render() {
@@ -43,25 +47,46 @@ class Health extends Component {
         this.setState({stockUp: state})
     }
 
+    checkApps() {
+        console.log("Checking stock 1--------------------------------------")
+        fetch(`${config.SERVER_URL}/appStatus`)
+            .then(r => r.json())
+            .then(json =>
+
+                this.setState({stockUp: json.stock.status==='OK' ? 200 :400,
+                        waiterUp: json.waiter.status==='OK'? 200 :400,
+                        tabUp: json.tab.status==='OK'? 200 :400,
+                        billingUp: json.billing.status==='OK'? 200 :400
+                })
+
+            )
+            .catch(e => console.warn(e))
+    }
+
+
     checkStock1() {
         console.log("Checking stock 1--------------------------------------")
         fetch(`${config.SERVER_URL}/stockStatus`).then((r) =>
-            this.setState({stockUp: r.status})
+           // this.setState({stockUp: r.status})
+        console.log(r.status)
         )
     }
     checkingWaiter() {
         fetch(`${config.SERVER_URL}/waiterStatus`).then((r) =>
-            this.setState({waiterUp: r.status})
+         //   this.setState({waiterUp: r.status})
+            console.log(r.status)
         )
     }
     checkTab() {
         fetch(`${config.SERVER_URL}/tabStatus`).then((r) =>
-            this.setState({tabUp: r.status})
+            //this.setState({tabUp: r.status})
+        console.log(r.status)
         )
     }
     checkingBilling() {
         fetch(`${config.SERVER_URL}/billingStatus`).then((r) =>
-            this.setState({billingUp: r.status})
+            //this.setState({billingUp: r.status})
+        console.log(r.status)
         )
     }
     stockUp(res) {
