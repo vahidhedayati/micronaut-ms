@@ -4,11 +4,6 @@ import com.ecwid.consul.v1.ConsulClient;
 import com.ecwid.consul.v1.QueryParams;
 import com.ecwid.consul.v1.Response;
 import com.ecwid.consul.v1.health.model.HealthService;
-import com.ecwid.consul.v1.kv.model.GetValue;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.micronaut.core.util.StringUtils;
-
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
@@ -163,37 +158,6 @@ public class GatewayController {
 
 
     }
-
-    /*
-    private void addInstancesToList(List<ServiceInstance> instances, String serviceId,
-                                    QueryParams queryParams) {
-
-        String aclToken = properties.getAclToken();
-        Response<List<HealthService>> services;
-        if (StringUtils.hasText(aclToken)) {
-            services = client.getHealthServices(serviceId,
-                    getTag(serviceId),
-                    this.properties.isQueryPassing(), queryParams, aclToken);
-        }
-        else {
-            services = client.getHealthServices(serviceId,
-                    getTag(serviceId),
-                    this.properties.isQueryPassing(), queryParams);
-        }
-        for (HealthService service : services.getValue()) {
-            String host = findHost(service);
-
-            Map<String,String> metadata = getMetadata(service);
-            boolean secure = false;
-            if(metadata.containsKey("secure")) {
-                secure = Boolean.parseBoolean(metadata.get("secure"));
-            }
-            instances.add(new DefaultServiceInstance(serviceId, host, service
-                    .getService().getPort(), secure, metadata));
-        }
-    }
-
-    */
 
 
     /**
