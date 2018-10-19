@@ -8,6 +8,7 @@ dependencies {
     implementation "io.micronaut:runtime"
     implementation "io.micronaut:http-client"
     implementation "io.micronaut:http-server-netty"
+    implementation "com.ecwid.consul:consul-api:1.4.1"
     compileOnly "io.micronaut:inject-java"
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
     testImplementation "junit:junit:4.12"

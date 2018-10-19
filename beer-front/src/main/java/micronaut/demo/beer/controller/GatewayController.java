@@ -1,10 +1,19 @@
 package micronaut.demo.beer.controller;
 
+import com.ecwid.consul.v1.ConsulClient;
+import com.ecwid.consul.v1.QueryParams;
+import com.ecwid.consul.v1.Response;
+import com.ecwid.consul.v1.health.model.HealthService;
+import com.ecwid.consul.v1.kv.model.GetValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.micronaut.core.util.StringUtils;
+
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.tracing.annotation.ContinueSpan;
+import io.micronaut.tracing.annotation.SpanTag;
 import io.reactivex.Single;
 import micronaut.demo.beer.client.MarkupControllerClient;
 import micronaut.demo.beer.client.StockControllerClient;
@@ -17,10 +26,8 @@ import micronaut.demo.beer.model.CustomerBill;
 
 import javax.validation.constraints.NotBlank;
 import java.net.URI;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
 
 @Controller("/")
 public class GatewayController {
@@ -48,15 +55,101 @@ public class GatewayController {
         return HttpResponse.redirect(URI.create("/index.html"));
     }
 
+
+    /**
+     * The long and short -
+     *
+     * After I enabled zipkin tracing noticed lots of
+     * https://docs.micronaut.io/latest/api/io/micronaut/discovery/consul/client/v1/ConsulOperations.html#pass-java.lang.String-
+     *
+     * Flooding zipkin
+     *
+     * The reason was all the internal single checks triggered from reactjs site through gateway - each single request checking
+     * each http client on the backend and returning yes it was alive or no it was down -
+     *
+     * The 2nd attempt to reduce was to try to combine into 1 call
+     *
+     * Then finally I have decided rather than doing all of the check through http - the question is does something else already know this
+     * without all these checks ? the answer is yes  - consul does -
+     *
+     * So without all this overhead the check is simplified to work out if consul thinks each of those apps it dynamically finds
+     * are healthy or not ..
+     *
+     *
+     * I have been messing around quite a bit with attempting to make frontend aka reach behave differently
+     * "react to things going down" as they do on the backend live !
+     *
+     * I need to point out all you are about to do is actually add lots of additional overhead and not gain much -
+     * since something going wrong could be any millisecond in a second of a minute...
+     *
+     * Can you react quick enough within milliseconds ? you can but how much overhead for that ?
+     *
+     * Websockets where all apps connect to client aka react frontend via websockets could be one way -
+     * Again you need to measure if at least 1 healthy node exists -
+     *
+     * Is this now not the same check that consul has internally built within it ?
+     *
+     * Perhaps the most cost effective would be something like below consul with a single socket on gateway that is a
+     * Flowable repeated task and checks consul and responds via websocket if something goes wrong.
+     *
+     * This goes back to the are you quick enough to capture it as the user clicks it----
+     *
+     *
+     * In the end ----------- you are far better off forgetting about this way and attempting to build your application
+     * with through fall back technology to be able to react accordingly regardless of state of backend -
+     * Well as long as minimal is up and running.
+     *
+     * I will go into this in a further example of selling beer -- my arms are getting stronger -
+     *
+     * @return
+     */
+
     @Get("/appStatus")
     @ContinueSpan
     public Single appStatus() {
-        String returnString="";
+
+        ConsulClient client = new ConsulClient("localhost");
+
+        //Get a total list of micro services appearing under consul
+        List<String> results = getAllConsulClients(client);
+        //Create a new array list
+        List<String> healthyNodesFound = new ArrayList<>();
+
+        //Go through each found apps ensure there is at least 1 healthy node if so add it into found health check
+        for (String node:results) {
+            Response<List<HealthService>> healthyServices = client.getHealthServices(node, true, QueryParams.DEFAULT);
+            HealthService healthServices = healthyServices.getValue().get(0);
+            if (healthServices!=null) {
+                System.out.println ("=== "+node+" > "+healthServices.getService().getAddress()+" "+healthServices.getService().getPort());
+                healthyNodesFound.add(node);
+            }
+        }
+
+        Map<String,Integer> responses = new HashMap<String,Integer>();
+        responses.put("billing",healthyNodesFound.contains("billing")?200:400);
+        responses.put("waiter",healthyNodesFound.contains("waiter")?200:400);
+        responses.put("stock", healthyNodesFound.contains("stock")?200:400);
+        responses.put("tab", healthyNodesFound.contains("tab")?200:400);
+
+        return Single.just(responses);
+
+
+        /**
+         * This below is old attempt to collect all http responses - not efficient as above
+         */
+
+
+        /*
         Map<String,HttpResponse> responses = new HashMap<String,HttpResponse>();
         responses.put("billing", markupControllerClient.status());
         responses.put("waiter", waiterControllerClient.status());
         responses.put("stock", stockControllerClient.status());
         responses.put("tab", tabControllerClient.status());
+        */
+
+
+        /*
+        //String returnString="";
 
         try {
             ObjectMapper mapperObj = new ObjectMapper();
@@ -65,7 +158,58 @@ public class GatewayController {
 
         }
         //"{billing:"+ markupControllerClient.status()+",waiter:"+ waiterControllerClient.status()+", stock:"+stockControllerClient.status()+", tab:"+tabControllerClient.status()+" }";
-        return Single.just(responses);
+
+        */
+
+
+    }
+
+    /*
+    private void addInstancesToList(List<ServiceInstance> instances, String serviceId,
+                                    QueryParams queryParams) {
+
+        String aclToken = properties.getAclToken();
+        Response<List<HealthService>> services;
+        if (StringUtils.hasText(aclToken)) {
+            services = client.getHealthServices(serviceId,
+                    getTag(serviceId),
+                    this.properties.isQueryPassing(), queryParams, aclToken);
+        }
+        else {
+            services = client.getHealthServices(serviceId,
+                    getTag(serviceId),
+                    this.properties.isQueryPassing(), queryParams);
+        }
+        for (HealthService service : services.getValue()) {
+            String host = findHost(service);
+
+            Map<String,String> metadata = getMetadata(service);
+            boolean secure = false;
+            if(metadata.containsKey("secure")) {
+                secure = Boolean.parseBoolean(metadata.get("secure"));
+            }
+            instances.add(new DefaultServiceInstance(serviceId, host, service
+                    .getService().getPort(), secure, metadata));
+        }
+    }
+
+    */
+
+
+    /**
+     * This collects a string array list of all / any microservices registered on consul host above
+     * @param client
+     * @return
+     */
+    public List<String> getAllConsulClients(ConsulClient client) {
+        List<String> instances = new ArrayList<>();
+
+        Response<Map<String, List<String>>> services = client
+                .getCatalogServices(QueryParams.DEFAULT);
+        for (String serviceId : services.getValue().keySet()) {
+            instances.add(serviceId);
+        }
+        return instances;
     }
 
 
@@ -75,6 +219,13 @@ public class GatewayController {
         return stockControllerClient.list().onErrorReturnItem(Collections.emptyList());
    }
 
+
+    /**
+     * Below checks are ignored now - appStatus above checks consul
+     * @return
+     */
+
+   /*
 
     @Get("/billingStatus")
     @ContinueSpan
@@ -100,10 +251,12 @@ public class GatewayController {
         return tabControllerClient.status();
     }
 
+    */
+
 
     @Post(uri = "/beer", consumes = MediaType.APPLICATION_JSON)
     @ContinueSpan
-    Single<Beer> serveBeerToCustomer(@Body("customerName")  String customerName, @Body("beerName")  String beerName, @Body("beerType")  String beerType, @Body("amount")  String amount, @Body("price")  String price) {
+    Single<Beer> serveBeerToCustomer(@SpanTag("gateway.beer") @Body("customerName")  String customerName, @Body("beerName")  String beerName, @Body("beerType")  String beerType, @Body("amount")  String amount, @Body("price")  String price) {
             System.out.println("Serving "+beerName+" "+price);
         return waiterControllerClient.serveBeerToCustomer(customerName,beerName,beerType,amount,price)
                 .onErrorReturnItem(new Beer("out of stock",BeerSize.PINT,0, 0.00));
@@ -123,7 +276,7 @@ public class GatewayController {
      */
     @Post(uri = "/tab", consumes = MediaType.APPLICATION_JSON)
     @ContinueSpan
-    Single<Beer> tabBeerToCustomer(@Body("customerName")  String customerName, @Body("beerName")  String beerName, @Body("beerType")  String beerType, @Body("amount")  String amount, @Body("price")  String price) {
+    Single<Beer> tabBeerToCustomer(@SpanTag("gateway.tab")  @Body("customerName")  String customerName, @Body("beerName")  String beerName, @Body("beerType")  String beerType, @Body("amount")  String amount, @Body("price")  String price) {
         System.out.println("Tab beer: "+beerName+" "+price);
         return waiterControllerClient.tabBeerToCustomer(customerName,beerName,beerType,amount,price)
                 .onErrorReturnItem(new Beer("out of stock",BeerSize.PINT,0, 0.00));
@@ -132,7 +285,7 @@ public class GatewayController {
 
     @Post(uri = "/pints", consumes = MediaType.APPLICATION_JSON)
     @ContinueSpan
-    Single<BeerStock> addPints(@Body("name")  String name, @Body("amount")  String amount) {
+    Single<BeerStock> addPints(@SpanTag("gateway.pints") @Body("name")  String name, @Body("amount")  String amount) {
         System.out.println("addPints "+name+" "+amount);
         return stockControllerClient.pints(name,amount)
                 .onErrorReturnItem(new BeerStock());
@@ -140,7 +293,7 @@ public class GatewayController {
 
     @Post(uri = "/halfPints", consumes = MediaType.APPLICATION_JSON)
     @ContinueSpan
-    Single<BeerStock> halfPints(@Body("name")  String name, @Body("amount")  String amount) {
+    Single<BeerStock> halfPints(@SpanTag("gateway.halfPints") @Body("name")  String name, @Body("amount")  String amount) {
         System.out.println("halfPints "+name+" "+amount);
         return stockControllerClient.halfPints(name,amount)
                 .onErrorReturnItem(new BeerStock());
@@ -148,7 +301,7 @@ public class GatewayController {
 
     @Post(uri = "/bottles", consumes = MediaType.APPLICATION_JSON)
     @ContinueSpan
-    Single<BeerStock> bottles(@Body("name")  String name, @Body("amount")  String amount) {
+    Single<BeerStock> bottles(@SpanTag("gateway.bottles") @Body("name")  String name, @Body("amount")  String amount) {
         System.out.println("bottles "+name+" "+amount);
         return stockControllerClient.bottles(name,amount)
                 .onErrorReturnItem(new BeerStock());
@@ -156,7 +309,7 @@ public class GatewayController {
 
     @Get("/bill/{customerName}")
     @ContinueSpan
-    public Single<CustomerBill> bill(@NotBlank String customerName) {
+    public Single<CustomerBill> bill(@SpanTag("gateway.bill") @NotBlank String customerName) {
         System.out.println("Getting bill for "+customerName+" "+new Date());
         return waiterControllerClient.bill(customerName)
                 .onErrorReturnItem(new CustomerBill());

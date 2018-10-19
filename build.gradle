@@ -40,6 +40,11 @@ subprojects { project ->
             if ((project.path.contains(':tab'))||project.path.contains(':billing')) {
                 compile "io.micronaut.configuration:kafka"
             }
+            if (project.name == 'gateway') {
+                compile "com.ecwid.consul:consul-api:1.4.1"
+
+            }
+
 
             if (project.name != 'something' && !project.path.contains(':someFunction') && !project.path.contains(':frontend')) {
                 // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
@@ -59,8 +64,7 @@ subprojects { project ->
 
                 compile "io.micronaut.configuration:mongo-reactive"
 
-                //compile "com.ecwid.consul:consul-api:1.4.1"
-
+                //
                // compile "io.micronaut:micronaut-tracing"
                 runtime 'io.zipkin.brave:brave-instrumentation-http:5.4.2'
                 runtime 'io.zipkin.reporter2:zipkin-reporter:2.7.9'

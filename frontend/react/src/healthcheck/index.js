@@ -53,10 +53,10 @@ class Health extends Component {
             .then(r => r.json())
             .then(json =>
 
-                this.setState({stockUp: json.stock.status==='OK' ? 200 :400,
-                        waiterUp: json.waiter.status==='OK'? 200 :400,
-                        tabUp: json.tab.status==='OK'? 200 :400,
-                        billingUp: json.billing.status==='OK'? 200 :400
+                this.setState({stockUp: json.stock,
+                        waiterUp: json.waiter,
+                        tabUp: json.tab,
+                        billingUp: json.billing
                 })
 
             )
