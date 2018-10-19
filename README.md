@@ -80,7 +80,7 @@ and wonder when I was trying to chase different prices when going through `beer-
 
 > To view consul goto http://localhost:8500
 
-> To view tracing via zipkin goto http://localhost:4100
+> To view tracing via zipkin goto http://localhost:9411
 
 
 
