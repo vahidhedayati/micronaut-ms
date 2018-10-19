@@ -141,6 +141,10 @@ public class StockController implements StockOperations<BeerStock> {
     @Post(uri = "/pints", consumes = MediaType.APPLICATION_JSON)
     @ContinueSpan
     public Single<Maybe> pints(@JsonProperty("name") String name,@JsonProperty("amount") String amount) {
+        return incPints(name,amount);
+    }
+
+    public Single<Maybe> incPints(String name,String amount) {
         System.out.println("Adding pints to the backend");
         Maybe<BeerStock> found = find(name);
         if (found!=null) {
@@ -160,6 +164,10 @@ public class StockController implements StockOperations<BeerStock> {
     @Post(uri = "/halfPints", consumes = MediaType.APPLICATION_JSON)
     @ContinueSpan
     public Single<Maybe> halfPints(@JsonProperty("name") String name,@JsonProperty("amount") String amount) {
+        return incHalfPints(name,amount);
+    }
+
+    public Single<Maybe> incHalfPints(String name,String amount) {
         System.out.println("Adding halfPints to the backend");
         Maybe<BeerStock> found = find(name);
         if (found!=null) {
@@ -179,6 +187,10 @@ public class StockController implements StockOperations<BeerStock> {
     @Post(uri = "/bottles", consumes = MediaType.APPLICATION_JSON)
     @ContinueSpan
     public Single<Maybe> bottles(@JsonProperty("name") String name,@JsonProperty("amount") String amount) {
+       return incBottles(name,amount);
+    }
+
+    public Single<Maybe> incBottles(String name,String amount) {
         System.out.println("Adding bottles to the backend");
         Maybe<BeerStock> found = find(name);
         if (found!=null) {

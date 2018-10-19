@@ -48,7 +48,7 @@ public class TicketController {
     @ContinueSpan
     public HttpResponse<BeerItem> addBeerToCustomerBill(@Body BeerItem beer, @NotBlank String customerName) {
         System.out.println("Serving a beer on tab app ");
-        eventPublisher.beerRegisteredEvent(customerName,beer);
+        eventPublisher.tabRegisteredEvent(customerName,beer);
         return HttpResponse.ok(beer);
     }
 

@@ -4,6 +4,7 @@ import logo from './images/logo.png'
 import About from "./about";
 import Stocks from "./stocks";
 import Beer from "./beer";
+import Beer2 from "./beer2";
 import './App.css'
 
 
@@ -37,6 +38,9 @@ class App extends Component {
                                     <Link to="/beer" className="nav-link">Buy a Beer</Link>
                                 </li>
                                 <li className='nav-item'>
+                                    <Link to="/beer2" className="nav-link">Simple Beer</Link>
+                                </li>
+                                 <li className='nav-item'>
                                     <Link to="/payBill" className="nav-link">Pay Bill</Link>
                                 </li>
                                 <li className='nav-item'>
@@ -49,6 +53,7 @@ class App extends Component {
                     <div className="container">
                         <Route exact path="/stocks" component={Stocks} />
                         <Route exact path="/beer" component={Beer}/>
+                        <Route exact path="/beer2" component={Beer2}/>
                         <Route exact path="/about" component={About}/>
                     </div>
                 </div>

@@ -10,7 +10,7 @@ public interface EventPublisher {
 
 
     @Topic("beer-registered")
-    void  beerRegisteredEvent(@KafkaKey String username, BeerItem beer);
+    void  tabRegisteredEvent(@KafkaKey String username, BeerItem beer);
 
 
 }

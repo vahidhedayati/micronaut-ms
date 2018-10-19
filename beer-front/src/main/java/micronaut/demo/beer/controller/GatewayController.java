@@ -4,16 +4,14 @@ import com.ecwid.consul.v1.ConsulClient;
 import com.ecwid.consul.v1.QueryParams;
 import com.ecwid.consul.v1.Response;
 import com.ecwid.consul.v1.health.model.HealthService;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.tracing.annotation.SpanTag;
 import io.reactivex.Single;
-import micronaut.demo.beer.client.MarkupControllerClient;
-import micronaut.demo.beer.client.StockControllerClient;
-import micronaut.demo.beer.client.TabControllerClient;
-import micronaut.demo.beer.client.WaiterControllerClient;
+import micronaut.demo.beer.client.*;
 import micronaut.demo.beer.enums.BeerSize;
 import micronaut.demo.beer.model.Beer;
 import micronaut.demo.beer.model.BeerStock;
@@ -30,15 +28,21 @@ public class GatewayController {
 
     private final StockControllerClient stockControllerClient;
     private final WaiterControllerClient waiterControllerClient;
+    private final StockControllerClient2 stockControllerClient2;
+    private final WaiterControllerClient2 waiterControllerClient2;
     private final MarkupControllerClient markupControllerClient;
     private final TabControllerClient tabControllerClient;
 
     GatewayController(StockControllerClient stockControllerClient,
                       WaiterControllerClient waiterControllerClient,
+                      StockControllerClient2 stockControllerClient2,
+                      WaiterControllerClient2 waiterControllerClient2,
                       MarkupControllerClient markupControllerClient,
                       TabControllerClient tabControllerClient) {
         this.stockControllerClient = stockControllerClient;
+        this.stockControllerClient2 = stockControllerClient2;
         this.waiterControllerClient=waiterControllerClient;
+        this.waiterControllerClient2 = waiterControllerClient2;
         this.markupControllerClient=markupControllerClient;
         this.tabControllerClient=tabControllerClient;
     }
@@ -218,6 +222,11 @@ public class GatewayController {
     */
 
 
+    /**
+     * -------------------------------------------------------------------------------
+     * All of below is access via beer/index.js on reactjs frontend
+     *
+     */
     @Post(uri = "/beer", consumes = MediaType.APPLICATION_JSON)
     @ContinueSpan
     Single<Beer> serveBeerToCustomer(@SpanTag("gateway.beer") @Body("customerName")  String customerName, @Body("beerName")  String beerName, @Body("beerType")  String beerType, @Body("amount")  String amount, @Body("price")  String price) {
@@ -278,6 +287,71 @@ public class GatewayController {
         return waiterControllerClient.bill(customerName)
                 .onErrorReturnItem(new CustomerBill());
     }
+
+
+
+
+
+    /**
+     *
+     *
+     * Below is going to use client2 files of each client which are engineered with better fallbacks
+     *
+     * this makes the whole health check redundant as such
+     *
+     * "so long as minimal is up and running"
+     * -------------------------------------------------------------------------------
+     * All of below is access via beer2/index.js on reactjs frontend
+     *
+     * We don't need a beertab action
+     *
+     */
+    @Post(uri = "/beer2", consumes = MediaType.APPLICATION_JSON)
+    @ContinueSpan
+    Single<Beer> serveNewBeerToCustomer(@JsonProperty("customerName") String customerName,
+                                        @JsonProperty("beerName") String beerName,
+                                        @JsonProperty("beerType") String beerType,
+                                        @JsonProperty("amount") String amount,
+                                        @JsonProperty("price") String price) {
+        System.out.println("Serving ---- beer2 "+beerName+" "+price);
+        return waiterControllerClient2.serveBeerToCustomer(customerName,beerName,beerType,amount,price)
+                .onErrorReturnItem(new Beer());
+    }
+
+
+
+    @Post(uri = "/pints2", consumes = MediaType.APPLICATION_JSON)
+    @ContinueSpan
+    Single<BeerStock> addNewPints(@JsonProperty("name") String name,@JsonProperty("amount") String amount) {
+        System.out.println("addPints 2 ----------------------------------- "+name+" "+amount);
+        return stockControllerClient2.pints(name,amount)
+                .onErrorReturnItem(new BeerStock());
+    }
+
+    @Post(uri = "/halfPints2", consumes = MediaType.APPLICATION_JSON)
+    @ContinueSpan
+    Single<BeerStock> newHalfPints(@JsonProperty("name") String name,@JsonProperty("amount") String amount) {
+        System.out.println("halfPints2 ---------------------  "+name+" "+amount);
+        return stockControllerClient2.halfPints(name,amount)
+                .onErrorReturnItem(new BeerStock());
+    }
+
+    @Post(uri = "/bottles2", consumes = MediaType.APPLICATION_JSON)
+    @ContinueSpan
+    Single<BeerStock> newBottles(@JsonProperty("name") String name,@JsonProperty("amount") String amount) {
+        System.out.println("bottles-----------------------------------2 "+name+" "+amount);
+        return stockControllerClient2.bottles(name,amount)
+                .onErrorReturnItem(new BeerStock());
+    }
+
+    @Get("/bill2/{customerName}")
+    @ContinueSpan
+    public Single<CustomerBill> newBill(@NotBlank String customerName) {
+        System.out.println("Getting bill for "+customerName+" "+new Date());
+        return waiterControllerClient2.bill(customerName)
+                .onErrorReturnItem(new CustomerBill());
+    }
+
 
 
 }
