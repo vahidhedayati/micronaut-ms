@@ -46,7 +46,7 @@ or if you have installed docker simply run `sudo docker run -p 8500:8500 consul`
 ```
 cd micronaut-ms
 
-./gradlew beer-stock:run beer-billing:run beer-tab:run  beer-waiter:run  beer-front:run --parallel
+./gradlew beer-stock:run beer-billing:run  beer-waiter:run  beer-front:run --parallel
 
 ```
 
@@ -56,20 +56,20 @@ cd micronaut-ms
 
 3. Then launch separate instances again
 ```
-./gradlew beer-waiter:run  beer-billing:run beer-stock:run beer-tab:run --parallel
+./gradlew beer-waiter:run  beer-billing:run beer-stock:run --parallel
 ```
 
 
 4. Then launch separate instances again (This now making 3 instances of billing / waiter / stock all running )
 ```
-./gradlew beer-waiter:run  beer-billing:run beer-stock:run beer-tab:run --parallel
+./gradlew beer-waiter:run  beer-billing:run beer-stock:run --parallel
 ```
 
 
 
 Youtube
 ----
-
+[Youtube full walkthrough of the beer solution covering full fall back](https://youtu.be/nkDdlu1cJEw)
 
 > To launch the site call http://localhost:3000 on the browser
 
