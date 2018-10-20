@@ -5,7 +5,7 @@ import {array} from 'prop-types'
 import { faUser, faSignOutAlt,faMoneyBill,faServer,faClone } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const StockTable = ({stocks,customerName,logout, amount, updateAmount,buy,active,stockUp,billingUp,waiterUp,currentBill,tabUp,tab}) => <div>
+const StockTable = ({stocks,customerName,logout, amount, updateAmount,buy,active,stockUp,billingUp,waiterUp,currentBill,tab}) => <div>
 <nav className="navbar navbar-expand-lg navbar-light bg-light">
 
     <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
@@ -30,7 +30,7 @@ logout</button>
 
 
 {stocks.map(v => <StockRow  key={v.name} stock={v} customerName={customerName}  amount={amount} updateAmount={updateAmount} buy={buy} active={active} waiterUp={waiterUp}
-stockUp={stockUp} billingUp={billingUp} tabUp={tabUp} tab={tab}/>)}
+stockUp={stockUp} billingUp={billingUp}  tab={tab}/>)}
 
 </div>
 

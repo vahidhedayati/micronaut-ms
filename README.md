@@ -70,14 +70,6 @@ cd micronaut-ms
 Youtube
 ----
 
-1. [Full walk through](https://www.youtube.com/watch?v=KMwfR5bK4iw)
-
-2. [Tracing / better fallback - capture all things happening](https://www.youtube.com/watch?v=Xi3l5X6Jtzw)
-
-
-I think as per comment on the youtube, I need to look more closely at the rates, @14:14 I was talking about hiked rates 
-and wonder when I was trying to chase different prices when going through `beer-tab` was due to fallback markup rates of [8.16%](https://github.com/vahidhedayati/micronaut-ms/blob/master/beer-stock/src/main/java/micronaut/demo/beer/client/MarkupClientFallBack.java#L18)
-
 
 > To launch the site call http://localhost:3000 on the browser
 

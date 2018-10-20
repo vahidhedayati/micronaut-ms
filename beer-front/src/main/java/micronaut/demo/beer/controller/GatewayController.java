@@ -30,21 +30,16 @@ public class GatewayController {
     private final WaiterControllerClient waiterControllerClient;
     private final StockControllerClient2 stockControllerClient2;
     private final WaiterControllerClient2 waiterControllerClient2;
-    private final MarkupControllerClient markupControllerClient;
-    private final TabControllerClient tabControllerClient;
 
     GatewayController(StockControllerClient stockControllerClient,
                       WaiterControllerClient waiterControllerClient,
                       StockControllerClient2 stockControllerClient2,
-                      WaiterControllerClient2 waiterControllerClient2,
-                      MarkupControllerClient markupControllerClient,
-                      TabControllerClient tabControllerClient) {
+                      WaiterControllerClient2 waiterControllerClient2
+                     ) {
         this.stockControllerClient = stockControllerClient;
         this.stockControllerClient2 = stockControllerClient2;
         this.waiterControllerClient=waiterControllerClient;
         this.waiterControllerClient2 = waiterControllerClient2;
-        this.markupControllerClient=markupControllerClient;
-        this.tabControllerClient=tabControllerClient;
     }
 
     @Produces(MediaType.TEXT_HTML)
@@ -128,7 +123,7 @@ public class GatewayController {
         responses.put("billing",healthyNodesFound.contains("billing")?200:400);
         responses.put("waiter",healthyNodesFound.contains("waiter")?200:400);
         responses.put("stock", healthyNodesFound.contains("stock")?200:400);
-        responses.put("tab", healthyNodesFound.contains("tab")?200:400);
+
 
         return Single.just(responses);
 

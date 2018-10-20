@@ -4,6 +4,7 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.retry.annotation.Fallback;
 import io.reactivex.Single;
+import micronaut.demo.beer.kafka.EventPublisher;
 import micronaut.demo.beer.model.BeerItem;
 import micronaut.demo.beer.model.Ticket;
 
@@ -13,18 +14,18 @@ import javax.validation.constraints.NotBlank;
 @Fallback
 public class NoCostTicket implements TicketControllerClient{
 
-    private final TabControllerClient tabControllerClient;
+    private final EventPublisher eventPublisher;
 
     @Inject
-    NoCostTicket(TabControllerClient tabControllerClient) {
-        this.tabControllerClient=tabControllerClient;
+    NoCostTicket(EventPublisher eventPublisher) {
+        this.eventPublisher=eventPublisher;
     }
 
     @Override
     public HttpResponse<BeerItem> addBeerToCustomerBill(BeerItem beer, @NotBlank String customerName) {
-        System.out.println("We are imitating a fall back but actually doing a call to another app");
-        return tabControllerClient.addBeerToCustomerBill(beer, customerName);
-        //return HttpResponse.ok();
+        System.out.println("Since beer-billing is down we are publishing to kafa - when it returns it can pick this beer sale up");
+        eventPublisher.tabRegisteredEvent(customerName,beer);
+        return HttpResponse.ok();
     }
 
     @Override

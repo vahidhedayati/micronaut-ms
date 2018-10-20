@@ -15,7 +15,7 @@ function noBottles() {
         </p>
     )
 }
-function showBottle(stock,buy,active,billingUp,waiterUp,amount,tabUp,tab) {
+function showBottle(stock,buy,active,billingUp,waiterUp,amount,tab) {
     return (<p className="card-text">
             Bottles Available: {stock.bottles} -
             Per Bottle cost: { Number(stock.bottleCost).toFixed(2)} (exc vat)
@@ -28,7 +28,7 @@ function showBottle(stock,buy,active,billingUp,waiterUp,amount,tabUp,tab) {
     <hr/>
     <div className="btn btn-xs btn-warning ">
         Nested checks decide on tab/billing<br/>
-        {loadDynamic('BOTTLE',stock.bottleCost,amount,waiterUp,billingUp,stock,buy,tab,active,tabUp) }
+        {loadDynamic('BOTTLE',stock.bottleCost,amount,waiterUp,billingUp,stock,buy,tab,active) }
     </div>
     </p>
     )
@@ -43,20 +43,20 @@ function noPints() {
 }
 
 
-function showPints(stock,buy,active,billingUp,waiterUp,amount,tabUp,tab) {
+function showPints(stock,buy,active,billingUp,waiterUp,amount,tab) {
     return (
         <p className="card-text">
         Pints Available: {stock.availablePints} -
         Pint cost:  {Number(stock.pintCost).toFixed(2)} (exc vat)
-        {loadDynamic('PINT',stock.pintCost,amount,waiterUp,billingUp,stock,buy,tab,active,tabUp) }
+        {loadDynamic('PINT',stock.pintCost,amount,waiterUp,billingUp,stock,buy,tab,active) }
         <br/>
         Half Pint cost:  {Number(stock.halfPintCost).toFixed(2)} (exc vat)
-        {loadDynamic('HALF_PINT',stock.halfPintCost,amount,waiterUp,billingUp,stock,buy,tab,active,tabUp) }
+        {loadDynamic('HALF_PINT',stock.halfPintCost,amount,waiterUp,billingUp,stock,buy,tab,active) }
         </p>
     )
 }
 
-function loadDynamic(currentValue,cost,amount,waiterUp,billingUp,stock,buy,tab,active,tabUp) {
+function loadDynamic(currentValue,cost,amount,waiterUp,billingUp,stock,buy,tab,active) {
     return (
         <span>
         {amount ?
@@ -67,10 +67,8 @@ function loadDynamic(currentValue,cost,amount,waiterUp,billingUp,stock,buy,tab,a
     name="beerType" data-bname={stock.name} data-price={cost} defaultValue={currentValue} onClick={buy}/>
 :<span className='btn btn-xs btn-danger'>Out of stock</span>
 )
-:(tabUp==200
-        ?<input type="text"   className={active ===stock.name+"_"+currentValue? 'btn btn-xs btn-danger readonly': "btn btn-xs btn-success readonly"}
+:(<input type="text"   className={active ===stock.name+"_"+currentValue? 'btn btn-xs btn-danger readonly': "btn btn-xs btn-success readonly"}
     name="beerType" data-bname={stock.name} data-price={cost} defaultValue={currentValue} onClick={tab}/>
-:<span className='btn btn-xs btn-danger'>Billing/Tab system is offline</span>
 )
 )
 :<span className='btn  btn-xs btn-danger'>Waiter is busy or not around - please try again</span>
@@ -81,7 +79,7 @@ function loadDynamic(currentValue,cost,amount,waiterUp,billingUp,stock,buy,tab,a
 )
 
 }
-const StockRow = ({stock, customerName, amount, updateAmount,buy,active,stockUp,billingUp,waiterUp,tabUp,tab}) => <div className="card vendor-card">
+const StockRow = ({stock, customerName, amount, updateAmount,buy,active,stockUp,billingUp,waiterUp,tab}) => <div className="card vendor-card">
 
 
   <div className="card-body">
@@ -90,8 +88,8 @@ const StockRow = ({stock, customerName, amount, updateAmount,buy,active,stockUp,
     { (stock.bottles > 1 || stock.availablePints > 1 ) ?
         amount ? amount : amountForm(amount, updateAmount)
         : '' }
-    { stock.bottles > 1 ?  showBottle(stock,buy,active,billingUp,waiterUp,amount,tabUp,tab) : noBottles() }
-    { stock.availablePints > 1 ?  showPints(stock,buy,active,billingUp,waiterUp,amount,tabUp,tab) : noPints() }
+    { stock.bottles > 1 ?  showBottle(stock,buy,active,billingUp,waiterUp,amount,tab) : noBottles() }
+    { stock.availablePints > 1 ?  showPints(stock,buy,active,billingUp,waiterUp,amount,tab) : noPints() }
   </div>
 
 </div>

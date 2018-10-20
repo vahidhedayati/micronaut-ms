@@ -3,7 +3,6 @@ package micronaut.demo.beer;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
@@ -12,8 +11,8 @@ import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.validation.Validated;
 import io.reactivex.Single;
-import micronaut.demo.beer.client.TabControllerClient;
 import micronaut.demo.beer.client.TicketControllerClient;
+import micronaut.demo.beer.kafka.EventPublisher;
 import micronaut.demo.beer.model.BeerItem;
 import micronaut.demo.beer.model.Ticket;
 
@@ -29,13 +28,13 @@ public class WaiterController {
     TicketControllerClient ticketControllerClient;
 
     final EmbeddedServer embeddedServer;
-    private final TabControllerClient tabControllerClient;
+    private final EventPublisher eventPublisher;
 
     @Inject
-    public WaiterController(TicketControllerClient ticketControllerClient,EmbeddedServer embeddedServer,TabControllerClient tabControllerClient) {
+    public WaiterController(TicketControllerClient ticketControllerClient,EmbeddedServer embeddedServer,EventPublisher eventPublisher) {
         this.ticketControllerClient = ticketControllerClient;
         this.embeddedServer=embeddedServer;
-        this.tabControllerClient=tabControllerClient;
+        this.eventPublisher=eventPublisher;
     }
 
     @Get("/status")
@@ -70,7 +69,7 @@ public class WaiterController {
         System.out.println("Waiter controller tabbing a beer"+customerName+" >>> bt"+beerType);
         Beer beer = new Beer(beerName,BeerSize.valueOf(beerType),Integer.valueOf(amount),Double.valueOf(price));
         BeerItem beerItem = new BeerItem(beerName,BeerSize.valueOf(beerType),Integer.valueOf(amount),Double.valueOf(price));
-        tabControllerClient.addBeerToCustomerBill(beerItem, customerName);
+        eventPublisher.tabRegisteredEvent(customerName,beerItem);
         return Single.just(beer);
     }
     
