@@ -5,6 +5,8 @@ import io.micronaut.configuration.kafka.annotation.KafkaKey;
 import io.micronaut.configuration.kafka.annotation.Topic;
 import micronaut.demo.beer.model.BeerItem;
 
+import java.util.Date;
+
 
 /**
  * This is used by StockFallBack2 And WaiterClientFallBack2 java files
@@ -41,5 +43,11 @@ public interface EventPublisher {
     //This interacts with beer-stock app - beer-stock listens in for increment-bottle topic
     @Topic("increment-bottle")
     void incrementBottle(@KafkaKey String beerName, String amount);
+
+
+
+    @Topic("save-sequence")
+    void saveSequence(@KafkaKey String name, String date);
+
 
 }

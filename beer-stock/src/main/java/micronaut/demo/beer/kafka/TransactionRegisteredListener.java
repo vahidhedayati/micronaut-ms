@@ -6,7 +6,12 @@ import io.micronaut.configuration.kafka.annotation.KafkaListener;
 import io.micronaut.configuration.kafka.annotation.OffsetReset;
 import io.micronaut.configuration.kafka.annotation.Topic;
 import lombok.RequiredArgsConstructor;
+import micronaut.demo.beer.client.SequenceControllerClient;
+import micronaut.demo.beer.client.StockControllerClient;
 import micronaut.demo.beer.controller.StockController;
+import micronaut.demo.beer.domain.SequenceTest;
+
+import java.util.Date;
 
 /**
  *
@@ -22,12 +27,14 @@ import micronaut.demo.beer.controller.StockController;
 @KafkaListener(offsetReset = OffsetReset.EARLIEST)///,groupId="billing", threads=10)
 public class TransactionRegisteredListener {
 
-    final StockController stockController;
+    final StockControllerClient stockControllerClient;
 
 
+    final SequenceControllerClient sequenceControllerClient;
 
-    public TransactionRegisteredListener(StockController stockController) {
-        this.stockController=stockController;
+    public TransactionRegisteredListener(StockControllerClient stockControllerClient,SequenceControllerClient sequenceControllerClient) {
+        this.stockControllerClient=stockControllerClient;
+        this.sequenceControllerClient=sequenceControllerClient;
     }
 
 
@@ -49,20 +56,26 @@ public class TransactionRegisteredListener {
 
     @Topic("increment-pint")
     void incrementPint(@KafkaKey String name,  String amount) {
-        stockController.incPints(name,amount);
+        stockControllerClient.pints(name,amount);
     }
 
     //This interacts with beer-stock app - beer-stock listens in for increment-halfpint topic
     @Topic("increment-halfpint")
     void incrementHalfPint(@KafkaKey String name, String amount) {
-        stockController.incHalfPints(name,amount);
+        stockControllerClient.halfPints(name,amount);
     }
 
     //This interacts with beer-stock app - beer-stock listens in for increment-bottle topic
     @Topic("increment-bottle")
     void incrementBottle(@KafkaKey String name,String amount) {
         System.out.println("Increment bottles from kakfa>?>>>> "+name+" amount: "+amount);
-        stockController.incBottles(name,amount);
+        stockControllerClient.bottles(name,amount);
+    }
+
+    @Topic("save-sequence")
+    void saveSequence(@KafkaKey String name, Date date) {
+        System.out.println("Save sequence from kakfa>?>>>> "+name+" date: "+date);
+        sequenceControllerClient.save(new SequenceTest(name,date));
     }
 
 }

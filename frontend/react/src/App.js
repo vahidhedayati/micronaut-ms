@@ -5,6 +5,7 @@ import About from "./about";
 import Stocks from "./stocks";
 import Beer from "./beer";
 import Beer2 from "./beer2";
+import Sequence from "./sequence"
 import './App.css'
 
 
@@ -41,8 +42,9 @@ class App extends Component {
                                     <Link to="/beer2" className="nav-link">Simple Beer</Link>
                                 </li>
                                  <li className='nav-item'>
-                                    <Link to="/payBill" className="nav-link">Pay Bill</Link>
+                                    <Link to="/sequence" className="nav-link">sequence</Link>
                                 </li>
+
                                 <li className='nav-item'>
                                     <Link to="/about" className="nav-link">About</Link>
                                 </li>
@@ -55,6 +57,7 @@ class App extends Component {
                         <Route exact path="/beer" component={Beer}/>
                         <Route exact path="/beer2" component={Beer2}/>
                         <Route exact path="/about" component={About}/>
+                        <Route exact path="/sequence" component={Sequence}/>
                     </div>
                 </div>
             </Router>
