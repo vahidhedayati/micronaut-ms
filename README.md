@@ -1,4 +1,7 @@
-Forked from: https://github.com/mfarache/micronaut-ms. The project did not appear to work for me so I have made it from scratch taking the content of the other project:
+
+
+
+
 
 
 
@@ -54,16 +57,11 @@ cd micronaut-ms
 ./gradlew frontend:react:start
 ```
 
-3. Then launch separate instances again
+3. You can launch any of these instances as many times as machine can handle
 ```
 ./gradlew beer-waiter:run  beer-billing:run beer-stock:run --parallel
 ```
 
-
-4. Then launch separate instances again (This now making 3 instances of billing / waiter / stock all running )
-```
-./gradlew beer-waiter:run  beer-billing:run beer-stock:run --parallel
-```
 
 
 
