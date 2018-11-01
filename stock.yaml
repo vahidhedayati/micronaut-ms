@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: waiter-deployment
+  name: stock-deployment
   labels:
-    app: waiter
+    app: stock
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: waiter
+      app: stock
   template:
     metadata:
       labels:
-        app: waiter
+        app: stock
     spec:
       containers:
-      - name: waiter
-        image: vahidhedayati/beer-waiter:1.0
+      - name: stock
+        image: vahidhedayati/beer-stock:1.0
         env:
         - name: CONSUL_HOST
           value: "consul-server"
