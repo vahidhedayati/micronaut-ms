@@ -1,5 +1,11 @@
 
+# Updated
+Please refer to [minikube](https://github.com/vahidhedayati/micronaut-ms/wiki/minikube). 
+This is a guide in setting up this entire application using Kubernetes under Linux.
 
+Will be making a short video then providing a complete full guide to make things easier to understand or automate as such.
+
+At the moment the internal IP of minikube is not accesible but able to use kubectl to port forward 3000 
 
 
 
@@ -61,6 +67,7 @@ cd micronaut-ms
 ```
 ./gradlew beer-waiter:run  beer-billing:run beer-stock:run --parallel
 ```
+
 
 
 
