@@ -2,6 +2,7 @@ FROM node:latest
 # Create app directory
 RUN mkdir -p  /usr/src/app
 
+# Set working DIR
 WORKDIR /usr/src/app
 
 COPY package.json ./

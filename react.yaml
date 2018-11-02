@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: react
-        image: vahidhedayati/beer-react:1.13
+        image: vahidhedayati/beer-react:1.14
         ports:
         - containerPort: 3000
 
