@@ -1,5 +1,26 @@
 #!/bin/bash
 
+#Please set this variable
+DOCKER_USERNAME="vahidhedayati";
+
+
+
+if [[ ! -f $HOME/.docker/config.json  ]]; then 
+	echo "You must goto https://hub.docker.com/"
+	echo "Register then run "
+	echo "docker login on your PC first before proceeding"
+	exit;
+fi
+
+
+if [[ $DOCKER_USERNAME == "" ]]; then
+	echo "You must edit this script and assign your docker username as the variable DOCKER_USERNAME=\"yourusername\""
+	exit
+fi
+
+
+
+
 sudo apt-get  --yes --force-yes  install apt-transport-https virtualbox virtualbox-ext-pack docker docker.io 
 
 wget https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
@@ -85,11 +106,11 @@ kubectl expose deployment/zipkin-deployment --type="NodePort" --port 9411
 ./gradlew assemble
 
 
-./install-app.sh beer-billing beer-billing billing vahidhedayati
-./install-app.sh beer-waiter beer-waiter waiter vahidhedayati
-./install-app.sh beer-stock beer-stock stock vahidhedayati
-./install-app.sh beer-front beer-front front vahidhedayati
-./install-app.sh frontend/react beer-react react vahidhedayati 1 3000
+sh ./install-app.sh beer-billing beer-billing billing $DOCKER_USERNAME
+sh ./install-app.sh beer-waiter beer-waiter waiter $DOCKER_USERNAME
+sh ./install-app.sh beer-stock beer-stock stock  $DOCKER_USERNAME
+sh ./install-app.sh beer-front beer-front front  $DOCKER_USERNAME
+sh ./install-app.sh frontend/react beer-react react $DOCKER_USERNAME 1 3000
 
 
 minikube dashboard&
