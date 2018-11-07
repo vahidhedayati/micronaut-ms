@@ -84,55 +84,12 @@ kubectl expose deployment/zipkin-deployment --type="NodePort" --port 9411
 
 ./gradlew assemble
 
-cd beer-billing
-sudo docker build -t beer-billing .
 
-cd ../beer-waiter/
-sudo docker build -t beer-waiter .
-
-cd ../beer-stock/
-sudo docker build -t beer-stock .
-
-cd ../beer-front/
-sudo docker build -t beer-front .
-
-lastImage=$(sudo docker images|grep beer-react|awk '{if ($2 !~ /<none>/) { n=$1; v=$2; print n"\t"v} }'|sort -nrk2|head -n1);
-cd ../frontend/react/
-sudo docker build -t react .
-
-
-
->waiter.yaml
-cat <<EOF>>waiter.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: waiter-deployment
-  labels:
-    app: waiter
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: waiter
-  template:
-    metadata:
-      labels:
-        app: waiter
-    spec:
-      containers:
-      - name: waiter
-        image: vahidhedayati/beer-waiter:1.2
-        env:
-        - name: CONSUL_HOST
-          value: "consul-server"
-        - name: ZIPKIN_HOST
-          value: "zipkin-deployment"
-        ports:
-        - containerPort: 8084
-EOF
-
-
+./install-app.sh beer-billing beer-billing billing vahidhedayati
+./install-app.sh beer-waiter beer-waiter waiter vahidhedayati
+./install-app.sh beer-stock beer-stock stock vahidhedayati
+./install-app.sh beer-front beer-front front vahidhedayati
+./install-app.sh frontend/react beer-react react vahidhedayati 1 3000
 
 
 minikube dashboard&

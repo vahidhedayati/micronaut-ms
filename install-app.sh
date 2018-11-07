@@ -4,15 +4,15 @@ FOLDER=$1
 APP=$2
 NAME=$3
 DOCKERHOME=$4
-APP_PORT=$5
-REPLICAS=$6
+REPLICAS=$5
+APP_PORT=$6
 
 
-currentVersion=$(sudo docker images|grep $NAME|awk '{if ($2 !~ /<none>/) { n=$1; v=$2; print v} }'|sort -nrk2|head -n1)
-current=echo $currentVersion|awk '{print (!$0 )? "0.0" :$0 }'
+currentVersion=$(sudo docker images|grep $NAME|awk '{if ($2 !~ /<none>/ && $2 !~ /latest/) { n=$1; v=$2; print v} }'|sort -nrk2|head -n1)
+current=$(echo $currentVersion|awk '{print (!$0 )? "0.0" :$0 }')
 
 echo "APP $APP current = $current "
-VERISON=increment_version()
+VERISON=increment_version
 
 if [[ $APP_PORT == "" ]]; then 
 	APP_PORT=$(grep port $APP/src/main/resources/application.*|awk -F":" '{if ($2 !~ /^#/) { v=$2; ccount=index(v,"=")+1; print substr(v,ccount,length(v)) } }')
