@@ -74,7 +74,9 @@ cd micronaut-ms
 
 Youtube
 ----
-[Youtube full walkthrough of the beer solution covering full fall back](https://youtu.be/nkDdlu1cJEw)
+[Part 1 full walkthrough of the beer solution covering full fall back](https://www.youtube.com/watch?v=nkDdlu1cJEw)
+
+[Part 2 running through kubernetes](https://www.youtube.com/watch?v=VdfUa3uwLPs)
 
 > To launch the site call http://localhost:3000 on the browser
 

@@ -126,7 +126,7 @@ kubectl get svc
 
 echo "sleeping for a bit"
 sleep 20;
-CONSUL_HOST=$(kubectl get pods |grep server|grep Running|awk '{print $1}');
+CONSUL_HOST=$(kubectl get pods |grep server|awk '{print $1}');
 
 echo "-----------------------------------------------------------------------------------"
 echo "Porting forwarding $CONSUL_HOST 8500:8500"
@@ -203,16 +203,16 @@ echo "--------------------------------------------------------------------------
 echo "running: sh ./install-app.sh frontend/react beer-react react $DOCKER_USERNAME 1 3000"
 ./install-app.sh frontend/react beer-react react $DOCKER_USERNAME 1 3000
 
-sleep 20;
+sleep 40;
 
 echo "-----------------------------------------------------------------------------------"
-REACT_HOST=$(kubectl get pods |grep "react-deployment"|grep Running|awk '{print $1}');
+REACT_HOST=$(kubectl get pods |grep "react-deployment"|awk '{print $1}');
 echo "Porting forwarding $REACT_HOST 3000:3000"
 kubectl port-forward $REACT_HOST 3000:3000&
 
 
 echo "-----------------------------------------------------------------------------------"
-FRONT_HOST=$(kubectl get pods |grep "front-deployment"|grep Running|awk '{print $1}');
+FRONT_HOST=$(kubectl get pods |grep "front-deployment"|awk '{print $1}');
 echo "Porting forwarding $FRONT_HOST 8080:8080"
 kubectl port-forward $FRONT_HOST 8080:8080&
 

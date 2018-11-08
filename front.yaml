@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: waiter
-        image: vahidhedayati/beer-front:1.1
+        image: vahidhedayati/beer-front:1.4
         env:
         - name: CONSUL_HOST
           value: "consul-server"

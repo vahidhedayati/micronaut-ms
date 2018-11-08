@@ -101,7 +101,7 @@ kubectl apply -f $NAME.yaml
 
 echo "-----------------------------------------------------------------------------------"
 echo "Exposing $NAME-deployment on port $APP_PORT"
-kubectl expose pods/$(kubectl get pods |grep "$NAME-deployment"|grep Running|awk '{print $1}') --type="NodePort" --port $APP_PORT
+kubectl expose pods/$(kubectl get pods |grep "$NAME-deployment"|awk '{print $1}') --type="NodePort" --port $APP_PORT
 
 
 
