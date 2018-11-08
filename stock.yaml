@@ -15,8 +15,8 @@ spec:
         app: stock
     spec:
       containers:
-      - name: stock
-        image: vahidhedayati/beer-stock:1.1
+      - name: waiter
+        image: vahidhedayati/beer-stock:1.2
         env:
         - name: CONSUL_HOST
           value: "consul-server"
@@ -24,4 +24,3 @@ spec:
           value: "zipkin-deployment"
         ports:
         - containerPort: 8083
-

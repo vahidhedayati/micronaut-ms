@@ -7,26 +7,30 @@ DOCKERHOME=$4
 REPLICAS=$5
 APP_PORT=$6
 
-
 currentVersion=$(sudo docker images|grep $NAME|awk '{if ($2 !~ /<none>/ && $2 !~ /latest/) { n=$1; v=$2; print v} }'|sort -nrk2|head -n1)
-current=$(echo $currentVersion|awk '{print (!$0 )? "0.0" :$0 }')
+echo "Current version : $currentVersion"
 
+current=$(echo $currentVersion|awk '{print (!$0 )? "0.0" :$0 }')
+echo "Current revision $current"
 
 function increment_version() {
  local v=$current
- if [ -z $2 ]; then
+ if [ -z $2 ]; then 
     local rgx='^((?:[0-9]+\.)*)([0-9]+)($)'
- else
+ else 
     local rgx='^((?:[0-9]+\.){'$(($2-1))'})([0-9]+)(\.|$)'
-    for (( p=`grep -o "\."<<<".$v"|wc -l`; p<$2; p++)); do
+    for (( p=`grep -o "\."<<<".$v"|wc -l`; p<$2; p++)); do 
        v+=.0; done; fi
  val=`echo -e "$v" | perl -pe 's/^.*'$rgx'.*$/$2/'`
  echo "$v" | perl -pe s/$rgx.*$'/${1}'`printf %0${#val}s $(($val+1))`/
 }
 
+echo "-----------------------------------------------------------------------------------"
 echo "APP $APP current = $current "
 # increment_version
 VERSION=$(increment_version);
+
+echo "-----------------------------------------------------------------------------------"
 echo "NEW VERSION = $VERSION"
 
 
@@ -40,20 +44,24 @@ if [[ $REPLICAS == "" ]]; then
 	echo "REPLICAS NOT DEFINED DEFAULTING TO 1"
 fi
 
+echo "-----------------------------------------------------------------------------------"
 echo "running: cd $FOLDER"
 cd $FOLDER
 echo "running: docker build -t $APP ."
-docker build -t $APP .
+sudo docker build -t $APP .
 
+echo "-----------------------------------------------------------------------------------"
 echo "running: docker tag $APP $DOCKERHOME/$APP:$VERSION"
 sudo docker tag $APP $DOCKERHOME/$APP:$VERSION
 
+echo "-----------------------------------------------------------------------------------"
 echo "running sudo docker push $DOCKERHOME/$APP:$VERSION"
 sudo docker push $DOCKERHOME/$APP:$VERSION
 
 echo "running: cd.."
 cd ..
 
+echo "-----------------------------------------------------------------------------------"
 echo "Overwriting $NAME.yaml"
 >$NAME.yaml
 
@@ -87,6 +95,11 @@ spec:
         - containerPort: $APP_PORT
 EOF
 
+echo "-----------------------------------------------------------------------------------"
+echo "Running: kubectl apply -f $NAME.yaml"
+kubectl apply -f $NAME.yaml
+
+echo "-----------------------------------------------------------------------------------"
 echo "Exposing $NAME-deployment on port $APP_PORT"
 kubectl expose pods/$(kubectl get pods |grep "$NAME-deployment"|grep Running|awk '{print $1}') --type="NodePort" --port $APP_PORT
 
