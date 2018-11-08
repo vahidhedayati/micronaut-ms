@@ -76,7 +76,7 @@ cd consul-helm
 git checkout v0.1.0
 
 echo "Editing values.yaml and updating replicas/boostranExpect values of 3  to 1 
-ed -s values.yaml <<EOF
+ed -s values.yaml << EOF
 ,s/replicas: 3/replicas: 1/g
 ,s/bootstrapExpect: 3/bootstrapExpect: 1/g
 w
@@ -95,6 +95,10 @@ kubectl get pods
 
 kubectl get svc
 
+CONSUL_HOST=$(kubectl get pods |grep server|grep Running|awk '{print $1}');
+
+echo "Porting forwarding $CONSUL_HOST 8500:8500"
+kubectl port-forward $CONSUL_HOST 8500:8500
 
 echo "running docker / zipkin"
 docker run -d -p 9411:9411 openzipkin/zipkin
