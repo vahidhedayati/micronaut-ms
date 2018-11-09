@@ -7,7 +7,9 @@ DOCKERHOME=$4
 REPLICAS=$5
 APP_PORT=$6
 
-currentVersion=$(sudo docker images|grep $NAME|awk '{if ($2 !~ /<none>/ && $2 !~ /latest/) { n=$1; v=$2; print v} }'|sort -nrk2|head -n1)
+CURRENT_PATH=$(pwd)
+currentVersion=$(sudo docker images|grep $NAME|awk '{if ($2 !~ /<none>/ && $2 !~ /latest/) { n=$1; v=$2; print v} }'|sort -t. -k 1,1nr -k 2,2nr -k 3,3nr -k 4,4nr|head -n1)
+
 echo "Current version : $currentVersion"
 
 current=$(echo $currentVersion|awk '{print (!$0 )? "0.0" :$0 }')
@@ -58,8 +60,8 @@ echo "--------------------------------------------------------------------------
 echo "running sudo docker push $DOCKERHOME/$APP:$VERSION"
 sudo docker push $DOCKERHOME/$APP:$VERSION
 
-echo "running: cd.."
-cd ..
+echo "running: cd $CURRENT_PATH"
+cd $CURRENT_PATH
 
 echo "-----------------------------------------------------------------------------------"
 echo "Overwriting $NAME.yaml"
