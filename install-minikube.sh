@@ -203,6 +203,12 @@ echo "--------------------------------------------------------------------------
 echo "running: sh ./install-app.sh frontend/react beer-react react $DOCKER_USERNAME 1 3000"
 ./install-app.sh frontend/react beer-react react $DOCKER_USERNAME 1 3000
 
+
+echo "-----------------------------------------------------------------------------------"
+echo "running kubectl apply -f front-ingres.yml"
+kubectl apply -f front-ingres.yml 
+
+
 sleep 40;
 
 echo "-----------------------------------------------------------------------------------"
