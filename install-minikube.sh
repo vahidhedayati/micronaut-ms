@@ -121,29 +121,56 @@ helm install .
 function installKafka() {
 
 
-	#sudo docker run --net=localhost -d --name=zookeeper -e ZOOKEEPER_CLIENT_PORT=2181 confluentinc/cp-zookeeper:4.1.0
 
-	#sudo docker run --net=localhost -d -p 9092:9092 --name=kafka -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092 -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 confluentinc/cp-kafka:4.1.0
+echo "----------------------------"
+echo "Starting docker zookeeper and kafka "
+	sudo docker run -d --net=confluent --name=zookeeper --rm -e ZOOKEEPER_CLIENT_PORT=2181 confluentinc/cp-zookeeper:5.0.1
 
-	sudo docker run  -d -e ZOOKEEPER_CLIENT_PORT=2181 confluentinc/cp-zookeeper:4.1.0
+	
+#sudo docker run -d  -p 9092:9092 -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092 -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 confluentinc/cp-kafka:4.1.0
+	sudo docker run -d --net=confluent --name=kafka --rm -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092 -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 confluentinc/cp-kafka:5.0.1
+echo "----------------------"
+echo "Applying kafka service files"
+cd $CURRENT_PATH;
+# https://dzone.com/articles/ultimate-guide-to-installing-kafka-docker-on-kuber  <<---- below as per this link
+kubectl create -f kubernetes/kafka/00-zookeeper.yml
+kubectl create -f kubernetes/kafka/05-kafka-service.yml
+kubectl create -f kubernetes/kafka/09-kafka-broker.yml
 
-	sudo docker run -d  -p 9092:9092 -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092 -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 confluentinc/cp-kafka:4.1.0
 
-
-	cd /tmp
-	rm -rf kubernetes-kafka
-	git clone https://github.com/Yolean/kubernetes-kafka.git
-	cd kubernetes-kafka
-	kubectl apply -f ./configure/minikube-storageclass-broker.yml
-	kubectl apply -f ./configure/minikube-storageclass-zookeeper.yml
-	kubectl apply -f ./00-namespace.yml 
-	kubectl apply -f ./rbac-namespace-default
-	kubectl apply -f ./zookeeper
-	kubectl apply -f ./kafka
+	#cd /tmp
+	#rm -rf kubernetes-kafka
+	#git clone https://github.com/Yolean/kubernetes-kafka.git
+	#cd kubernetes-kafka
+	#kubectl apply -f ./configure/minikube-storageclass-broker.yml
+	#kubectl apply -f ./configure/minikube-storageclass-zookeeper.yml
+	#kubectl apply -f ./00-namespace.yml 
+	#kubectl apply -f ./rbac-namespace-default
+	#kubectl apply -f ./zookeeper
+	#kubectl apply -f ./kafka
 }
 
 
-# installKafka;
+installKafka;
+
+
+function loadMongo() {
+        sudo docker run -it -d mongo
+	#curl -L https://github.com/kubernetes/kompose/releases/download/v1.11.0/kompose-darwin-amd64 -o kompose
+	#chmod +x kompose
+	#sudo mv ./kompose /usr/local/bin/kompose
+	cd $CURRENT_PATH;
+	
+	#cd kubernetes/mongo
+	#kompose convert -f docker-compose.yaml
+	##Above will generate 3 yaml files
+	kubectl create -f kubernetes/mongo/00-mongo-persistant.yml
+	kubectl create -f kubernetes/mongo/05-mongo-deployment.yml
+	kubectl create -f kubernetes/mongo/10-mongo-service.yml
+	kubectl expose deployment mongodb --type=LoadBalancer
+
+}
+loadMongo;
 
 
 kubectl get pods

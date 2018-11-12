@@ -94,8 +94,12 @@ spec:
         env:
         - name: CONSUL_HOST
           value: "$CONSUL_HOST"
+        - name: KAFKA_HOST
+          value: "kafka-service"
         - name: ZIPKIN_HOST
           value: "zipkin-deployment"
+        - name: MONGO_HOST
+          value: "mongodb"
         ports:
         - containerPort: $APP_PORT
 EOF

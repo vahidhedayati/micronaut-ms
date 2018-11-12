@@ -16,11 +16,15 @@ spec:
     spec:
       containers:
       - name: waiter
-        image: vahidhedayati/beer-stock:1.14
+        image: vahidhedayati/beer-stock:1.17
         env:
         - name: CONSUL_HOST
-          value: "undercooked-fish-consul-server"
+          value: "anxious-crab-consul-server"
+        - name: KAFKA_HOST
+          value: "kafka-service"
         - name: ZIPKIN_HOST
           value: "zipkin-deployment"
+        - name: MONGO_HOST
+          value: "mongodb"
         ports:
         - containerPort: 8083
