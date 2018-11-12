@@ -63,6 +63,9 @@ sudo docker push $DOCKERHOME/$APP:$VERSION
 echo "running: cd $CURRENT_PATH"
 cd $CURRENT_PATH
 
+
+CONSUL_HOST=$(kubectl get svc |grep consul-server|awk '{print $1}');
+
 echo "-----------------------------------------------------------------------------------"
 echo "Overwriting $NAME.yaml"
 >$NAME.yaml
@@ -90,7 +93,7 @@ spec:
         image: $DOCKERHOME/$APP:$VERSION
         env:
         - name: CONSUL_HOST
-          value: "consul-server"
+          value: "$CONSUL_HOST"
         - name: ZIPKIN_HOST
           value: "zipkin-deployment"
         ports:
@@ -103,7 +106,12 @@ kubectl apply -f $NAME.yaml
 
 echo "-----------------------------------------------------------------------------------"
 echo "Exposing $NAME-deployment on port $APP_PORT"
-kubectl expose pods/$(kubectl get pods |grep "$NAME-deployment"|awk '{print $1}') --type="NodePort" --port $APP_PORT
+# kubectl expose pods/$(kubectl get pods |grep "$NAME-deployment"|awk '{print $1}') --type="NodePort" --port $APP_PORT
+
+kubectl delete service $NAME-deployment
+
+
+kubectl expose deployment $NAME-deployment --port=$APP_PORT --target-port=$APP_PORT
 
 
 

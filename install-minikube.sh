@@ -118,6 +118,32 @@ helm install .
 #cd ../
 #helm install ./consul-helm
 
+function installKafka() {
+
+
+	#sudo docker run --net=localhost -d --name=zookeeper -e ZOOKEEPER_CLIENT_PORT=2181 confluentinc/cp-zookeeper:4.1.0
+
+	#sudo docker run --net=localhost -d -p 9092:9092 --name=kafka -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092 -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 confluentinc/cp-kafka:4.1.0
+
+	sudo docker run  -d -e ZOOKEEPER_CLIENT_PORT=2181 confluentinc/cp-zookeeper:4.1.0
+
+	sudo docker run -d  -p 9092:9092 -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092 -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 confluentinc/cp-kafka:4.1.0
+
+
+	cd /tmp
+	rm -rf kubernetes-kafka
+	git clone https://github.com/Yolean/kubernetes-kafka.git
+	cd kubernetes-kafka
+	kubectl apply -f ./configure/minikube-storageclass-broker.yml
+	kubectl apply -f ./configure/minikube-storageclass-zookeeper.yml
+	kubectl apply -f ./00-namespace.yml 
+	kubectl apply -f ./rbac-namespace-default
+	kubectl apply -f ./zookeeper
+	kubectl apply -f ./kafka
+}
+
+
+# installKafka;
 
 
 kubectl get pods
@@ -126,7 +152,7 @@ kubectl get svc
 
 echo "sleeping for a bit"
 sleep 20;
-CONSUL_HOST=$(kubectl get pods |grep server|awk '{print $1}');
+CONSUL_HOST=$(kubectl get pods |grep consul-server|awk '{print $1}');
 
 echo "-----------------------------------------------------------------------------------"
 echo "Porting forwarding $CONSUL_HOST 8500:8500"

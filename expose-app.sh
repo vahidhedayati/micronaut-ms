@@ -11,8 +11,14 @@ fi
 
 echo "---------------------------------------------------------------------------
 --------"
-podName=$(kubectl get pods |grep "$NAME-deployment"|grep Running|awk '{print $1}')
-echo "Exposing $NAME-deployment on port $APP_PORT -- $podName"
-echo "running: kubectl expose pods/$podName --type="NodePort" --port $APP_PORT"
-kubectl expose pods/$podName --type="NodePort" --port $APP_PORT
+#podName=$(kubectl get pods |grep "$NAME-deployment"|grep Running|awk '{print $1}')
+#echo "Exposing $NAME-deployment on port $APP_PORT -- $podName"
+#echo "running: kubectl expose pods/$podName --type="NodePort" --port $APP_PORT"
+#kubectl expose pods/$podName --type="NodePort" --port $APP_PORT
+
+kubectl delete service $NAME-deployment
+
+
+kubectl expose deployment $NAME-deployment --port=$APP_PORT --target-port=$APP_PORT
+
 

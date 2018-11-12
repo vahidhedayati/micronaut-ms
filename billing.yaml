@@ -16,10 +16,10 @@ spec:
     spec:
       containers:
       - name: waiter
-        image: vahidhedayati/beer-billing:1.10
+        image: vahidhedayati/beer-billing:1.17
         env:
         - name: CONSUL_HOST
-          value: "consul-server"
+          value: "undercooked-fish-consul-server"
         - name: ZIPKIN_HOST
           value: "zipkin-deployment"
         ports:
