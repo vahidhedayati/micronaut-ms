@@ -1,12 +1,10 @@
 #!/bin/bash
 
-#############################################
-# The very first install on a machine run this script
-# This will simply put in place minikube kubectl setup the vm - add consul - zipkin mongo
-# Then install each custom app in this project in to minikube vm 
-#
-# if you want to clean the slate without reinstalling it all refer to ./refresh-minikube.sh
-###
+####
+# Cut down version of install which removes minikube local container - adds all the stuff back in i.e.
+# consul / mongo / zipkin 
+# since consul is updated - ./refresh-app.sh is called which updates each apps yaml file without re-uploading the old app file 
+####
 
 #Please set this variable
 DOCKER_USERNAME="vahidhedayati";
@@ -37,51 +35,15 @@ clean_minikube
 echo "-----------------------------------------------------------------------------------"
 echo "About to install virtualbox - docker and add kubernetes sources as well as install kubectl DEB package"
 
-sudo apt-get  --yes --force-yes  install apt-transport-https virtualbox virtualbox-ext-pack docker docker.io 
 
-wget https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-chmod +x minikube-linux-amd64
-sudo mv minikube-linux-amd64 /usr/local/bin/minikube
-
-echo "-----------------------------------------------------------------------------------"
-echo "Minikube added about to start it - this may take a while - please wait"
-
-
-#minikube start
 minikube start --cpus 4 --memory 4096
 
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-
-sudo apt update
-sudo apt -y install kubectl
-
-echo "Showing kubectl cluster info"
-kubectl cluster-info
-
-
-kubectl config view
-
-kubectl get nodes
-
-
-minikube ssh << EOF
-exit
-EOF
-
-
-echo "-----------------------------------------------------------------------------------"
-echo "Demo showing you minikub adons"
-minikube addons list
 
 echo "-----------------------------------------------------------------------------------"
 echo "Enabling minikube ingres - inbuilt HTTP server"
 minikube addons enable ingress
 
-
- 
 kubectl config use-context minikube
-
 
 cd /tmp
 #curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > install-helm.sh
@@ -96,6 +58,8 @@ echo "About to install HELM"
 
 echo "Initialising helm"
 helm init --wait
+
+
 
 cd /tmp
 echo "-----------------------------------------------------------------------------------"
@@ -115,17 +79,11 @@ q
 EOF
 
 
-# No tiller - none of these fixes it
-#minikube addons enable registry-creds
-#kubectl logs --namespace kube-system tiller-deploy-2654728925-j2zvk
-
 echo "-----------------------------------------------------------------------------------"
 echo "Installing consul-helm using helm"
 
 helm install .
-# running the install twice appears to work - odd 
-#cd ../
-#helm install ./consul-helm
+
 
 function installKafka() {
 
@@ -137,8 +95,6 @@ echo "Starting docker zookeeper and kafka "
 sudo docker run  -d -e ZOOKEEPER_CLIENT_PORT=2181 confluentinc/cp-zookeeper:4.1.0
 sudo docker run -d  -p 9092:9092 -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092 -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 confluentinc/cp-kafka:4.1.0
 
-#sudo docker run -d --net=confluent --name=zookeeper --rm -e ZOOKEEPER_CLIENT_PORT=2181 confluentinc/cp-zookeeper:5.0.1
-#sudo docker run -d --net=confluent --name=kafka --rm -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092 -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 confluentinc/cp-kafka:5.0.1
 echo "----------------------"
 echo "Applying kafka service files"
 cd $CURRENT_PATH;
@@ -146,18 +102,6 @@ cd $CURRENT_PATH;
 kubectl create -f kubernetes/kafka/00-zookeeper.yml
 kubectl create -f kubernetes/kafka/05-kafka-service.yml
 kubectl create -f kubernetes/kafka/09-kafka-broker.yml
-
-
-	#cd /tmp
-	#rm -rf kubernetes-kafka
-	#git clone https://github.com/Yolean/kubernetes-kafka.git
-	#cd kubernetes-kafka
-	#kubectl apply -f ./configure/minikube-storageclass-broker.yml
-	#kubectl apply -f ./configure/minikube-storageclass-zookeeper.yml
-	#kubectl apply -f ./00-namespace.yml 
-	#kubectl apply -f ./rbac-namespace-default
-	#kubectl apply -f ./zookeeper
-	#kubectl apply -f ./kafka
 }
 
 
@@ -181,29 +125,6 @@ function loadMongo() {
 
 }
 loadMongo;
-
-function installMong() {
- sudo docker run -it -d mongo
-
-
-#kubectl create -f https://raw.githubusercontent.com/vmware/kubernetes/kube-examples/kube-examples/mongodb-shards/storageclass.yaml
-
-#kubectl create -f https://github.com/vmware/kubernetes/blob/kube-examples/kube-examples/mongodb-shards/storage-volumes-node01.yaml
-#kubectl create -f https://github.com/vmware/kubernetes/blob/kube-examples/kube-examples/mongodb-shards/storage-volumes-node02.yaml
-#kubectl create -f https://github.com/vmware/kubernetes/blob/kube-examples/kube-examples/mongodb-shards/storage-volumes-node03.yaml
-#kubectl create -f https://github.com/vmware/kubernetes/blob/kube-examples/kube-examples/mongodb-shards/storage-volumes-node04.yaml
-
-#kubectl create -f https://raw.githubusercontent.com/vmware/kubernetes/kube-examples/kube-examples/mongodb-shards/node01-deployment.yaml
-#kubectl create -f https://raw.githubusercontent.com/vmware/kubernetes/kube-examples/kube-examples/mongodb-shards/node02-deployment.yaml
-#kubectl create -f https://raw.githubusercontent.com/vmware/kubernetes/kube-examples/kube-examples/mongodb-shards/node03-deployment.yaml
-#kubectl create -f https://raw.githubusercontent.com/vmware/kubernetes/kube-examples/kube-examples/mongodb-shards/node04-deployment.yaml
-
-#kubectl create -f https://raw.githubusercontent.com/vmware/kubernetes/kube-examples/kube-examples/mongodb-shards/node01-service.yaml
-#kubectl create -f https://raw.githubusercontent.com/vmware/kubernetes/kube-examples/kube-examples/mongodb-shards/node02-service.yaml
-#kubectl create -f https://raw.githubusercontent.com/vmware/kubernetes/kube-examples/kube-examples/mongodb-shards/node03-service.yaml
-#kubectl create -f https://raw.githubusercontent.com/vmware/kubernetes/kube-examples/kube-examples/mongodb-shards/node04-service.yaml
-}
-#installMong;
 
 
 kubectl get pods
@@ -259,35 +180,31 @@ echo "Exposing zipkin port 9411"
 kubectl expose deployment/zipkin-deployment --type="NodePort" --port 9411
 
 cd $CURRENT_PATH;
-
-echo "-----------------------------------------------------------------------------------"
-echo "Running gradle assemble in $CURRENT_PATH"
-./gradlew assemble
+chmod 755 ./refresh-app.sh
 
 echo "-----------------------------------------------------------------------------------"
 echo "Attempting to install each individual app dynamically - refer to below to automate process of updating each instance when there is code changes"
 
-chmod 755 ./install-app.sh
 
 echo "-----------------------------------------------------------------------------------"
 echo "running: sh ./install-app.sh beer-billing beer-billing billing $DOCKER_USERNAME"
-./install-app.sh beer-billing beer-billing billing $DOCKER_USERNAME
+./refresh-app.sh beer-billing beer-billing billing $DOCKER_USERNAME
 
 echo "-----------------------------------------------------------------------------------"
 echo "running: sh ./install-app.sh beer-waiter beer-waiter waiter $DOCKER_USERNAME"
-./install-app.sh beer-waiter beer-waiter waiter $DOCKER_USERNAME
+./refresh-app.sh beer-waiter beer-waiter waiter $DOCKER_USERNAME
 
 echo "-----------------------------------------------------------------------------------"
 echo "running: ./install-app.sh beer-stock beer-stock stock  $DOCKER_USERNAME"
-./install-app.sh beer-stock beer-stock stock  $DOCKER_USERNAME
+./refresh-app.sh beer-stock beer-stock stock  $DOCKER_USERNAME
 
 echo "-----------------------------------------------------------------------------------"
 echo "running: sh ./install-app.sh beer-front beer-front front  $DOCKER_USERNAME"
-./install-app.sh beer-front beer-front front  $DOCKER_USERNAME
+./refresh-app.sh beer-front beer-front front  $DOCKER_USERNAME
 
 echo "-----------------------------------------------------------------------------------"
 echo "running: sh ./install-app.sh frontend/react beer-react react $DOCKER_USERNAME 1 3000"
-./install-app.sh frontend/react beer-react react $DOCKER_USERNAME 1 3000
+./refresh-app.sh frontend/react beer-react react $DOCKER_USERNAME 1 3000
 
 
 echo "-----------------------------------------------------------------------------------"

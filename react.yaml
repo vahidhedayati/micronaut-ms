@@ -16,10 +16,10 @@ spec:
     spec:
       containers:
       - name: waiter
-        image: vahidhedayati/beer-react:2.22
+        image: vahidhedayati/beer-react:
         env:
         - name: CONSUL_HOST
-          value: "anxious-crab-consul-server"
+          value: "wondering-garfish-consul-server"
         - name: KAFKA_HOST
           value: "kafka-service"
         - name: ZIPKIN_HOST

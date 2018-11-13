@@ -5,7 +5,7 @@ metadata:
   labels:
     app: billing
 spec:
-  replicas: 1
+  replicas: 
   selector:
     matchLabels:
       app: billing
@@ -16,10 +16,10 @@ spec:
     spec:
       containers:
       - name: waiter
-        image: vahidhedayati/beer-billing:1.20
+        image: vahidhedayati/beer-billing:
         env:
         - name: CONSUL_HOST
-          value: "anxious-crab-consul-server"
+          value: "wondering-garfish-consul-server"
         - name: KAFKA_HOST
           value: "kafka-service"
         - name: ZIPKIN_HOST
@@ -27,4 +27,4 @@ spec:
         - name: MONGO_HOST
           value: "mongodb"
         ports:
-        - containerPort: 8085
+        - containerPort: 

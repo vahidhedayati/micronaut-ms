@@ -1,5 +1,7 @@
 #!/bin/bash
-
+############
+# Called by ./install-minikube.sh - for each app running in this project 
+##############
 FOLDER=$1
 APP=$2
 NAME=$3
