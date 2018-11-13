@@ -117,7 +117,7 @@ public class GatewayController {
     @ContinueSpan
     public Single appStatus() {
 
-        ConsulClient client = new ConsulClient("localhost");
+        ConsulClient client = new ConsulClient("${CONSUL_HOST:localhost}");
 
         //Get a total list of micro services appearing under consul
         List<String> results = getAllConsulClients(client);

@@ -5,7 +5,7 @@ metadata:
   labels:
     app: waiter
 spec:
-  replicas: 
+  replicas: 1
   selector:
     matchLabels:
       app: waiter
@@ -16,10 +16,10 @@ spec:
     spec:
       containers:
       - name: waiter
-        image: vahidhedayati/beer-waiter:
+        image: vahidhedayati/beer-waiter:1.24
         env:
         - name: CONSUL_HOST
-          value: "wondering-garfish-consul-server"
+          value: "kindled-monkey-consul-server"
         - name: KAFKA_HOST
           value: "kafka-service"
         - name: ZIPKIN_HOST
@@ -27,4 +27,4 @@ spec:
         - name: MONGO_HOST
           value: "mongodb"
         ports:
-        - containerPort: 
+        - containerPort: 8084

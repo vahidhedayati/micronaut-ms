@@ -82,6 +82,8 @@ kubectl delete service $NAME-deployment
 
 
 kubectl expose deployment $NAME-deployment --port=$APP_PORT --target-port=$APP_PORT
+#echo "Running: kubectl port-forward $(kubectl get pods |grep $NAME-deployment|awk '{print $1}') $APP_PORT:$APP_PORT&"
 
+#kubectl port-forward $(kubectl get pods |grep "$NAME-deployment"|awk '{print $1}') $APP_PORT:$APP_PORT&
 
 
