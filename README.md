@@ -10,6 +10,15 @@ At the moment the internal IP of minikube is not accesible but able to use kubec
 
 
 
+Looking further at the logs on kubernetes consul host: The two following links are of relevance. My resolv.conf did have the issue reported.
+
+
+https://github.com/hashicorp/consul-helm/issues/9
+
+https://github.com/kubernetes/kubeadm/issues/787
+
+
+The issues described in latest video may now be very likely due to some configuration issue from an ubuntu install point of view
 
 --- 
 

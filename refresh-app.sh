@@ -81,9 +81,14 @@ echo "Exposing $NAME-deployment on port $APP_PORT"
 kubectl delete service $NAME-deployment
 
 
-kubectl expose deployment $NAME-deployment --port=$APP_PORT --target-port=$APP_PORT
+#kubectl expose deployment $NAME-deployment --port=$APP_PORT --target-port=$APP_PORT
+kubectl expose deployment/$NAME-deployment  --type="NodePort" --port $APP_PORT
+
 #echo "Running: kubectl port-forward $(kubectl get pods |grep $NAME-deployment|awk '{print $1}') $APP_PORT:$APP_PORT&"
 
 #kubectl port-forward $(kubectl get pods |grep "$NAME-deployment"|awk '{print $1}') $APP_PORT:$APP_PORT&
 
 
+#echo "-----------------------------------------------------------------------------------"
+#echo "running kubectl apply -f $NAME-ingres.yml"
+#kubectl apply -f $NAME-ingres.yml

@@ -19,6 +19,10 @@ function clean_minikube() {
 }
 
 
+echo "-----------------------------------------------------------------------------------"
+echo "About to install virtualbox - docker and add kubernetes sources as well as install kubectl DEB package"
+sudo apt-get  --yes --force-yes  install apt-transport-https virtualbox virtualbox-ext-pack docker docker.io 
+
 if [[ ! -f $HOME/.docker/config.json  ]]; then 
 	echo "You must goto https://hub.docker.com/"
 	echo "Register then run "
@@ -34,10 +38,6 @@ fi
 
 clean_minikube
 
-echo "-----------------------------------------------------------------------------------"
-echo "About to install virtualbox - docker and add kubernetes sources as well as install kubectl DEB package"
-
-sudo apt-get  --yes --force-yes  install apt-transport-https virtualbox virtualbox-ext-pack docker docker.io 
 
 wget https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
 chmod +x minikube-linux-amd64
@@ -103,10 +103,10 @@ echo "Installing consul-helm"
 rm -rf /tmp/consul-helm
 git clone https://github.com/hashicorp/consul-helm.git
 cd consul-helm
-git checkout v0.1.0
+git checkout v0.3.0
  
 echo "-----------------------------------------------------------------------------------"
-echo "Editing values.yaml and updating replicas/boostranExpect values of 3  to 1 "
+echo "Editing values.yaml and updating replicas/boostrapExpect values of 3  to 1 "
 ed -s values.yaml << EOF
 ,s/replicas: 3/replicas: 1/g
 ,s/bootstrapExpect: 3/bootstrapExpect: 1/g
@@ -291,8 +291,8 @@ echo "running: sh ./install-app.sh frontend/react beer-react react $DOCKER_USERN
 
 
 echo "-----------------------------------------------------------------------------------"
-echo "running kubectl apply -f front-ingres.yml"
-kubectl apply -f front-ingres.yml 
+#echo "running kubectl apply -f front-ingres.yml"
+#kubectl apply -f front-ingres.yml 
 
 
 sleep 120;
