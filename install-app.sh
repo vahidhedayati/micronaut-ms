@@ -66,7 +66,7 @@ echo "running: cd $CURRENT_PATH"
 cd $CURRENT_PATH
 
 
-CONSUL_HOST=$(kubectl get pod |grep consul-server|awk '{print $1}');
+CONSUL_HOST=$(kubectl get svc |grep consul-server|awk '{print $1}');
 
 echo "-----------------------------------------------------------------------------------"
 echo "Overwriting $NAME.yaml"

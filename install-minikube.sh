@@ -127,6 +127,20 @@ helm install .
 #cd ../
 #helm install ./consul-helm
 
+consul_dns=$(kubectl get svc |grep consul-dns|awk '{print $1}')
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    addonmanager.kubernetes.io/mode: EnsureExists
+  name: kube-dns
+  namespace: kube-system
+data:
+  stubDomains: |
+    {"consul": ["$(kubectl get svc $consul_dns -o jsonpath='{.spec.clusterIP}')"]}
+EOF
+
 function installKafka() {
 
 
