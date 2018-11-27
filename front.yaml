@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: front-deployment
+  name: front
   labels:
     app: front
 spec:
@@ -16,10 +16,10 @@ spec:
     spec:
       containers:
       - name: waiter
-        image: vahidhedayati/beer-front:1.24
+        image: vahidhedayati/beer-front:1.38
         env:
         - name: CONSUL_HOST
-          value: "hoping-alligator-consul-server"
+          value: "kind-cheetah-consul-server"
         - name: KAFKA_HOST
           value: "kafka-service"
         - name: ZIPKIN_HOST

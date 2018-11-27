@@ -9,6 +9,7 @@ spec:
       labels:
         app: zookeeper-1
     spec:
+      hostname: zookeeper-1
       containers:
       - name: zoo1
         image: digitalwonderland/zookeeper

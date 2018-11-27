@@ -1,8 +1,8 @@
 plugins {
     id "io.spring.dependency-management" version "1.0.6.RELEASE"
-    id "com.github.johnrengelman.shadow" version "4.0.0"
+    id "com.github.johnrengelman.shadow" version "4.0.2"
     id "net.ltgt.apt-eclipse" version "0.18"
-    id "net.ltgt.apt-idea" version "0.18"	
+    id "net.ltgt.apt-idea" version "0.18"
 }
 subprojects { project ->
 
@@ -31,14 +31,14 @@ subprojects { project ->
 
         dependencyManagement {
             imports {
-                mavenBom 'io.micronaut:bom:1.0.0.RC1'
+                mavenBom 'io.micronaut:micronaut-bom:1.0.1'
             }
         }
 
         dependencies {
 
             if ((project.path.contains(':tab'))||project.path.contains(':billing')||project.path.contains(':frontend')) {
-                compile "io.micronaut.configuration:kafka"
+                compile "io.micronaut.configuration:micronaut-kafka"
             }
             if (project.name == 'gateway') {
                 compile "com.ecwid.consul:consul-api:1.4.1"
@@ -49,20 +49,19 @@ subprojects { project ->
             if (project.name != 'something' && !project.path.contains(':someFunction') && !project.path.contains(':frontend')) {
                 // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
                 //compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+                compile "io.micronaut.configuration:micronaut-hibernate-validator"
+                compile "io.micronaut.configuration:micronaut-hibernate-gorm"
+                compile "io.micronaut:micronaut-http-client"
 
-                compile "io.micronaut.configuration:hibernate-validator"
-                compile "io.micronaut.configuration:hibernate-gorm"
+                compile "io.micronaut:micronaut-discovery-client"
+
                 runtime "com.h2database:h2:1.4.196"
                 runtime "org.apache.tomcat:tomcat-jdbc:8.0.44"
-                compile "io.micronaut:discovery-client"
-                // https://mvnrepository.com/artifact/io.micronaut/tracing
-                // compile group: 'io.micronaut', name: 'tracing', version: '1.0.0.M4'
-                // https://mvnrepository.com/artifact/io.micronaut.configuration/kafka
-                //compile group: 'io.micronaut.configuration', name: 'kafka', version: '1.0.0.M4'
-                compile "io.micronaut:tracing"
+
+                compile "io.micronaut:micronaut-tracing"
                 //
 
-                compile "io.micronaut.configuration:mongo-reactive"
+                compile "io.micronaut.configuration:micronaut-mongo-reactive"
 
                 //
                // compile "io.micronaut:micronaut-tracing"

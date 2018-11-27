@@ -131,11 +131,12 @@ public class StockController implements StockOperations<BeerStock> {
     @ContinueSpan
     @Override
     public Maybe<BeerStock> find(String name) {
+        System.out.println("stock app looking up beer: "+name);
         return Flowable.fromPublisher(
                 getCollection()
                         .find(eq("name", name))
                         .limit(1)
-        ).firstElement();
+        ).firstElement().onErrorReturnItem(new BeerStock("onErrorReturnItem",0,0));
     }
 
     @Post(uri = "/pints", consumes = MediaType.APPLICATION_JSON)

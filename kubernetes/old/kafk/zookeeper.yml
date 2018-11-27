@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: zookeeper-cluster1
+  namespace: default
+  labels:
+    app: zookeeper-cluster1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper-cluster1
+  template:
+    metadata:
+      labels:
+        name: zookeeper-cluster1
+        app: zookeeper-cluster1
+    spec:
+      hostname: zookeeper-cluster1
+      containers:
+      - name: zookeeper-cluster1
+        image: wurstmeister/zookeeper:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 2181
+        - containerPort: 2888
+        - containerPort: 3888

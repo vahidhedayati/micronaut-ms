@@ -1,19 +1,19 @@
 
 
 dependencies {
-    annotationProcessor "io.micronaut:inject-java"
-    annotationProcessor "io.micronaut:validation"
-    implementation "io.micronaut:inject"
-    implementation "io.micronaut:validation"
-    implementation "io.micronaut:runtime"
-    implementation "io.micronaut:http-client"
-    implementation "io.micronaut:http-server-netty"
+    annotationProcessor "io.micronaut:micronaut-inject-java"
+    annotationProcessor "io.micronaut:micronaut-validation"
+    implementation "io.micronaut:micronaut-inject"
+    implementation "io.micronaut:micronaut-validation"
+    implementation "io.micronaut:micronaut-runtime"
+    implementation "io.micronaut:micronaut-http-client"
+    implementation "io.micronaut:micronaut-http-server-netty"
     implementation "com.ecwid.consul:consul-api:1.4.1"
-    implementation "io.micronaut.configuration:kafka"
-    compileOnly "io.micronaut:inject-java"
+    implementation "io.micronaut.configuration:micronaut-kafka"
+    compileOnly "io.micronaut:micronaut-inject-java"
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
     testImplementation "junit:junit:4.12"
-    testImplementation "io.micronaut:inject-java"
+    testImplementation "io.micronaut:micronaut-inject-java"
     testImplementation "org.hamcrest:hamcrest-all:1.3"
 }
 

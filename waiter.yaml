@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: waiter-deployment
+  name: waiter
   labels:
     app: waiter
 spec:
@@ -16,10 +16,10 @@ spec:
     spec:
       containers:
       - name: waiter
-        image: vahidhedayati/beer-waiter:1.25
+        image: vahidhedayati/beer-waiter:1.38
         env:
         - name: CONSUL_HOST
-          value: "hoping-alligator-consul-server"
+          value: "kind-cheetah-consul-server"
         - name: KAFKA_HOST
           value: "kafka-service"
         - name: ZIPKIN_HOST

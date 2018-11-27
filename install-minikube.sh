@@ -143,9 +143,18 @@ echo "----------------------"
 echo "Applying kafka service files"
 cd $CURRENT_PATH;
 # https://dzone.com/articles/ultimate-guide-to-installing-kafka-docker-on-kuber  <<---- below as per this link
-kubectl create -f kubernetes/kafka/00-zookeeper.yml
-kubectl create -f kubernetes/kafka/05-kafka-service.yml
-kubectl create -f kubernetes/kafka/09-kafka-broker.yml
+#kubectl create -f kubernetes/kafka/00-zookeeper.yml
+#kubectl create -f kubernetes/kafka/05-kafka-service.yml
+#kubectl create -f kubernetes/kafka/09-kafka-broker.yml
+#kubectl  create -f kubernetes/kafka.yml
+#kubectl create -f kubernetes/kafka/namespace.yml
+#kubectl create -f kubernetes/kafka/zookeeper.yml
+#kubectl create -f kubernetes/kafka/service.yml
+kubectl create -f kubernetes/kafka/zookeeper_micro.yaml
+kubectl create -f kubernetes/kafka/kafka_micro.yaml
+kubectl create -f kubernetes/kafka/kafka_service.yaml
+
+
 
 
 	#cd /tmp
@@ -298,13 +307,13 @@ echo "--------------------------------------------------------------------------
 sleep 120;
 
 echo "-----------------------------------------------------------------------------------"
-REACT_HOST=$(kubectl get pods |grep "react-deployment"|awk '{print $1}');
+REACT_HOST=$(kubectl get pods |grep "react"|awk '{print $1}');
 echo "Porting forwarding $REACT_HOST 3000:3000"
 kubectl port-forward $REACT_HOST 3000:3000&
 
 
 echo "-----------------------------------------------------------------------------------"
-FRONT_HOST=$(kubectl get pods |grep "front-deployment"|awk '{print $1}');
+FRONT_HOST=$(kubectl get pods |grep "front"|awk '{print $1}');
 echo "Porting forwarding $FRONT_HOST 8080:8080"
 kubectl port-forward $FRONT_HOST 8080:8080&
 

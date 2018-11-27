@@ -10,6 +10,7 @@ spec:
         app: kafka
         id: "0"
     spec:
+      hostname: kafka-broker0
       containers:
       - name: kafka
         image: wurstmeister/kafka

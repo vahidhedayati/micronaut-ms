@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: stock-deployment
+  name: stock
   labels:
     app: stock
 spec:
@@ -16,10 +16,10 @@ spec:
     spec:
       containers:
       - name: waiter
-        image: vahidhedayati/beer-stock:1.24
+        image: vahidhedayati/beer-stock:1.40
         env:
         - name: CONSUL_HOST
-          value: "hoping-alligator-consul-server"
+          value: "kind-cheetah-consul-server"
         - name: KAFKA_HOST
           value: "kafka-service"
         - name: ZIPKIN_HOST

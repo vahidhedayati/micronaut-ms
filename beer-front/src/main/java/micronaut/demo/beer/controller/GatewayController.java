@@ -6,6 +6,7 @@ import com.ecwid.consul.v1.Response;
 import com.ecwid.consul.v1.health.model.HealthService;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import groovy.util.logging.Slf4j;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
@@ -13,6 +14,7 @@ import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.tracing.annotation.SpanTag;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import micronaut.demo.beer.client.*;
@@ -116,8 +118,10 @@ public class GatewayController {
     @Get("/appStatus")
     @ContinueSpan
     public Single appStatus() {
-
-        ConsulClient client = new ConsulClient("${CONSUL_HOST:localhost}");
+        @Property(name = "CONSUL_HOST")
+        String propertyName="localhost";
+        System.out.println(propertyName+" property name");
+        ConsulClient client = new ConsulClient(propertyName);
 
         //Get a total list of micro services appearing under consul
         List<String> results = getAllConsulClients(client);
@@ -298,6 +302,13 @@ public class GatewayController {
                 .onErrorReturnItem(new CustomerBill());
     }
 
+    @Get("/lookup/{name}")
+    @ContinueSpan
+    public Maybe<BeerStock> lookup(@SpanTag("gateway.beerLookup") @NotBlank String name) {
+        System.out.println("Looking up beer for "+name+" "+new Date());
+        return stockControllerClient.find(name)
+                .onErrorReturnItem(new BeerStock());
+    }
 
 
 

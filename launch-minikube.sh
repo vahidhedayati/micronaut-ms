@@ -47,13 +47,13 @@ kubectl port-forward $CONSUL_HOST 8500:8500&
 sleep 60
 
 echo "-----------------------------------------------------------------------------------"
-REACT_HOST=$(kubectl get pods |grep "react-deployment"|awk '{print $1}');
+REACT_HOST=$(kubectl get pods |grep "react"|awk '{print $1}');
 echo "Porting forwarding $REACT_HOST 3000:3000"
 kubectl port-forward $REACT_HOST 3000:3000&
 
 
 echo "-----------------------------------------------------------------------------------"
-FRONT_HOST=$(kubectl get pods |grep "front-deployment"|awk '{print $1}');
+FRONT_HOST=$(kubectl get pods |grep "front"|awk '{print $1}');
 echo "Porting forwarding $FRONT_HOST 8080:8080"
 kubectl port-forward $FRONT_HOST 8080:8080&
 

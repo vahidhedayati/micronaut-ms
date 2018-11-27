@@ -152,3 +152,37 @@ switched to db beerstock
 The commands are `mongo` followed by `use {dbName};` then `db.dropDatabase()`
 
 I had to do this to beerStock due to how it was done - recreate test etc 
+
+
+---
+
+
+sudo apt-get update && apt-get install -y apt-transport-https curl
+sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+sudo cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+
+sudo kubeadm init
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+You can now join any number of machines by running the following on each node
+as root:
+
+ sudo kubeadm join 192.168.1.141:6443 --token tkwqde.2fq1f3k1to8jbkib --discovery-token-ca-cert-hash sha256:97971cd15c92b75cb421226c784d9cda048ec6658555591596fb61242231826a
+

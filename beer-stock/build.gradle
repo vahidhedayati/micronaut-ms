@@ -1,15 +1,15 @@
 
 dependencies {
-    annotationProcessor "io.micronaut:inject-java"
-    annotationProcessor "io.micronaut:validation"
-    implementation "io.micronaut:inject"
-    implementation "io.micronaut:validation"
-    implementation "io.micronaut:runtime"
-    implementation "io.micronaut:http-client"
-    implementation "io.micronaut:http-server-netty"
-    compileOnly "io.micronaut:inject-java"
+    annotationProcessor "io.micronaut:micronaut-inject-java"
+    annotationProcessor "io.micronaut:micronaut-validation"
+    implementation "io.micronaut:micronaut-inject"
+    implementation "io.micronaut:micronaut-validation"
+    implementation "io.micronaut:micronaut-runtime"
+    implementation "io.micronaut:micronaut-http-client"
+    implementation "io.micronaut:micronaut-http-server-netty"
+    compileOnly "io.micronaut:micronaut-inject-java"
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
-    implementation "io.micronaut.configuration:kafka"
+    implementation "io.micronaut.configuration:micronaut-kafka"
     runtimeOnly 'io.zipkin.brave:brave-instrumentation-http:5.4.2'
     runtimeOnly 'io.zipkin.reporter2:zipkin-reporter:2.7.9'
     implementation 'io.opentracing.brave:brave-opentracing:0.33.3'

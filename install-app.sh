@@ -77,7 +77,7 @@ cat <<EOF>>$NAME.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: $NAME-deployment
+  name: $NAME
   labels:
     app: $NAME
 spec:
@@ -111,23 +111,23 @@ echo "Running: kubectl apply -f $NAME.yaml"
 kubectl apply -f $NAME.yaml
 
 echo "-----------------------------------------------------------------------------------"
-echo "Exposing $NAME-deployment on port $APP_PORT"
-# kubectl expose pods/$(kubectl get pods |grep "$NAME-deployment"|awk '{print $1}') --type="NodePort" --port $APP_PORT
+echo "Exposing $NAME on port $APP_PORT"
+# kubectl expose pods/$(kubectl get pods |grep "$NAME"|awk '{print $1}') --type="NodePort" --port $APP_PORT
 
-kubectl delete service $NAME-deployment
-
-
-#kubectl expose deployment $NAME-deployment --port=$APP_PORT --target-port=$APP_PORT
-kubectl expose deployment/$NAME-deployment  --type="NodePort" --port $APP_PORT
+kubectl delete service $NAME
 
 
-#echo "Running: kubectl port-forward $(kubectl get pods |grep $NAME-deployment|awk '{print $1}') $APP_PORT:$APP_PORT&"
+kubectl expose deployment $NAME --port=$APP_PORT --target-port=$APP_PORT
+#kubectl expose deployment/$NAME  --type="NodePort" --port $APP_PORT
 
-#kubectl port-forward $(kubectl get pods |grep "$NAME-deployment"|awk '{print $1}') $APP_PORT:$APP_PORT&
+
+#echo "Running: kubectl port-forward $(kubectl get pods |grep $NAME|awk '{print $1}') $APP_PORT:$APP_PORT&"
+
+#kubectl port-forward $(kubectl get pods |grep "$NAME"|awk '{print $1}') $APP_PORT:$APP_PORT&
 
 
-cho "-----------------------------------------------------------------------------------"
-echo "running kubectl apply -f $NAME-ingres.yml"
-kubectl apply -f $NAME-ingres.yml
+#echo "-----------------------------------------------------------------------------------"
+#echo "running kubectl apply -f $NAME-ingres.yml"
+#kubectl apply -f $NAME-ingres.yml
 
 
