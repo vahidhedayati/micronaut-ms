@@ -16,10 +16,10 @@ spec:
     spec:
       containers:
       - name: waiter
-        image: vahidhedayati/beer-waiter:1.38
+        image: vahidhedayati/beer-waiter:1.39
         env:
         - name: CONSUL_HOST
-          value: "kind-cheetah-consul-server"
+          value: "kind-cheetah-consul-server-0"
         - name: KAFKA_HOST
           value: "kafka-service"
         - name: ZIPKIN_HOST
