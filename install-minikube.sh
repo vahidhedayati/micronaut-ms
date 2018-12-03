@@ -64,10 +64,20 @@ kubectl config view
 
 kubectl get nodes
 
-
+echo "-----------------------------------------------------------------------------------"
+echo "logging into minikube VM and adding restart-image.sh script"
+echo "run minikube ssh then when logged in : restart-image.sh front restart-image.sh stock"
 minikube ssh << EOF
+sudo bash
+cat <<EEF>> /usr/bin/restart-image.sh
+#!/bin/bash
+sudo docker ps |grep $(echo '\$1')|grep POD|awk '{print "sudo docker kill "$(echo '\$NF')}'|/bin/sh
+EEF
+chmod 755 /usr/bin/restart-image.sh
+exit
 exit
 EOF
+
 
 
 echo "-----------------------------------------------------------------------------------"
@@ -103,16 +113,19 @@ echo "Installing consul-helm"
 rm -rf /tmp/consul-helm
 git clone https://github.com/hashicorp/consul-helm.git
 cd consul-helm
-git checkout v0.3.0
+git checkout v1.3.0
+#cp $CURRENT_PATH/kubernetes/values.yaml ./
+cd ../
+helm install -f $CURRENT_PATH/kubernetes/helm-consul-values.yaml --name custom ./consul-helm
  
-echo "-----------------------------------------------------------------------------------"
-echo "Editing values.yaml and updating replicas/boostrapExpect values of 3  to 1 "
-ed -s values.yaml << EOF
-,s/replicas: 3/replicas: 1/g
-,s/bootstrapExpect: 3/bootstrapExpect: 1/g
-w
-q
-EOF
+#echo "-----------------------------------------------------------------------------------"
+#echo "Editing values.yaml and updating replicas/boostrapExpect values of 3  to 1 "
+#ed -s values.yaml << EOF
+#,s/replicas: 3/replicas: 1/g
+#,s/bootstrapExpect: 3/bootstrapExpect: 1/g
+#w
+#q
+#EOF
 
 
 # No tiller - none of these fixes it

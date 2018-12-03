@@ -71,13 +71,15 @@ CONSUL_HOST=$(kubectl get svc |grep consul-server|awk '{print $1}');
 echo "-----------------------------------------------------------------------------------"
 echo "Overwriting $NAME.yaml"
 >$NAME.yaml
-
+#    "consul.hashicorp.com/connect-service-port": "$APP_PORT"
 echo "Reproducing $NAME.yaml"
 cat <<EOF>>$NAME.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: $NAME
+  annotations:
+    "consul.hashicorp.com/connect-inject": "false"
   labels:
     app: $NAME
 spec:

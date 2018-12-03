@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: billing
+  annotations:
+    "consul.hashicorp.com/connect-inject": "false"
   labels:
     app: billing
 spec:
@@ -16,10 +18,10 @@ spec:
     spec:
       containers:
       - name: waiter
-        image: vahidhedayati/beer-billing:1.45
+        image: vahidhedayati/beer-billing:1.53
         env:
         - name: CONSUL_HOST
-          value: "edgy-anaconda-consul-server"
+          value: "custom-consul-server"
         - name: KAFKA_HOST
           value: "kafka-service"
         - name: ZIPKIN_HOST
