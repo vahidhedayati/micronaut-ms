@@ -23,7 +23,9 @@ echo "--------------------------------------------------------------------------
 echo "About to install virtualbox - docker and add kubernetes sources as well as install kubectl DEB package"
 sudo apt-get  --yes --force-yes  install apt-transport-https virtualbox virtualbox-ext-pack docker docker.io 
 
-if [[ ! -f $HOME/.docker/config.json  ]]; then 
+if sudo test -e $HOME/.docker/config.json; then 
+	echo "You have already logged into hub.docker.com great" 
+else
 	echo "You must goto https://hub.docker.com/"
 	echo "Register then run "
 	echo "docker login on your PC first before proceeding"
