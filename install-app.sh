@@ -71,6 +71,8 @@ CONSUL_HOST=$(kubectl get svc |grep consul-server|awk '{print $1}');
 echo "-----------------------------------------------------------------------------------"
 echo "Overwriting $NAME.yaml"
 >$NAME.yaml
+#  annotations:
+#    "consul.hashicorp.com/connect-inject": "false"
 #    "consul.hashicorp.com/connect-service-port": "$APP_PORT"
 echo "Reproducing $NAME.yaml"
 cat <<EOF>>$NAME.yaml
@@ -78,8 +80,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: $NAME
-  annotations:
-    "consul.hashicorp.com/connect-inject": "false"
   labels:
     app: $NAME
 spec:
@@ -119,8 +119,8 @@ echo "Exposing $NAME on port $APP_PORT"
 kubectl delete service $NAME
 
 
-kubectl expose deployment $NAME --port=$APP_PORT --target-port=$APP_PORT
-#kubectl expose deployment/$NAME  --type="NodePort" --port $APP_PORT
+#kubectl expose deployment $NAME --port=$APP_PORT --target-port=$APP_PORT
+kubectl expose deployment/$NAME  --type="NodePort" --port $APP_PORT
 
 
 #echo "Running: kubectl port-forward $(kubectl get pods |grep $NAME|awk '{print $1}') $APP_PORT:$APP_PORT&"
@@ -129,7 +129,7 @@ kubectl expose deployment $NAME --port=$APP_PORT --target-port=$APP_PORT
 
 
 #echo "-----------------------------------------------------------------------------------"
-#echo "running kubectl apply -f $NAME-ingres.yml"
-#kubectl apply -f $NAME-ingres.yml
+echo "running kubectl apply -f $NAME-ingres.yml"
+kubectl apply -f $NAME-ingres.yml
 
 

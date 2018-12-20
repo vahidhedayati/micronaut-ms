@@ -1,10 +1,10 @@
-tracing:
-    zipkin:
-        http:
-            url: http://localhost:9411
-        enabled: true
-        sampler:
-            probability: 1
+micronaut:
+    application:
+        name: beer-waiter
+                
+#Uncomment to set server port
+#    server:
+#        port: 8080
 ---
 kafka:
     #  embedded:

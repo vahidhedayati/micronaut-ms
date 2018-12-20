@@ -23,9 +23,7 @@ echo "--------------------------------------------------------------------------
 echo "About to install virtualbox - docker and add kubernetes sources as well as install kubectl DEB package"
 sudo apt-get  --yes --force-yes  install apt-transport-https virtualbox virtualbox-ext-pack docker docker.io 
 
-if sudo test -e $HOME/.docker/config.json; then 
-	echo "You have already logged into hub.docker.com great" 
-else
+if [[ ! -f $HOME/.docker/config.json  ]]; then 
 	echo "You must goto https://hub.docker.com/"
 	echo "Register then run "
 	echo "docker login on your PC first before proceeding"
@@ -50,7 +48,7 @@ echo "Minikube added about to start it - this may take a while - please wait"
 
 
 #minikube start
-minikube start --cpus 4 --memory 4096
+minikube start --cpus 4 --memory 4096 --kubernetes-version v1.10.0 --bootstrapper=kubeadm
 
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
@@ -95,16 +93,17 @@ minikube addons enable ingress
 kubectl config use-context minikube
 
 
+function installConsulHelm() {
 cd /tmp
-#curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > install-helm.sh
-#chmod u+x install-helm.sh
-#./install-helm.sh
-curl https://raw.githubusercontent.com/helm/helm/master/scripts/get > get_helm.sh
-chmod 700 get_helm.sh
+curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > install-helm.sh
+chmod u+x install-helm.sh
+./install-helm.sh
+#curl https://raw.githubusercontent.com/helm/helm/master/scripts/get > get_helm.sh
+#chmod 700 get_helm.sh
 
 
-echo "About to install HELM"
-./get_helm.sh
+#echo "About to install HELM"
+#./get_helm.sh
 
 echo "Initialising helm"
 helm init --wait
@@ -115,32 +114,29 @@ echo "Installing consul-helm"
 rm -rf /tmp/consul-helm
 git clone https://github.com/hashicorp/consul-helm.git
 cd consul-helm
-git checkout v1.3.0
+git checkout v0.4.0
+
+helm install --name consul ./
+
 #cp $CURRENT_PATH/kubernetes/values.yaml ./
-cd ../
-helm install -f $CURRENT_PATH/kubernetes/helm-consul-values.yaml --name custom ./consul-helm
- 
+
 #echo "-----------------------------------------------------------------------------------"
 #echo "Editing values.yaml and updating replicas/boostrapExpect values of 3  to 1 "
 #ed -s values.yaml << EOF
 #,s/replicas: 3/replicas: 1/g
 #,s/bootstrapExpect: 3/bootstrapExpect: 1/g
-#w
-#q
+##w
+##q
 #EOF
 
+helm del --purge consul
+#helm install --name consul ./
 
-# No tiller - none of these fixes it
-#minikube addons enable registry-creds
-#kubectl logs --namespace kube-system tiller-deploy-2654728925-j2zvk
+cd ../
+helm install -f $CURRENT_PATH/kubernetes/helm-consul-values.yaml --name custom ./consul-helm
+# helm install ./consul-helm
 
-echo "-----------------------------------------------------------------------------------"
-echo "Installing consul-helm using helm"
 
-helm install .
-# running the install twice appears to work - odd 
-#cd ../
-#helm install ./consul-helm
 
 consul_dns=$(kubectl get svc |grep consul-dns|awk '{print $1}')
 cat <<EOF | kubectl apply -f -
@@ -155,93 +151,45 @@ data:
   stubDomains: |
     {"consul": ["$(kubectl get svc $consul_dns -o jsonpath='{.spec.clusterIP}')"]}
 EOF
+}
+installConsulHelm;
+#exit;
+
+
+
 
 function installKafka() {
+    echo "----------------------------"
+    echo "Starting docker zookeeper and kafka "
 
+    sudo docker run  -d -e ZOOKEEPER_CLIENT_PORT=2181 confluentinc/cp-zookeeper:4.1.0
+    sudo docker run -d  -p 9092:9092 -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092 -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 confluentinc/cp-kafka:4.1.0
 
+    #sudo docker run -d --net=confluent --name=zookeeper --rm -e ZOOKEEPER_CLIENT_PORT=2181 confluentinc/cp-zookeeper:5.0.1
+    #sudo docker run -d --net=confluent --name=kafka --rm -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092 -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 confluentinc/cp-kafka:5.0.1
+    echo "----------------------"
+    echo "Applying kafka service files"
+    cd $CURRENT_PATH;
 
-echo "----------------------------"
-echo "Starting docker zookeeper and kafka "
-	
-sudo docker run  -d -e ZOOKEEPER_CLIENT_PORT=2181 confluentinc/cp-zookeeper:4.1.0
-sudo docker run -d  -p 9092:9092 -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092 -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 confluentinc/cp-kafka:4.1.0
+    kubectl create -f kubernetes/kafka/zookeeper_micro.yaml
+    kubectl create -f kubernetes/kafka/kafka_micro.yaml
+    kubectl create -f kubernetes/kafka/kafka_service.yaml
 
-#sudo docker run -d --net=confluent --name=zookeeper --rm -e ZOOKEEPER_CLIENT_PORT=2181 confluentinc/cp-zookeeper:5.0.1
-#sudo docker run -d --net=confluent --name=kafka --rm -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092 -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 confluentinc/cp-kafka:5.0.1
-echo "----------------------"
-echo "Applying kafka service files"
-cd $CURRENT_PATH;
-# https://dzone.com/articles/ultimate-guide-to-installing-kafka-docker-on-kuber  <<---- below as per this link
-#kubectl create -f kubernetes/kafka/00-zookeeper.yml
-#kubectl create -f kubernetes/kafka/05-kafka-service.yml
-#kubectl create -f kubernetes/kafka/09-kafka-broker.yml
-#kubectl  create -f kubernetes/kafka.yml
-#kubectl create -f kubernetes/kafka/namespace.yml
-#kubectl create -f kubernetes/kafka/zookeeper.yml
-#kubectl create -f kubernetes/kafka/service.yml
-kubectl create -f kubernetes/kafka/zookeeper_micro.yaml
-kubectl create -f kubernetes/kafka/kafka_micro.yaml
-kubectl create -f kubernetes/kafka/kafka_service.yaml
-
-
-
-
-	#cd /tmp
-	#rm -rf kubernetes-kafka
-	#git clone https://github.com/Yolean/kubernetes-kafka.git
-	#cd kubernetes-kafka
-	#kubectl apply -f ./configure/minikube-storageclass-broker.yml
-	#kubectl apply -f ./configure/minikube-storageclass-zookeeper.yml
-	#kubectl apply -f ./00-namespace.yml 
-	#kubectl apply -f ./rbac-namespace-default
-	#kubectl apply -f ./zookeeper
-	#kubectl apply -f ./kafka
 }
-
 
 installKafka;
 
 
+
 function loadMongo() {
-        sudo docker run -it -d mongo
-	#curl -L https://github.com/kubernetes/kompose/releases/download/v1.11.0/kompose-darwin-amd64 -o kompose
-	#chmod +x kompose
-	#sudo mv ./kompose /usr/local/bin/kompose
+    sudo docker run -it -d mongo
 	cd $CURRENT_PATH;
-	
-	#cd kubernetes/mongo
-	#kompose convert -f docker-compose.yaml
-	##Above will generate 3 yaml files
 	kubectl create -f kubernetes/mongo/00-mongo-persistant.yml
 	kubectl create -f kubernetes/mongo/05-mongo-deployment.yml
 	kubectl create -f kubernetes/mongo/10-mongo-service.yml
 	kubectl expose deployment mongodb --type=LoadBalancer
-
 }
 loadMongo;
-
-function installMong() {
- sudo docker run -it -d mongo
-
-
-#kubectl create -f https://raw.githubusercontent.com/vmware/kubernetes/kube-examples/kube-examples/mongodb-shards/storageclass.yaml
-
-#kubectl create -f https://github.com/vmware/kubernetes/blob/kube-examples/kube-examples/mongodb-shards/storage-volumes-node01.yaml
-#kubectl create -f https://github.com/vmware/kubernetes/blob/kube-examples/kube-examples/mongodb-shards/storage-volumes-node02.yaml
-#kubectl create -f https://github.com/vmware/kubernetes/blob/kube-examples/kube-examples/mongodb-shards/storage-volumes-node03.yaml
-#kubectl create -f https://github.com/vmware/kubernetes/blob/kube-examples/kube-examples/mongodb-shards/storage-volumes-node04.yaml
-
-#kubectl create -f https://raw.githubusercontent.com/vmware/kubernetes/kube-examples/kube-examples/mongodb-shards/node01-deployment.yaml
-#kubectl create -f https://raw.githubusercontent.com/vmware/kubernetes/kube-examples/kube-examples/mongodb-shards/node02-deployment.yaml
-#kubectl create -f https://raw.githubusercontent.com/vmware/kubernetes/kube-examples/kube-examples/mongodb-shards/node03-deployment.yaml
-#kubectl create -f https://raw.githubusercontent.com/vmware/kubernetes/kube-examples/kube-examples/mongodb-shards/node04-deployment.yaml
-
-#kubectl create -f https://raw.githubusercontent.com/vmware/kubernetes/kube-examples/kube-examples/mongodb-shards/node01-service.yaml
-#kubectl create -f https://raw.githubusercontent.com/vmware/kubernetes/kube-examples/kube-examples/mongodb-shards/node02-service.yaml
-#kubectl create -f https://raw.githubusercontent.com/vmware/kubernetes/kube-examples/kube-examples/mongodb-shards/node03-service.yaml
-#kubectl create -f https://raw.githubusercontent.com/vmware/kubernetes/kube-examples/kube-examples/mongodb-shards/node04-service.yaml
-}
-#installMong;
 
 
 kubectl get pods
@@ -315,37 +263,8 @@ echo "--------------------------------------------------------------------------
 echo "running: sh ./install-app.sh beer-waiter beer-waiter waiter $DOCKER_USERNAME"
 ./install-app.sh beer-waiter beer-waiter waiter $DOCKER_USERNAME
 
-echo "-----------------------------------------------------------------------------------"
-echo "running: ./install-app.sh beer-stock beer-stock stock  $DOCKER_USERNAME"
-./install-app.sh beer-stock beer-stock stock  $DOCKER_USERNAME
-
-echo "-----------------------------------------------------------------------------------"
-echo "running: sh ./install-app.sh beer-front beer-front front  $DOCKER_USERNAME"
-./install-app.sh beer-front beer-front front  $DOCKER_USERNAME
-
-echo "-----------------------------------------------------------------------------------"
-echo "running: sh ./install-app.sh frontend/react beer-react react $DOCKER_USERNAME 1 3000"
-./install-app.sh frontend/react beer-react react $DOCKER_USERNAME 1 3000
-
-
-echo "-----------------------------------------------------------------------------------"
-#echo "running kubectl apply -f front-ingres.yml"
-#kubectl apply -f front-ingres.yml 
-
 
 sleep 120;
-
-echo "-----------------------------------------------------------------------------------"
-REACT_HOST=$(kubectl get pods |grep "react"|awk '{print $1}');
-echo "Porting forwarding $REACT_HOST 3000:3000"
-kubectl port-forward $REACT_HOST 3000:3000&
-
-
-echo "-----------------------------------------------------------------------------------"
-FRONT_HOST=$(kubectl get pods |grep "front"|awk '{print $1}');
-echo "Porting forwarding $FRONT_HOST 8080:8080"
-kubectl port-forward $FRONT_HOST 8080:8080&
-
 
 #echo "-----------------------------------------------------------------------------------"
 #echo "Launching minikube dashboard"

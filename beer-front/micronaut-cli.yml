@@ -1,5 +1,0 @@
-profile: service
-defaultPackage: beer.front
----
-testFramework: junit
-sourceLanguage: java

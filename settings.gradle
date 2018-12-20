@@ -1,8 +1,4 @@
 include "beer-waiter"
 include "beer-billing"
-include "beer-stock"
-//include "beer-tab"
-include "beer-front"
-include "frontend:react"
 ///include "beer-websocket"
 //include "groovysocket"

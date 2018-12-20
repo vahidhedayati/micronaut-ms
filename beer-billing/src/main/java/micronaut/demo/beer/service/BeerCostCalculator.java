@@ -36,17 +36,22 @@
             return costNoVat+costVat;
         }
 
-        public double calculateBeerCost(BeerItem beerItem) {
-            double costNoVat = beerItem.getPrice()*beerItem.getAmount();
-            double costVat = costNoVat*vat/100;
-            return costNoVat+costVat;
-        }
-
         private double allBeersCost(Ticket ticket) {
             return ticket
                     .getBeerItems()
                     .stream()
-                    .map( beer ->  beer.getPrice()*beer.getAmount())
+                    .map( beer ->  calculateBeerCost(beer))
                     .mapToDouble(i->i).sum();
+        }
+
+        private double calculateBeerCost(BeerItem beer) {
+
+            switch (beer.getSize()) {
+                case SMALL : return 1* beerBaseCost;
+                case MEDIUM: return 2* beerBaseCost;
+                case PINT: return 3* beerBaseCost;
+                case EMPTY: return beerBaseCost;
+                default: return 99;
+            }
         }
     }

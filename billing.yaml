@@ -2,8 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: billing
-  annotations:
-    "consul.hashicorp.com/connect-inject": "false"
   labels:
     app: billing
 spec:
@@ -18,7 +16,7 @@ spec:
     spec:
       containers:
       - name: waiter
-        image: vahidhedayati/beer-billing:1.53
+        image: vahidhedayati/beer-billing:1.77
         env:
         - name: CONSUL_HOST
           value: "custom-consul-server"
@@ -30,3 +28,4 @@ spec:
           value: "mongodb"
         ports:
         - containerPort: 8085
+      #  port

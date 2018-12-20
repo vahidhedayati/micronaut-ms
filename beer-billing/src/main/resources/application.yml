@@ -1,13 +1,13 @@
-tracing:
-    zipkin:
-        http:
-            url: http://localhost:9411
-        enabled: true
-        sampler:
-            probability: 1
+micronaut:
+    application:
+        name: beer-billing
+                
+#Uncomment to set server port
+   # server:
+      #  port: 8081
 ---
-kafka:
+#kafka:
     #  embedded:
     #    enabled: true
-    bootstrap:
-        servers: "${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}"
+ #   bootstrap:
+  #      servers: "${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}"
