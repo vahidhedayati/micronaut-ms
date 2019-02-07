@@ -16,10 +16,10 @@ spec:
     spec:
       containers:
       - name: waiter
-        image: vahidhedayati/beer-billing:1.83
+        image: vahidhedayati/beer-billing:1.84
         env:
         - name: CONSUL_HOST
-          value: "172.17.0.6"
+          value: "consul-server"
         - name: KAFKA_HOST
           value: "kafka-service"
         - name: ZIPKIN_HOST
