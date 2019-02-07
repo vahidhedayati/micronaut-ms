@@ -16,10 +16,10 @@ spec:
     spec:
       containers:
       - name: waiter
-        image: vahidhedayati/beer-billing:1.77
+        image: vahidhedayati/beer-billing:1.83
         env:
         - name: CONSUL_HOST
-          value: "custom-consul-server"
+          value: "172.17.0.6"
         - name: KAFKA_HOST
           value: "kafka-service"
         - name: ZIPKIN_HOST
@@ -28,4 +28,3 @@ spec:
           value: "mongodb"
         ports:
         - containerPort: 8085
-      #  port

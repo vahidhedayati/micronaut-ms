@@ -39,7 +39,7 @@ echo "NEW VERSION = $VERSION"
 
 
 if [[ $APP_PORT == "" ]]; then 
-	APP_PORT=$(grep port $APP/src/main/resources/application.*|awk -F":" '{if ($2 !~ /^#/) { v=$2; ccount=index(v,"=")+1; print substr(v,ccount,length(v)) } }')
+	APP_PORT=$(grep port $APP/src/main/resources/application.*|awk -F":" '{if ($2 !~ /^#/) { v=$2; ccount=index(v,"=")+1; print substr(v,ccount,length(v)) } }'|head -n1)
 	echo "APP PORT NOT DEFINED DYNAMICALL SET TO $APP_PORT"
 fi
 

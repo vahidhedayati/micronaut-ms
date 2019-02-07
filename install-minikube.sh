@@ -114,7 +114,7 @@ echo "Installing consul-helm"
 rm -rf /tmp/consul-helm
 git clone https://github.com/hashicorp/consul-helm.git
 cd consul-helm
-git checkout v0.4.0
+git checkout v0.5.0
 
 helm install --name consul ./
 
@@ -133,7 +133,7 @@ helm del --purge consul
 #helm install --name consul ./
 
 cd ../
-helm install -f $CURRENT_PATH/kubernetes/helm-consul-values.yaml --name custom ./consul-helm
+helm install -f $CURRENT_PATH/kubernetes/helm-consul-values.yaml --name consul ./consul-helm
 # helm install ./consul-helm
 
 

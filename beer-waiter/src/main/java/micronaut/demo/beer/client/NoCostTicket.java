@@ -12,6 +12,7 @@ import javax.validation.constraints.NotBlank;
 public class NoCostTicket implements TicketControllerClient{
     @Override
     public HttpResponse<BeerItem> addBeerToCustomerBill(BeerItem beer, @NotBlank String customerName) {
+        System.out.println(" Blank beer from fall back being served");
         return HttpResponse.ok();
     }
 

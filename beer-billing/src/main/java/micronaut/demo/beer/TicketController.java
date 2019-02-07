@@ -50,7 +50,7 @@ public class TicketController {
 
 	@Post("/addBeer/{customerName}")
 	public HttpResponse<BeerItem> addBeerToCustomerBill(@Body BeerItem beer, @NotBlank String customerName) {
-
+		System.out.println(" Normal beer served from ticket controller");
 		return HttpResponse.ok(beer);
 	}
 
