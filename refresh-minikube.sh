@@ -6,8 +6,6 @@
 # since consul is updated - ./refresh-app.sh is called which updates each apps yaml file without re-uploading the old app file 
 ####
 
-#Please set this variable
-DOCKER_USERNAME="vahidhedayati";
 
 function clean_minikube() {
 	echo "clearing out minikube"
@@ -16,13 +14,15 @@ function clean_minikube() {
 	rm -rf $HOME/.minikube
 }
 
-
-if [[ ! -f $HOME/.docker/config.json  ]]; then 
-	echo "You must goto https://hub.docker.com/"
-	echo "Register then run "
-	echo "docker login on your PC first before proceeding"
-	exit;
+if sudo grep -q 'auths": {}' ~/.docker/config.json ; then
+        echo "You must goto https://hub.docker.com/"
+        echo "Register then run "
+        echo "docker login on your PC first before proceeding"
+        exit;
 fi
+
+DOCKER_USERNAME=$(sudo docker info | sed '/Username:/!d;s/.* //');
+
 
 CURRENT_PATH=$(pwd);
 if [[ $DOCKER_USERNAME == "" ]]; then
@@ -214,16 +214,46 @@ kubectl apply -f front-ingres.yml
 
 sleep 120;
 
-echo "-----------------------------------------------------------------------------------"
-REACT_HOST=$(kubectl get pods |grep "react-deployment"|awk '{print $1}');
-echo "Porting forwarding $REACT_HOST 3000:3000"
-kubectl port-forward $REACT_HOST 3000:3000&
+CURRENT_APP=$(kubectl get pods |grep "front")
+STATUS=$(echo $CURRENT_APP|awk '{print $3}')
+FRONT_HOST=$(echo $CURRENT_APP|awk '{print $1}');
+while [  $STATUS != 'Running' ]; do
+        echo "Sleeping again waiting on Front app to start"
+        sleep 60;
+        CURRENT_APP=$(kubectl get pods |grep "front")
+        STATUS=$(echo $CURRENT_APP|awk '{print $3}')
 
+ done
 
-echo "-----------------------------------------------------------------------------------"
-FRONT_HOST=$(kubectl get pods |grep "front-deployment"|awk '{print $1}');
+running=$(ps w|grep kubectl|grep 8080|awk '{print $1}')
+if [ $running != '' ];  then
+ echo "found 8080 running killing on $running";
+ kill -9 $running
+fi
+
 echo "Porting forwarding $FRONT_HOST 8080:8080"
 kubectl port-forward $FRONT_HOST 8080:8080&
+
+
+CURRENT_APP=$(kubectl get pods |grep "react")
+STATUS=$(echo $CURRENT_APP|awk '{print $3}')
+REACT_HOST=$(echo $CURRENT_APP|awk '{print $1}');
+echo "Status = $STATUS"
+ while [  $STATUS != 'Running' ]; do
+        echo "Sleeping again waiting on REACT app to start"
+        sleep 60;
+        CURRENT_APP=$(kubectl get pods |grep "react")
+        STATUS=$(echo $CURRENT_APP|awk '{print $3}')
+ done
+
+running=$(ps w|grep kubectl|grep 3000|awk '{print $1}')
+if [ $running != '' ];  then
+ echo "found 3000 running killing on $running";
+ kill -9 $running
+fi
+
+echo "Porting forwarding $REACT_HOST 3000"
+kubectl port-forward $REACT_HOST 3000:3000&
 
 
 #echo "-----------------------------------------------------------------------------------"

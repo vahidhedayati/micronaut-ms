@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: waiter
-        image: vahidhedayati/beer-react:2.55
+        image: vahidhedayati/beer-react:2.58
         env:
         - name: CONSUL_HOST
           value: "custom-consul-server"
