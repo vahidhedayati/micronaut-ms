@@ -79,7 +79,9 @@ kind: Deployment
 metadata:
   name: $NAME
   annotations:
-    "consul.hashicorp.com/connect-inject": "false"
+    "consul.hashicorp.com/connect-inject": "true"
+    "consul.hashicorp.com/service-name": "$NAME"
+    "consul.hashicorp.com/connect-service-port": "$APP_PORT"
   labels:
     app: $NAME
 spec:
