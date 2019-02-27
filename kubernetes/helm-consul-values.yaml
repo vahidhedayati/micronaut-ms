@@ -1,5 +1,7 @@
 # Choose an optional name for the datacenter
 global:
+  enabled:true 
+  image: "consul:1.4.0"
   datacenter: minidc
 
 # Enable the Consul Web UI via a NodePort
@@ -10,10 +12,19 @@ ui:
 # Enable Connect for secure communication between nodes
 connectInject:
   enabled: true
-
+  
 client:
   enabled: true
   grpc: true
+  extraConfig: 
+  {
+    "retry-join": ["provider=aws tag_key=Consul-Auto-Join tag-value=minidc"]
+  }
+dns: 
+  enabled: true
+  
+syncCatalog:   
+  enabled:true
 
 # Use only one Consul server for local development
 server:
