@@ -55,7 +55,7 @@ sudo apt update
 sudo apt -y install kubectl
 
 }
-#installBase;
+installBase;
 
 #minikube start
 #minikube start --cpus 4 --memory 4096 --kubernetes-version v1.13.0 --bootstrapper=kubeadm
