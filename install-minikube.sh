@@ -59,7 +59,7 @@ installBase;
 
 #minikube start
 #minikube start --cpus 4 --memory 4096 --kubernetes-version v1.13.0 --bootstrapper=kubeadm
-minikube start  --memory 6048
+minikube start  --memory 4096
 #--kubernetes-version v1.13.0 --bootstrapper=kubeadm
 
 echo "Showing kubectl cluster info"
