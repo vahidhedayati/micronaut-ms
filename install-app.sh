@@ -137,6 +137,6 @@ kubectl expose pods/$(kubectl get pods |grep "$NAME"|awk '{print $1}') --type="N
 
 #echo "-----------------------------------------------------------------------------------"
 # echo "running kubectl apply -f $NAME-ingres.yml"
-kubectl apply -f $NAME-ingres.yml
+#kubectl apply -f $NAME-ingres.yml
 
 

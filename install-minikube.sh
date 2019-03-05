@@ -92,11 +92,11 @@ minikube addons list
 
 echo "-----------------------------------------------------------------------------------"
 echo "Enabling minikube ingres - inbuilt HTTP server"
-minikube addons enable ingress
+#minikube addons enable ingress
 
 
  
-kubectl config use-context minikube
+#kubectl config use-context minikube
 
 
 function installHelm() {

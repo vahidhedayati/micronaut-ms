@@ -3,7 +3,7 @@ global:
   datacenter: dc1
 
 syncCatalog:
-  enabled: true
+  enabled: false
 
 # Enable the Consul Web UI via a NodePort
 ui:
@@ -16,7 +16,7 @@ connectInject:
 
 client:
   enabled: true
-  grpc: true
+  grpc: false
 
 # Use only one Consul server for local development
 server:
