@@ -12,7 +12,7 @@ ui:
 
 # Enable Connect for secure communication between nodes
 connectInject:
-  enabled: true
+  enabled: false
 
 client:
   enabled: true

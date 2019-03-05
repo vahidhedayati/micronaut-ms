@@ -8,7 +8,9 @@ minikube stop
 
 sudo docker run -d -p 9411:9411 openzipkin/zipkin
 
-minikube start --cpus 4 --memory 4096 --kubernetes-version v1.10.0 --bootstrapper=kubeadm
+minikube start  --memory 4096
+# --cpus 4 --memory 4096 --kubernetes-version v1.10.0 --bootstrapper=kubeadm
+
 kubectl config use-context minikube
 
 echo "-----------------------------------------------------------------------------------"
@@ -39,14 +41,14 @@ sudo docker run -d  -p 9092:9092 -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KA
 
 }
 
-loadKafka;
+#loadKafka;
 
 
 function loadMongo() {
 	sudo docker run -it -d mongo
 	kubectl expose deployment mongodb --type=LoadBalancer
 }
-loadMongo;
+#loadMongo;
 
 
 
