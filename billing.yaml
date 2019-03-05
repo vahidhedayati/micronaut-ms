@@ -2,6 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: billing
+  annotations:
+    "consul.hashicorp.com/connect-inject": "true"
+    "consul.hashicorp.com/service-name": "billing"
+    "consul.hashicorp.com/connect-service-port": "8085"
   labels:
     app: billing
 spec:
@@ -16,7 +20,7 @@ spec:
     spec:
       containers:
       - name: waiter
-        image: vahidhedayati/beer-billing:1.84
+        image: vahidhedayati/beer-billing:1.114
         env:
         - name: CONSUL_HOST
           value: "consul-server"

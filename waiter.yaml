@@ -2,6 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: waiter
+  annotations:
+    "consul.hashicorp.com/connect-inject": "true"
+    "consul.hashicorp.com/service-name": "waiter"
+    "consul.hashicorp.com/connect-service-port": "8084"
   labels:
     app: waiter
 spec:
@@ -16,7 +20,7 @@ spec:
     spec:
       containers:
       - name: waiter
-        image: vahidhedayati/beer-waiter:1.80
+        image: vahidhedayati/beer-waiter:1.117
         env:
         - name: CONSUL_HOST
           value: "consul-server"

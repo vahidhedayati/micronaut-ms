@@ -49,8 +49,14 @@ public class TicketController {
     }
 
 	@Post("/addBeer/{customerName}")
-	public HttpResponse<BeerItem> addBeerToCustomerBill(@Body BeerItem beer, @NotBlank String customerName) {
-		System.out.println(" Normal beer served from ticket controller");
+	public HttpResponse<BeerItem> addBeerToCustomerBill(@NotBlank String customerName) {
+		System.out.println(" Normal beer served from ticket controller\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+		return HttpResponse.ok(new BeerItem());
+	}
+
+	@Post("/addBeer2/{customerName}")
+	public HttpResponse<BeerItem> addBeerToCustomerBill2(@Body BeerItem beer, @NotBlank String customerName) {
+		System.out.println(" Normal beer served from ticket controller\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 		return HttpResponse.ok(beer);
 	}
 
@@ -58,6 +64,7 @@ public class TicketController {
 	@Get("/bill/{customerName}")
 	@NewSpan("bill")
     public Single<Ticket> bill(@NotBlank String customerName) {
+		System.out.println("Billing customer in ticket controller\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 			Optional<Ticket> t = getTicketForUser(customerName);
     		Ticket ticket = t.isPresent() ?  t.get() : new Ticket();
     		ticket.setDeskId(embeddedServer.getPort());

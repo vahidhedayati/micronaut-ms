@@ -37,9 +37,7 @@ subprojects { project ->
 
         dependencies {
 
-            if ((project.path.contains(':tab'))||project.path.contains(':billing')||project.path.contains(':frontend')) {
-                compile "io.micronaut.configuration:micronaut-kafka"
-            }
+
             if (project.name == 'gateway') {
                 compile "com.ecwid.consul:consul-api:1.4.1"
 

@@ -32,7 +32,8 @@ public class WaiterController {
         Beer beer = new Beer("mahou", Beer.Size.MEDIUM);
         BeerItem beerItem = new BeerItem(beer.getName(), BeerItem.Size.MEDIUM);
 
-        ticketControllerClient.addBeerToCustomerBill(beerItem, customerName);
+        //ticketControllerClient.addBeerToCustomerBill(beerItem, customerName);
+        ticketControllerClient.addBeerToCustomerBill(customerName);
         return Single.just(beer);
     }
     

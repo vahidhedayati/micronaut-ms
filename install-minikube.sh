@@ -8,8 +8,6 @@
 # if you want to clean the slate without reinstalling it all refer to ./refresh-minikube.sh
 ###
 
-#Please set this variable
-DOCKER_USERNAME="vahidhedayati";
 
 function clean_minikube() {
 	echo "clearing out minikube"
@@ -18,26 +16,30 @@ function clean_minikube() {
 	rm -rf $HOME/.minikube
 }
 
-
 echo "-----------------------------------------------------------------------------------"
 echo "About to install virtualbox - docker and add kubernetes sources as well as install kubectl DEB package"
-sudo apt-get  --yes --force-yes  install apt-transport-https virtualbox virtualbox-ext-pack docker docker.io 
+sudo apt-get  --yes --force-yes  install apt-transport-https virtualbox virtualbox-ext-pack docker docker.io
 
-if [[ ! -f $HOME/.docker/config.json  ]]; then 
-	echo "You must goto https://hub.docker.com/"
-	echo "Register then run "
-	echo "docker login on your PC first before proceeding"
-	exit;
+
+if sudo grep -q 'auths": {}' ~/.docker/config.json ; then
+        echo "You must goto https://hub.docker.com/"
+        echo "Register then run "
+        echo "docker login on your PC first before proceeding"
+        exit;
 fi
+
+DOCKER_USERNAME=$(sudo docker info | sed '/Username:/!d;s/.* //');
+
 
 CURRENT_PATH=$(pwd);
 if [[ $DOCKER_USERNAME == "" ]]; then
-	echo "You must edit this script and assign your docker username as the variable DOCKER_USERNAME=\"yourusername\""
-	exit
+        echo "You must edit this script and assign your docker username as the variable DOCKER_USERNAME=\"yourusername\""
+        exit
 fi
 
 clean_minikube
 
+function installBase() {
 
 wget https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
 chmod +x minikube-linux-amd64
@@ -46,15 +48,19 @@ sudo mv minikube-linux-amd64 /usr/local/bin/minikube
 echo "-----------------------------------------------------------------------------------"
 echo "Minikube added about to start it - this may take a while - please wait"
 
-
-#minikube start
-minikube start --cpus 4 --memory 4096 --kubernetes-version v1.10.0 --bootstrapper=kubeadm
-
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 sudo apt update
 sudo apt -y install kubectl
+
+}
+#installBase;
+
+#minikube start
+#minikube start --cpus 4 --memory 4096 --kubernetes-version v1.13.0 --bootstrapper=kubeadm
+minikube start  --memory 4096 
+#--kubernetes-version v1.13.0 --bootstrapper=kubeadm
 
 echo "Showing kubectl cluster info"
 kubectl cluster-info
@@ -93,7 +99,7 @@ minikube addons enable ingress
 kubectl config use-context minikube
 
 
-function installConsulHelm() {
+function installHelm() {
 cd /tmp
 curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > install-helm.sh
 chmod u+x install-helm.sh
@@ -108,6 +114,10 @@ chmod u+x install-helm.sh
 echo "Initialising helm"
 helm init --wait
 
+}
+installHelm
+
+function installConsulHelm() {
 cd /tmp
 echo "-----------------------------------------------------------------------------------"
 echo "Installing consul-helm"
@@ -118,26 +128,16 @@ git checkout v0.5.0
 
 helm install --name consul ./
 
-#cp $CURRENT_PATH/kubernetes/values.yaml ./
-
-#echo "-----------------------------------------------------------------------------------"
-#echo "Editing values.yaml and updating replicas/boostrapExpect values of 3  to 1 "
-#ed -s values.yaml << EOF
-#,s/replicas: 3/replicas: 1/g
-#,s/bootstrapExpect: 3/bootstrapExpect: 1/g
-##w
-##q
-#EOF
 
 helm del --purge consul
-#helm install --name consul ./
 
 cd ../
 helm install -f $CURRENT_PATH/kubernetes/helm-consul-values.yaml --name consul ./consul-helm
-# helm install ./consul-helm
+}
+installConsulHelm;
 
 
-
+function installConsulConfigMap() {
 consul_dns=$(kubectl get svc |grep consul-dns|awk '{print $1}')
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
@@ -152,11 +152,7 @@ data:
     {"consul": ["$(kubectl get svc $consul_dns -o jsonpath='{.spec.clusterIP}')"]}
 EOF
 }
-installConsulHelm;
-#exit;
-
-
-
+installConsulConfigMap
 
 function installKafka() {
     echo "----------------------------"
@@ -177,7 +173,7 @@ function installKafka() {
 
 }
 
-installKafka;
+#installKafka;
 
 
 
@@ -189,7 +185,7 @@ function loadMongo() {
 	kubectl create -f kubernetes/mongo/10-mongo-service.yml
 	kubectl expose deployment mongodb --type=LoadBalancer
 }
-loadMongo;
+#loadMongo;
 
 
 kubectl get pods
@@ -198,7 +194,7 @@ kubectl get svc
 
 echo "sleeping for a bit"
 sleep 20;
-CONSUL_HOST=$(kubectl get pods |grep consul-server|awk '{print $1}');
+CONSUL_HOST=$(kubectl get pods |grep consul-server|head -n1|awk '{print $1}');
 
 echo "-----------------------------------------------------------------------------------"
 echo "Porting forwarding $CONSUL_HOST 8500:8500"

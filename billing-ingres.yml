@@ -10,5 +10,5 @@ spec:
       paths:
         - path: /billing
           backend:
-            serviceName: billing-deployment
+            serviceName: billing
             servicePort: 8085

@@ -10,5 +10,5 @@ spec:
       paths:
         - path: /waiter
           backend:
-            serviceName: waiter-deployment
+            serviceName: waiter
             servicePort: 8084
