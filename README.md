@@ -1,4 +1,14 @@
 
+### Side note - similar / related projects
+- [micronaut-vuejs-cqrs](https://github.com/vahidhedayati/micronaut-vuejs-cqrs)
+
+- [micronaut-vuejs-crud](https://github.com/vahidhedayati/micronaut-vuejs-crud)
+
+- [grails-vue-springsecurity-demo](https://github.com/vahidhedayati/grails-vue-springsecurity-demo)
+
+- [micronaut-ms micronaut beer serving app (this)](https://github.com/vahidhedayati/micronaut-ms)
+
+
 # Updated
 Please refer to [minikube](https://github.com/vahidhedayati/micronaut-ms/wiki/minikube). 
 This is a guide in setting up this entire application using Kubernetes under Linux.
